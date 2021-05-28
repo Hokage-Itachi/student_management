@@ -1,10 +1,15 @@
 package com.example.student_management.domain;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
+@NoArgsConstructor
+@Builder
 public class Role {
     @Id
     @Column(name = "role_name")

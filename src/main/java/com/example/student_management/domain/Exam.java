@@ -1,6 +1,8 @@
 package com.example.student_management.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.List;
 @Entity
 @Table(name = "exams")
 @Getter
+@NoArgsConstructor
+@Builder
 public class Exam {
     @Id
     @GeneratedValue

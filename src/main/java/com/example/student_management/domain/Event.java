@@ -1,10 +1,15 @@
 package com.example.student_management.domain;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "events")
+@NoArgsConstructor
+@Builder
 public class Event {
     @Id
     @GeneratedValue

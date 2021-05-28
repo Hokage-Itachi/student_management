@@ -1,6 +1,8 @@
 package com.example.student_management.domain;
 
 import com.sun.istack.NotNull;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue

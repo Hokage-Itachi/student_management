@@ -1,12 +1,16 @@
 package com.example.student_management.domain;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "plans")
 @Getter
+@NoArgsConstructor
+@Builder
 public class Plan {
     @Id
     @GeneratedValue
