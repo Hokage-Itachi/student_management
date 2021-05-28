@@ -14,4 +14,8 @@ public class Plan {
 
     @Column(name = "name", length = 100)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

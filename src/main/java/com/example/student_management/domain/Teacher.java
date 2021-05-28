@@ -2,6 +2,7 @@ package com.example.student_management.domain;
 
 import lombok.Getter;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "teachers")
@@ -26,4 +27,6 @@ public class Teacher {
     @Column(name = "grade", length = 20)
     private String grade;
 
+    @OneToMany(mappedBy = "teacher")
+    private List<Class> classes;
 }

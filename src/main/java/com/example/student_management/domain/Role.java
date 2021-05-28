@@ -1,9 +1,7 @@
 package com.example.student_management.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "roles")
@@ -14,5 +12,11 @@ public class Role {
 
     @Column(name = "descriptions", length = 100)
     private String descriptions;
+
+    @ManyToMany
+    @JoinTable(name = "authorization_each_role",
+            joinColumns = @JoinColumn(name = "role_name"),
+            inverseJoinColumns = @JoinColumn(name = "per_id"))
+    private List<Permistion> permistions;
 
 }

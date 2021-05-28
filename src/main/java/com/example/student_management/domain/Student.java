@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,5 +40,11 @@ public class Student {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
+    @OneToMany(mappedBy = "student")
+    private List<ExamResult> examResults;
+
+
+    @ManyToMany(mappedBy = "students")
+    private List<Class> classes;
 
 }

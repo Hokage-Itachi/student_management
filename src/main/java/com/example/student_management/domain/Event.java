@@ -24,5 +24,8 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     private Date happenDate;
 
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class clazz;
 
 }

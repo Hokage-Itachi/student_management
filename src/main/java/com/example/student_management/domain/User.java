@@ -4,6 +4,7 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -45,6 +46,16 @@ public class User {
 
     @Column(name = "forgot_password_token", length = 100)
     private String forgotPasswordToken;
+
+    @OneToOne
+    @JoinColumn(name = "role")
+    private Role role;
+
+    @ManyToMany
+    @JoinTable(name = "authorization_each_author",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "per_id"))
+    private List<Permistion> permistions;
 
 
 }

@@ -23,5 +23,12 @@ public class ExamResult {
     @Column(name = "note", length = 2000)
     private String note;
 
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
 
 }
