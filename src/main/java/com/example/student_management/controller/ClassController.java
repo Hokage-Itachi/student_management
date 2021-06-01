@@ -2,7 +2,7 @@ package com.example.student_management.controller;
 
 import com.example.student_management.domain.Class;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.dto.converter.ClassConverter;
+import com.example.student_management.converter.ClassConverter;
 import com.example.student_management.service.ClassService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
