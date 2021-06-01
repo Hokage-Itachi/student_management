@@ -41,8 +41,13 @@ public class ClassController {
         return new ResponseEntity<>(classDto, HttpStatus.OK);
     }
 
+    // TODO: handle class post mapping api
     @PostMapping
     public ResponseEntity<Object> addClass(@RequestBody ClassDto classDto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    // TODO: handle class put mapping api
+
+    // TODO: handle class delete mapping api
 }
