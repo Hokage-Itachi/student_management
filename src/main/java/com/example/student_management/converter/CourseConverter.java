@@ -21,4 +21,12 @@ public class CourseConverter {
                 .build();
         return courseDto;
     }
+
+    public Course toEntity(CourseDto courseDto) {
+        return Course.builder()
+                .name(courseDto.getName())
+                .type(courseDto.getType())
+                .createDate(courseDto.getCreatedDate())
+                .build();
+    }
 }
