@@ -1,6 +1,8 @@
 package com.example.student_management.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,7 +10,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "roles")
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Role {
     @Id

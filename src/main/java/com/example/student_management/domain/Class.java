@@ -1,8 +1,6 @@
 package com.example.student_management.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,6 +10,7 @@ import java.util.List;
 @Table(name = "classes")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Class {
     @Id

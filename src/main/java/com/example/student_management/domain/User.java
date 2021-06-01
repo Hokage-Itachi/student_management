@@ -1,7 +1,9 @@
 package com.example.student_management.domain;
 
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -10,7 +12,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class User {
     @Id

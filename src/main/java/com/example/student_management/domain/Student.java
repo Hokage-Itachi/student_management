@@ -1,5 +1,6 @@
 package com.example.student_management.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Table(name = "students")
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 
 public class Student {
