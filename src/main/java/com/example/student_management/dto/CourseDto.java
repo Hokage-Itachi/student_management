@@ -17,5 +17,7 @@ public class CourseDto {
     private String type;
     private Date createdDate;
     private List<String> classes;
+    private List<String> exams;
+    private List<String> plans;
 
 }
