@@ -8,6 +8,7 @@ import java.util.Date;
 @Entity
 @Table(name = "exam_results")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
