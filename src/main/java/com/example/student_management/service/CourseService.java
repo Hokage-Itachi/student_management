@@ -23,7 +23,7 @@ public class CourseService {
         return courseRepository.findById(id);
     }
 
-    // TODO: fix duplicate key value violates unique constraint "pk_khoa_hoc"
+
     public Course save(Course course) {
         return courseRepository.save(course);
     }
