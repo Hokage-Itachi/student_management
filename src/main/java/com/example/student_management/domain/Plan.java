@@ -15,7 +15,8 @@ import javax.persistence.*;
 @Builder
 public class Plan {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "plans_id_seq")
+    @SequenceGenerator(name = "plans_id_seq", sequenceName = "plans_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", length = 100)

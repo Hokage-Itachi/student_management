@@ -16,7 +16,8 @@ import java.util.List;
 @Builder
 public class Permistion {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permistions_id_seq")
+    @SequenceGenerator(name = "permistions_id_seq", sequenceName = "permistions_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "description")

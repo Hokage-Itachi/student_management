@@ -18,7 +18,8 @@ import java.util.List;
 
 public class Student {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "students_id_seq")
+    @SequenceGenerator(name = "students_id_seq", sequenceName = "students_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "full_name", length = 250, nullable = false)

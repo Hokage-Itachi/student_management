@@ -16,7 +16,8 @@ import java.util.Date;
 @Builder
 public class Event {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "events_id_seq")
+    @SequenceGenerator(name = "events_id_seq", sequenceName = "events_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", length = 250)

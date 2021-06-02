@@ -17,7 +17,8 @@ import java.util.List;
 @Builder
 public class Course {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "courses_id_seq")
+    @SequenceGenerator(name = "courses_id_seq", sequenceName = "courses_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", length = 200)
