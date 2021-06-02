@@ -12,6 +12,6 @@ import java.util.List;
 public class ExamDto {
     private Long id;
     private String name;
-    private CourseDto course;
+    private String course;
     private List<String> examResults;
 }

@@ -10,5 +10,5 @@ import lombok.*;
 public class PlanDto {
     private Long id;
     private String name;
-    private CourseDto course;
+    private String course;
 }

@@ -16,7 +16,7 @@ public class ClassDto {
     private Date startDate;
     private Date endDate;
     private String status;
-    private CourseDto course;
+    private String course;
     private TeacherDto teacher;
     private List<String> events;
     private List<String> students;
