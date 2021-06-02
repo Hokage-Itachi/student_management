@@ -2,6 +2,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    show-sql: false
   datasource:
     username: postgres
     password: 123456
