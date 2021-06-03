@@ -4,6 +4,7 @@ import com.example.student_management.converter.CourseConverter;
 import com.example.student_management.domain.Course;
 import com.example.student_management.dto.CourseDto;
 import com.example.student_management.service.CourseService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,32 @@ public class CourseController {
         Course course = courseConverter.toEntity(courseDto);
         Course savedCourse = courseService.save(course);
         return new ResponseEntity<>(savedCourse, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateCourse(@PathVariable("id") Long id, @RequestBody CourseDto courseDto) {
+        Optional<Course> courseOptional = courseService.findById(id);
+
+        if (courseOptional.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Course updatedCourseInfo = courseConverter.toEntity(courseDto);
+        updatedCourseInfo.setId(id);
+
+        return new ResponseEntity<>(courseService.save(updatedCourseInfo), HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteCourse(@PathVariable("id") Long id) {
+        try {
+            courseService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
