@@ -18,4 +18,11 @@ public class ExamConverter {
                 .build();
         return examDto;
     }
+
+    public Exam toEntity(ExamDto examDto){
+        return Exam.builder()
+                .id(examDto.getId())
+                .name(examDto.getName())
+                .build();
+    }
 }
