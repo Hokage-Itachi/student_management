@@ -4,6 +4,7 @@ import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Event;
 import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.CourseDto;
+import com.example.student_management.dto.EventDto;
 import com.example.student_management.dto.TeacherDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,17 +16,16 @@ import java.util.stream.Collectors;
 public class ClassConverter {
 
     private TeacherConverter teacherConverter;
-    private CourseConverter courseConverter;
+    private EventConverter eventConverter;
 
-    public ClassConverter(TeacherConverter teacherConverter, CourseConverter courseConverter) {
+    public ClassConverter(TeacherConverter teacherConverter, EventConverter eventConverter) {
         this.teacherConverter = teacherConverter;
-        this.courseConverter = courseConverter;
+        this.eventConverter = eventConverter;
     }
 
     public ClassDto toDto(Class entity) {
         TeacherDto teacher = teacherConverter.toDto(entity.getTeacher());
-        List<String> events = entity.getEvents().stream().map(Event::getName).collect(Collectors.toList());
-        CourseDto course = courseConverter.toDto(entity.getCourse());
+        List<EventDto> events = entity.getEvents().stream().map(eventConverter::toDto).collect(Collectors.toList());
         ClassDto classDto = ClassDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -33,13 +33,18 @@ public class ClassConverter {
                 .endDate(entity.getEndDate())
                 .status(entity.getStatus())
                 .teacher(teacher)
-                .course(course)
                 .events(events)
                 .build();
         return classDto;
     }
 
     public Class toEntity(ClassDto classDto) {
-        return new Class();
+
+        return Class.builder()
+                .name(classDto.getName())
+                .startDate(classDto.getStartDate())
+                .endDate(classDto.getEndDate())
+                .status(classDto.getStatus())
+                .build();
     }
 }

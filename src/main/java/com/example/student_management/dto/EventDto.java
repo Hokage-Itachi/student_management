@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ public class EventDto {
     private Date createDate;
     private String status;
     private Date happenDate;
-    private ClassDto clazz;
+    @JsonProperty("class")
+    private String clazz;
 
 }

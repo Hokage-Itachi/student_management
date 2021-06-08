@@ -42,6 +42,7 @@ public class CourseConverter {
 
     public Course toEntity(CourseDto courseDto) {
         return Course.builder()
+                .id(courseDto.getId())
                 .name(courseDto.getName())
                 .type(courseDto.getType())
                 .createDate(courseDto.getCreatedDate())
