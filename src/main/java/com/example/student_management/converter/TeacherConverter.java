@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class TeacherConverter {
     public TeacherDto toDto(Teacher entity) {
         List<String> classes = entity.getClasses().stream().map(Class::getName).collect(Collectors.toList());
-        TeacherDto teacherDto = TeacherDto.builder()
+        return TeacherDto.builder()
                 .id(entity.getId())
                 .fullName(entity.getFullName())
                 .email(entity.getEmail())
@@ -21,7 +21,16 @@ public class TeacherConverter {
                 .grade(entity.getGrade())
                 .classes(classes)
                 .build();
+    }
 
-        return teacherDto;
+    public Teacher toEntity(TeacherDto teacherDto) {
+        return Teacher.builder()
+                .id(teacherDto.getId())
+                .fullName(teacherDto.getFullName())
+                .email(teacherDto.getEmail())
+                .phone(teacherDto.getPhone())
+                .address(teacherDto.getAddress())
+                .grade(teacherDto.getGrade())
+                .build();
     }
 }
