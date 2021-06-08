@@ -14,5 +14,6 @@ import lombok.Setter;
 public class ClassRequest {
     @JsonProperty("class")
     private ClassDto clazz;
-    private Long teacher_id;
+    private Long teacherId;
+    private Long courseId;
 }

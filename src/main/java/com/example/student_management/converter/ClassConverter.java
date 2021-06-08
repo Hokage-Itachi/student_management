@@ -24,7 +24,6 @@ public class ClassConverter {
     }
 
     public ClassDto toDto(Class entity) {
-        TeacherDto teacher = teacherConverter.toDto(entity.getTeacher());
         List<EventDto> events = entity.getEvents().stream().map(eventConverter::toDto).collect(Collectors.toList());
         ClassDto classDto = ClassDto.builder()
                 .id(entity.getId())
@@ -32,7 +31,8 @@ public class ClassConverter {
                 .startDate(entity.getStartDate())
                 .endDate(entity.getEndDate())
                 .status(entity.getStatus())
-                .teacher(teacher)
+                .course(entity.getCourse().getName())
+                .teacher(entity.getTeacher().getFullName())
                 .events(events)
                 .build();
         return classDto;
@@ -41,6 +41,7 @@ public class ClassConverter {
     public Class toEntity(ClassDto classDto) {
 
         return Class.builder()
+                .id(classDto.getId())
                 .name(classDto.getName())
                 .startDate(classDto.getStartDate())
                 .endDate(classDto.getEndDate())
