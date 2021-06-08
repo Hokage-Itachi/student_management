@@ -57,7 +57,6 @@ public class CourseController {
         if (courseOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-//        courseDto.setId(id);
         Course updatedCourseInfo = courseConverter.toEntity(courseDto);
         updatedCourseInfo.setId(id);
 
