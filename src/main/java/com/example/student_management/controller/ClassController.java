@@ -1,24 +1,28 @@
 package com.example.student_management.controller;
 
+import com.example.student_management.converter.ClassConverter;
+import com.example.student_management.converter.StudentConverter;
 import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Course;
+import com.example.student_management.domain.Student;
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.converter.ClassConverter;
+import com.example.student_management.dto.StudentDto;
 import com.example.student_management.request.ClassRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.CourseService;
+import com.example.student_management.service.StudentService;
 import com.example.student_management.service.TeacherService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// TODO: create response object include message, status_code and data
 @RestController
 @RequestMapping("/api/classes")
 public class ClassController {
@@ -53,7 +57,6 @@ public class ClassController {
         return new ResponseEntity<>(classDto, HttpStatus.OK);
     }
 
-    // TODO: create response object for post request
     @PostMapping
     public ResponseEntity<Object> addClass(@RequestBody ClassRequest request) {
 
@@ -70,11 +73,11 @@ public class ClassController {
 
         clazz.setCourse(courseOptional.get());
         clazz.setTeacher(teacherOptional.get());
-        classService.save(clazz);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Class insertedClass = classService.save(clazz);
+        return new ResponseEntity<>(classConverter.toDto(insertedClass), HttpStatus.CREATED);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassRequest request) {
         Optional<Class> classOptional = classService.findById(id);
         if (classOptional.isEmpty()) {
@@ -93,8 +96,9 @@ public class ClassController {
         clazz.setId(id);
         clazz.setTeacher(teacherOptional.get());
         clazz.setCourse(courseOptional.get());
-        classService.save(clazz);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        Class updatedClass = classService.save(clazz);
+        return new ResponseEntity<>(classConverter.toDto(updatedClass), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
