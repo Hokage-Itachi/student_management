@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EventConverter {
-    public EventDto toDto(Event entity){
+    public EventDto toDto(Event entity) {
         return EventDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -17,4 +17,15 @@ public class EventConverter {
                 .build();
     }
 
+
+    public Event toEntity(EventDto eventDto) {
+        return Event.builder()
+                .id(eventDto.getId())
+                .name(eventDto.getName())
+                .createDate(eventDto.getCreateDate())
+                .status(eventDto.getStatus())
+                .happenDate(eventDto.getHappenDate())
+                .build();
+
+    }
 }
