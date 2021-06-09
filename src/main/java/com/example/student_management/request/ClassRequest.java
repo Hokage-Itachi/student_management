@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @Getter
 @Setter
@@ -19,5 +18,4 @@ public class ClassRequest {
     private ClassDto clazz;
     private Long teacherId;
     private Long courseId;
-    private List<StudentId> students;
 }
