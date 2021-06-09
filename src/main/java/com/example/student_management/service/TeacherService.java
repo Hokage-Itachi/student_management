@@ -30,4 +30,8 @@ public class TeacherService {
     public void deleteById(Long id) {
         teacherRepository.deleteById(id);
     }
+
+    public Optional<Teacher> findByEmail(String email) {
+        return teacherRepository.findByEmail(email);
+    }
 }

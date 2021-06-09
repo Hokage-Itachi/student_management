@@ -45,6 +45,10 @@ public class TeacherController {
 
     @PostMapping
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
+        Optional<Teacher> teacherOptional = teacherService.findByEmail(teacherDto.getEmail());
+        if (teacherOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
         Teacher teacher = teacherConverter.toEntity(teacherDto);
         Teacher insertedTeacher = teacherService.save(teacher);
         return new ResponseEntity<>(insertedTeacher, HttpStatus.CREATED);
@@ -58,6 +62,10 @@ public class TeacherController {
         }
 
         Teacher teacherUpdateInfo = teacherConverter.toEntity(teacherDto);
+        if (!teacherOptional.get().getEmail().equals(teacherUpdateInfo.getEmail()) && teacherService.findByEmail(teacherDto.getEmail()).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         teacherUpdateInfo.setId(id);
 
         Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
