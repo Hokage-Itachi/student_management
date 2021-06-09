@@ -51,7 +51,7 @@ public class TeacherController {
         }
         Teacher teacher = teacherConverter.toEntity(teacherDto);
         Teacher insertedTeacher = teacherService.save(teacher);
-        return new ResponseEntity<>(insertedTeacher, HttpStatus.CREATED);
+        return new ResponseEntity<>(teacherConverter.toDto(insertedTeacher), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
@@ -69,7 +69,7 @@ public class TeacherController {
         teacherUpdateInfo.setId(id);
 
         Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
-        return new ResponseEntity<>(updatedTeacher, HttpStatus.OK);
+        return new ResponseEntity<>(teacherConverter.toDto(updatedTeacher), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
