@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentId {
-    private Long studentId;
+public class ClassId {
+    private Long classId;
 }

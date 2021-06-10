@@ -25,4 +25,18 @@ public class StudentConverter {
                 .classes(classes)
                 .build();
     }
+
+    public Student toEntity(StudentDto studentDto) {
+        return Student.builder()
+                .id(studentDto.getId())
+                .fullName(studentDto.getFullName())
+                .address(studentDto.getAddress())
+                .email(studentDto.getEmail())
+                .phone(studentDto.getPhone())
+                .birthday(studentDto.getBirthday())
+                .note(studentDto.getNote())
+                .facebook(studentDto.getFacebook())
+                .createDate(studentDto.getCreateDate())
+                .build();
+    }
 }

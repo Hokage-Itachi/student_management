@@ -4,6 +4,7 @@ import com.example.student_management.converter.ClassConverter;
 import com.example.student_management.converter.StudentConverter;
 import com.example.student_management.domain.Student;
 import com.example.student_management.dto.StudentDto;
+import com.example.student_management.request.StudentRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.StudentService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -47,6 +48,25 @@ public class StudentController {
         return new ResponseEntity<>(studentConverter.toDto(studentOptional.get()), HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Object> addStudent(@RequestBody StudentRequest request) {
+        Student student = studentConverter.toEntity(request.getStudent());
+        Student insertedStudent = studentService.save(student);
+        return new ResponseEntity<>(studentConverter.toDto(insertedStudent), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentRequest request) {
+        Optional<Student> optionalStudent = studentService.findById(id);
+        if (optionalStudent.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Student studentUpdateInfo = studentConverter.toEntity(request.getStudent());
+        studentUpdateInfo.setId(id);
+        Student updatedStudent = studentService.save(studentUpdateInfo);
+        return new ResponseEntity<>(studentConverter.toDto(updatedStudent), HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteStudent(@PathVariable("id") Long id) {

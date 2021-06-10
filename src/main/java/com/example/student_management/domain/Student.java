@@ -3,6 +3,7 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +52,6 @@ public class Student {
 
 
     @ManyToMany(mappedBy = "students")
-    private List<Class> classes;
+    private List<Class> classes = new ArrayList<>();
 
 }
