@@ -9,6 +9,7 @@ import com.example.student_management.dto.RegistrationDto;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.RegistrationService;
 import com.example.student_management.service.StudentService;
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class RegistrationController {
 
         return new ResponseEntity<>(registrationConverter.toDto(registrationOptional.get()), HttpStatus.OK);
     }
-
+    // TODO:fix student and class not map
     @PostMapping
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
         Optional<Student> studentOptional = studentService.findById(registrationDto.getId().getStudentId());

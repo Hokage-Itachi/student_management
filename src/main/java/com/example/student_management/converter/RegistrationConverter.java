@@ -12,6 +12,8 @@ public class RegistrationConverter {
                 .registerDay(entity.getRegisterDay())
                 .status(entity.getStatus())
                 .createdDate(entity.getCreateDate())
+                .clazz(entity.getClazz().getName())
+                .student(entity.getStudent().getFullName())
                 .build();
     }
 
