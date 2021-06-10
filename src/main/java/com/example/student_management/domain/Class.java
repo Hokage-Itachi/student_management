@@ -43,8 +43,8 @@ public class Class {
     private Teacher teacher;
 
     @OneToMany(mappedBy = "clazz")
-    private List<Event> events = new ArrayList<>();
+    private List<Event> events;
 
-    @OneToMany(mappedBy = "clazz")
-    private List<Registration> registrations = new ArrayList<>();
+    @OneToMany(mappedBy = "clazz", cascade = CascadeType.ALL)
+    private List<Registration> registrations;
 }

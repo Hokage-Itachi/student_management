@@ -48,10 +48,10 @@ public class Student {
     private Date createDate;
 
     @OneToMany(mappedBy = "student")
-    private List<ExamResult> examResults = new ArrayList<>();
+    private List<ExamResult> examResults;
 
 
-    @OneToMany(mappedBy = "student")
-    private List<Registration> registrations = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<Registration> registrations;
 
 }
