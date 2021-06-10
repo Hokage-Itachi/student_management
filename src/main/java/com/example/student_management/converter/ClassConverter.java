@@ -9,6 +9,7 @@ import com.example.student_management.dto.TeacherDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,10 @@ public class ClassConverter {
     }
 
     public ClassDto toDto(Class entity) {
-        List<EventDto> events = entity.getEvents().stream().map(eventConverter::toDto).collect(Collectors.toList());
+        List<EventDto> events = new ArrayList<>();
+        if (entity.getEvents() != null) {
+            events = entity.getEvents().stream().map(eventConverter::toDto).collect(Collectors.toList());
+        }
         ClassDto classDto = ClassDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())

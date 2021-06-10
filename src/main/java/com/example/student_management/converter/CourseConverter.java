@@ -8,6 +8,7 @@ import com.example.student_management.dto.ExamDto;
 import com.example.student_management.dto.PlanDto;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,10 +26,19 @@ public class CourseConverter {
     }
 
     public CourseDto toDto(Course entity) {
-        List<ClassDto> classes = entity.getClasses().stream().map(classConverter::toDto).collect(Collectors.toList());
-        List<ExamDto> exams = entity.getExams().stream().map(examConverter::toDto).collect(Collectors.toList());
-        List<PlanDto> plans = entity.getPlans().stream().map(planConverter::toDto).collect(Collectors.toList());
-        CourseDto courseDto = CourseDto.builder()
+        List<ClassDto> classes = new ArrayList<>();
+        List<ExamDto> exams = new ArrayList<>();
+        List<PlanDto> plans = new ArrayList<>();
+        if (entity.getClasses() != null) {
+            classes = entity.getClasses().stream().map(classConverter::toDto).collect(Collectors.toList());
+        }
+        if (entity.getExams() != null) {
+            exams = entity.getExams().stream().map(examConverter::toDto).collect(Collectors.toList());
+        }
+        if (entity.getPlans() != null) {
+            plans = entity.getPlans().stream().map(planConverter::toDto).collect(Collectors.toList());
+        }
+        return CourseDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .type(entity.getType())
@@ -37,7 +47,7 @@ public class CourseConverter {
                 .exams(exams)
                 .plans(plans)
                 .build();
-        return courseDto;
+
     }
 
     public Course toEntity(CourseDto courseDto) {

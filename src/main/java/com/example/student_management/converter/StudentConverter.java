@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 @Component
 public class StudentConverter {
     public StudentDto toDto(Student entity) {
-        List<String> classes = entity.getClasses().stream().map(Class::getName).collect(Collectors.toList());
         return StudentDto.builder()
                 .id(entity.getId())
                 .fullName(entity.getFullName())
@@ -22,7 +21,6 @@ public class StudentConverter {
                 .note(entity.getNote())
                 .facebook(entity.getFacebook())
                 .createDate(entity.getCreateDate())
-                .classes(classes)
                 .build();
     }
 
