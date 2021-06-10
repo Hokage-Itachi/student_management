@@ -3,6 +3,7 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,9 +27,9 @@ public class Permistion {
     private String perName;
 
     @ManyToMany(mappedBy = "permistions")
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
     @ManyToMany(mappedBy = "permistions")
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
 }

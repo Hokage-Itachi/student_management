@@ -3,6 +3,7 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +35,5 @@ public class Teacher {
     private String grade;
 
     @OneToMany(mappedBy = "teacher")
-    private List<Class> classes;
+    private List<Class> classes = new ArrayList<>();
 }

@@ -3,6 +3,7 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,11 +43,8 @@ public class Class {
     private Teacher teacher;
 
     @OneToMany(mappedBy = "clazz")
-    private List<Event> events;
+    private List<Event> events = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "registrations",
-            joinColumns = @JoinColumn(name = "class_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id"))
-    private List<Student> students;
+    @OneToMany(mappedBy = "clazz")
+    private List<Registration> registrations = new ArrayList<>();
 }

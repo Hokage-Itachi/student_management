@@ -3,6 +3,7 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,11 +31,11 @@ public class Course {
     private Date createDate;
 
     @OneToMany(mappedBy = "course")
-    private List<Class> classes;
+    private List<Class> classes = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
-    private List<Exam> exams;
+    private List<Exam> exams = new ArrayList<>();
 
     @OneToMany(mappedBy = "course")
-    private List<Plan> plans;
+    private List<Plan> plans = new ArrayList<>();
 }
