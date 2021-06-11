@@ -10,6 +10,7 @@ import com.example.student_management.service.ClassService;
 import com.example.student_management.service.RegistrationService;
 import com.example.student_management.service.StudentService;
 import com.sun.xml.bind.v2.TODO;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class RegistrationController {
 
         return new ResponseEntity<>(registrationConverter.toDto(registrationOptional.get()), HttpStatus.OK);
     }
-    // TODO:fix student and class not map
+
     @PostMapping
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
         Optional<Student> studentOptional = studentService.findById(registrationDto.getId().getStudentId());
@@ -63,6 +64,17 @@ public class RegistrationController {
         registration.setStudent(studentOptional.get());
         Registration insertedRegistration = registrationService.save(registration);
         return new ResponseEntity<>(registrationConverter.toDto(insertedRegistration), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{classId}/{studentId}")
+    public ResponseEntity<Object> deleteRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
+        RegistrationId id = new RegistrationId(studentId, classId);
+        try {
+            registrationService.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
