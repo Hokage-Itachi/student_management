@@ -31,7 +31,7 @@ public class User {
     @Column(length = 100)
     private String password;
 
-    @Column(length = 50)
+    @Column(name = "fullname", length = 50)
     private String fullName;
 
     @Temporal(TemporalType.DATE)
@@ -63,7 +63,7 @@ public class User {
     @JoinTable(name = "authorization_each_author",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "per_id"))
-    private List<Permistion> permistions = new ArrayList<>();
+    private List<Permistion> permistions;
 
 
 }

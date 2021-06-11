@@ -31,11 +31,11 @@ public class Course {
     private Date createDate;
 
     @OneToMany(mappedBy = "course")
-    private List<Class> classes = new ArrayList<>();
+    private List<Class> classes;
 
     @OneToMany(mappedBy = "course")
-    private List<Exam> exams = new ArrayList<>();
+    private List<Exam> exams;
 
     @OneToMany(mappedBy = "course")
-    private List<Plan> plans = new ArrayList<>();
+    private List<Plan> plans;
 }

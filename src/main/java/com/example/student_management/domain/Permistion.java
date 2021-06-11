@@ -27,9 +27,9 @@ public class Permistion {
     private String perName;
 
     @ManyToMany(mappedBy = "permistions")
-    private List<User> users = new ArrayList<>();
+    private List<User> users;
 
     @ManyToMany(mappedBy = "permistions")
-    private List<Role> roles = new ArrayList<>();
+    private List<Role> roles;
 
 }

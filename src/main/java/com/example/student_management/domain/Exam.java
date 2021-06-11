@@ -27,6 +27,6 @@ public class Exam {
     private Course course;
 
     @OneToMany(mappedBy = "exam")
-    private List<ExamResult> examResults = new ArrayList<>();
+    private List<ExamResult> examResults;
 
 }
