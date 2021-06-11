@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.Date;
@@ -14,7 +15,9 @@ public class ExamResultDto {
     private Integer score;
     private Date resultDate;
     private String note;
-    private StudentDto student;
-    private ExamDto exam;
+    private String student;
+    private String exam;
+    @JsonProperty("class")
+    private String clazz;
 
 }

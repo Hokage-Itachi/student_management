@@ -50,7 +50,6 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private List<ExamResult> examResults;
 
-
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Registration> registrations;
 

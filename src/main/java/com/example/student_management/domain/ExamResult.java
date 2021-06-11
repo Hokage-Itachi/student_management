@@ -36,4 +36,8 @@ public class ExamResult {
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class clazz;
+
 }
