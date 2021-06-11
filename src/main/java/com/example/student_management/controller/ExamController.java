@@ -80,7 +80,7 @@ public class ExamController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deletePlan(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteExam(@PathVariable("id") Long id) {
         try {
             examService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
