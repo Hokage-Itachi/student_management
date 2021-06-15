@@ -46,8 +46,8 @@ public class CourseController {
     @PostMapping
     public ResponseEntity<Object> addCourse(@RequestBody CourseDto courseDto) {
         Course course = courseConverter.toEntity(courseDto);
-        Course savedCourse = courseService.save(course);
-        return new ResponseEntity<>(savedCourse, HttpStatus.CREATED);
+        Course insertedCourse = courseService.save(course);
+        return new ResponseEntity<>(courseConverter.toDto(insertedCourse), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -57,10 +57,12 @@ public class CourseController {
         if (courseOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+//        Course updatedCourseInfo = courseOptional.get();
+//        updatedCourseInfo.setName(courseDto.getName());
         Course updatedCourseInfo = courseConverter.toEntity(courseDto);
         updatedCourseInfo.setId(id);
-
-        return new ResponseEntity<>(courseService.save(updatedCourseInfo), HttpStatus.OK);
+        Course updatedCourse = courseService.save(updatedCourseInfo);
+        return new ResponseEntity<>(courseConverter.toDto(updatedCourse), HttpStatus.OK);
 
     }
 

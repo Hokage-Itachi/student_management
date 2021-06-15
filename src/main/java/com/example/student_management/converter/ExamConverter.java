@@ -11,12 +11,11 @@ import java.util.List;
 public class ExamConverter {
     public ExamDto toDto(Exam entity){
 
-        ExamDto examDto = ExamDto.builder()
+        return ExamDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .course(entity.getCourse().getName())
                 .build();
-        return examDto;
     }
 
     public Exam toEntity(ExamDto examDto){
