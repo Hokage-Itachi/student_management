@@ -28,6 +28,6 @@ public class RoleService {
     }
 
     public void deleteByRoleName(String roleName) {
-        roleRepository.deleteByRoleName(roleName);
+        roleRepository.deleteById(roleName);
     }
 }
