@@ -1,4 +1,4 @@
-package com.example.student_management.security.auth;
+package com.example.student_management.security.authentication;
 
 import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.User;

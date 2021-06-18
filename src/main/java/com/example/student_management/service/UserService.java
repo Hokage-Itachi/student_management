@@ -2,7 +2,7 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
 import com.example.student_management.repository.UserRepository;
-import com.example.student_management.security.auth.CustomUserDetails;
+import com.example.student_management.security.authentication.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
