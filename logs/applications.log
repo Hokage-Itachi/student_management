@@ -1,0 +1,7 @@
+2021-06-18 11:53:47.649 DEBUG 10280 --- [http-nio-8080-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.student_management.controller.AuthController#authenticateLogin(LoginRequest)
+2021-06-18 11:53:47.650 DEBUG 10280 --- [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : POST "/api/auth/login", parameters={}
+2021-06-18 11:53:47.650 DEBUG 10280 --- [http-nio-8080-exec-10] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.example.student_management.controller.AuthController#authenticateLogin(LoginRequest)
+2021-06-18 11:53:47.651 DEBUG 10280 --- [http-nio-8080-exec-10] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.example.student_management.request.LoginRequest@17a24538]
+2021-06-18 11:53:47.740 DEBUG 10280 --- [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json, application/json, application/*+json]
+2021-06-18 11:53:47.740 DEBUG 10280 --- [http-nio-8080-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [com.example.student_management.response.LoginRespone@6b6a1d94]
+2021-06-18 11:53:47.741 DEBUG 10280 --- [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
