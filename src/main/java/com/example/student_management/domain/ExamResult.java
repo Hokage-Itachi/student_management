@@ -18,10 +18,10 @@ public class ExamResult {
     @SequenceGenerator(name = "exam_results_id_seq", sequenceName = "exam_results_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "score")
+    @Column(name = "score", nullable = false)
     private Integer score;
 
-    @Column(name = "result_date")
+    @Column(name = "result_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date resultDate;
 

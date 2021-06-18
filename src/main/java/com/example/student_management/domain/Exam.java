@@ -19,7 +19,7 @@ public class Exam {
     @SequenceGenerator(name = "exams_id_seq", sequenceName = "exams_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", length = 500)
+    @Column(name = "name", length = 500, nullable = false)
     private String name;
 
     @ManyToOne

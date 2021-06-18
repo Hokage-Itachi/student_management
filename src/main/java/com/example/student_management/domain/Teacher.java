@@ -18,10 +18,10 @@ public class Teacher {
     @SequenceGenerator(name = "teachers_id_seq", sequenceName = "teachers_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "full_name", length = 250)
+    @Column(name = "full_name", length = 250, nullable = false)
     private String fullName;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, unique = true)
     private String email;
 
     @Column(name = "phone", length = 15)

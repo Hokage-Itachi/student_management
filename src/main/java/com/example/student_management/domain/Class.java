@@ -23,7 +23,7 @@ public class Class {
     @Column(name = "name", length = 250)
     private String name;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 

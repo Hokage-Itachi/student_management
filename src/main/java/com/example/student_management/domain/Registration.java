@@ -16,14 +16,14 @@ public class Registration {
     @EmbeddedId
     private RegistrationId id;
 
-    @Column(name = "register_day")
+    @Column(name = "register_day", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date registerDay;
 
-    @Column(name = "status", length = 10)
+    @Column(name = "status", length = 10, nullable = false)
     private String status;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 

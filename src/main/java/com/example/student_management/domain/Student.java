@@ -27,7 +27,7 @@ public class Student {
     @Column(name = "address", length = 250, nullable = false)
     private String address;
 
-    @Column(name = "email", length = 100, nullable = false)
+    @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
     @Column(name = "phone", length = 15)

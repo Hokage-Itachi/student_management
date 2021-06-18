@@ -22,16 +22,16 @@ public class User {
     @NotNull
     private Long id;
 
-    @Column(length = 50)
+    @Column(length = 50, unique = true, nullable=false)
     private String username;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true, nullable=false)
     private String email;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String password;
 
-    @Column(name = "fullname", length = 50)
+    @Column(name = "fullname", length = 50, nullable = false)
     private String fullName;
 
     @Temporal(TemporalType.DATE)
@@ -45,7 +45,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lockoutDate;
 
-    @Column(name = "login_failed_count")
+    @Column(name = "login_failed_count", nullable = false)
     private Integer loginFailedCount;
 
     @Column(name = "register_date")

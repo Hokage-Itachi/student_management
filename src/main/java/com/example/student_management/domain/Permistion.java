@@ -23,7 +23,7 @@ public class Permistion {
     @Lob
     private String description;
 
-    @Column(name = "per_name", length = 200)
+    @Column(name = "per_name", length = 200, nullable = false)
     private String perName;
 
     @ManyToMany(mappedBy = "permistions")

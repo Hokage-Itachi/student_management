@@ -17,7 +17,7 @@ public class Plan {
     @SequenceGenerator(name = "plans_id_seq", sequenceName = "plans_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
     @ManyToOne

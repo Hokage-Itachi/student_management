@@ -18,14 +18,14 @@ public class Event {
     @SequenceGenerator(name = "events_id_seq", sequenceName = "events_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", length = 250)
+    @Column(name = "name", length = 250, nullable = false)
     private String name;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @Column(name = "status", length = 20)
+    @Column(name = "status", length = 20, nullable = false)
     private String status;
 
     @Column(name = "happen_date")

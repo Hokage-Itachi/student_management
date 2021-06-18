@@ -20,13 +20,13 @@ public class Course {
     @SequenceGenerator(name = "courses_id_seq", sequenceName = "courses_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name", length = 200)
+    @Column(name = "name", length = 200, nullable = false)
     private String name;
 
     @Column(name = "type", length = 50)
     private String type;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
