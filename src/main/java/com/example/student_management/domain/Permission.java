@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Permistion {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permistions_id_seq")
     @SequenceGenerator(name = "permistions_id_seq", sequenceName = "permistions_id_seq", allocationSize = 1)
@@ -26,10 +26,10 @@ public class Permistion {
     @Column(name = "per_name", length = 200, nullable = false)
     private String perName;
 
-    @ManyToMany(mappedBy = "permistions")
+    @ManyToMany(mappedBy = "permissions")
     private List<User> users;
 
-    @ManyToMany(mappedBy = "permistions")
+    @ManyToMany(mappedBy = "permissions")
     private List<Role> roles;
 
 }

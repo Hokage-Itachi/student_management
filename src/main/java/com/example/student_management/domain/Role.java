@@ -24,6 +24,6 @@ public class Role {
     @JoinTable(name = "authorization_each_role",
             joinColumns = @JoinColumn(name = "role_name"),
             inverseJoinColumns = @JoinColumn(name = "per_id"))
-    private List<Permistion> permistions;
+    private List<Permission> permissions;
 
 }

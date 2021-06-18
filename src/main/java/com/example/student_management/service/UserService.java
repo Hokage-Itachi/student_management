@@ -2,12 +2,12 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
 import com.example.student_management.repository.UserRepository;
+import com.example.student_management.security.auth.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +51,6 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        return new org.springframework.security.core.userdetails.User(userOptional.get().getUsername(), userOptional.get().getPassword(), Collections.emptyList());
+        return new CustomUserDetails(userOptional.get());
     }
 }

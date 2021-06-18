@@ -1,7 +1,7 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.PermistionConverter;
-import com.example.student_management.domain.Permistion;
+import com.example.student_management.domain.Permission;
 import com.example.student_management.dto.PermistionDto;
 import com.example.student_management.service.PermistionService;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,14 +26,14 @@ public class PermistionController {
 
     @GetMapping
     public ResponseEntity<Object> getAllPermistion() {
-        List<Permistion> permistions = permistionService.findAll();
-        List<PermistionDto> permistionDtoList = permistions.stream().map(permistionConverter::toDto).collect(Collectors.toList());
+        List<Permission> permissions = permistionService.findAll();
+        List<PermistionDto> permistionDtoList = permissions.stream().map(permistionConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(permistionDtoList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getPermistionById(@PathVariable("id") Long id) {
-        Optional<Permistion> permistionOptional = permistionService.findById(id);
+        Optional<Permission> permistionOptional = permistionService.findById(id);
         if (permistionOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -43,22 +43,22 @@ public class PermistionController {
 
     @PostMapping
     public ResponseEntity<Object> addPermistion(@RequestBody PermistionDto permistionDto) {
-        Permistion permistion = permistionConverter.toEntity(permistionDto);
-        Permistion insertedPermistion = permistionService.save(permistion);
-        return new ResponseEntity<>(permistionConverter.toDto(insertedPermistion), HttpStatus.CREATED);
+        Permission permission = permistionConverter.toEntity(permistionDto);
+        Permission insertedPermission = permistionService.save(permission);
+        return new ResponseEntity<>(permistionConverter.toDto(insertedPermission), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updatePermistion(@PathVariable("id") Long id, @RequestBody PermistionDto permistionDto) {
-        Optional<Permistion> permistionOptional = permistionService.findById(id);
+        Optional<Permission> permistionOptional = permistionService.findById(id);
         if (permistionOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Permistion permistion = permistionConverter.toEntity(permistionDto);
-        permistion.setId(id);
-        Permistion updatedPermistion = permistionService.save(permistion);
-        return new ResponseEntity<>(permistionConverter.toDto(updatedPermistion), HttpStatus.OK);
+        Permission permission = permistionConverter.toEntity(permistionDto);
+        permission.setId(id);
+        Permission updatedPermission = permistionService.save(permission);
+        return new ResponseEntity<>(permistionConverter.toDto(updatedPermission), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

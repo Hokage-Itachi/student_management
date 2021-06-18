@@ -4,7 +4,6 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,11 +58,11 @@ public class User {
     @JoinColumn(name = "role")
     private Role role;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "authorization_each_author",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "per_id"))
-    private List<Permistion> permistions;
+    private List<Permission> permissions;
 
 
 }

@@ -1,6 +1,6 @@
 package com.example.student_management.service;
 
-import com.example.student_management.domain.Permistion;
+import com.example.student_management.domain.Permission;
 import com.example.student_management.repository.PermistionRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +15,16 @@ public class PermistionService {
         this.permistionRepository = permistionRepository;
     }
 
-    public List<Permistion> findAll() {
+    public List<Permission> findAll() {
         return permistionRepository.findAll();
     }
 
-    public Optional<Permistion> findById(Long id) {
+    public Optional<Permission> findById(Long id) {
         return permistionRepository.findById(id);
     }
 
-    public Permistion save(Permistion permistion) {
-        return permistionRepository.save(permistion);
+    public Permission save(Permission permission) {
+        return permistionRepository.save(permission);
     }
 
     public void deleteById(Long id) {
