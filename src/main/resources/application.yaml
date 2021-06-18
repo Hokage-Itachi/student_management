@@ -7,15 +7,17 @@ spring:
     username: postgres
     password: 123456
     url: jdbc:postgresql://localhost:5432/student_management
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        SQL: INFO
-#        type:
-#          descriptor:
-#            sql:
-#              BasicBinder: INFO
-#      springframework: DEBUG
-#    com:
-#      example: DEBUG
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor:
+            sql:
+              BasicBinder: INFO
+      springframework:
+        web: DEBUG
+    com:
+      example:
+        student_management: TRACE
