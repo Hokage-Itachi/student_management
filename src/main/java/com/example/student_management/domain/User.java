@@ -54,7 +54,7 @@ public class User {
     @Column(name = "forgot_password_token", length = 100)
     private String forgotPasswordToken;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "role")
     private Role role;
 

@@ -26,4 +26,7 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "per_id"))
     private List<Permission> permissions;
 
+    @OneToMany(mappedBy = "role")
+    private List<User> users;
+
 }
