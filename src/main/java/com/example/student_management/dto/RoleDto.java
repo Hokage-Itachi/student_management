@@ -2,6 +2,8 @@ package com.example.student_management.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -10,4 +12,5 @@ import lombok.*;
 public class RoleDto {
     private String roleName;
     private String description;
+    private List<UserDto> users;
 }
