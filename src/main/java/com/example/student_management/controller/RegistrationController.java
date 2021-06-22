@@ -13,6 +13,7 @@ import com.sun.xml.bind.v2.TODO;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class RegistrationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_registrations')")
     public ResponseEntity<Object> getAllRegistration() {
         List<Registration> registrations = registrationService.findAll();
         List<RegistrationDto> registrationDtoList = registrations.stream().map(registrationConverter::toDto).collect(Collectors.toList());
@@ -42,6 +44,7 @@ public class RegistrationController {
     }
 
     @GetMapping("/{classId}/{studentId}")
+    @PreAuthorize("hasAnyAuthority('can_view_registration_by_id')")
     public ResponseEntity<Object> getRegistrationById(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
         Optional<Registration> registrationOptional = registrationService.findById(id);
@@ -53,6 +56,7 @@ public class RegistrationController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_registration')")
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
         Optional<Student> studentOptional = studentService.findById(registrationDto.getId().getStudentId());
         Optional<Class> classOptional = classService.findById(registrationDto.getId().getClassId());
@@ -67,6 +71,7 @@ public class RegistrationController {
     }
 
     @DeleteMapping("/{classId}/{studentId}")
+    @PreAuthorize("hasAnyAuthority('can_update_registration')")
     public ResponseEntity<Object> deleteRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
         try {
@@ -76,6 +81,5 @@ public class RegistrationController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

@@ -10,9 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -25,11 +23,15 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<Permission> permissionsObjs = user.getPermissions();
-        if (permissionsObjs == null || permissionsObjs.isEmpty()) {
-            return new ArrayList<SimpleGrantedAuthority>();
+        Set<Permission> user_permissions = user.getPermissions();
+        Set<Permission> role_permissions = user.getRole().getPermissions();
+        Set<String> permissions = new HashSet<>();
+        if (user_permissions != null || !user_permissions.isEmpty()) {
+            permissions = user_permissions.stream().map(Permission::getPerName).collect(Collectors.toSet());
         }
-        List<String> permissions = permissionsObjs.stream().map(Permission::getPerName).collect(Collectors.toList());
+        if(role_permissions != null || !role_permissions.isEmpty()){
+            permissions.addAll(role_permissions.stream().map(Permission::getPerName).collect(Collectors.toSet()));
+        }
         return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
     }

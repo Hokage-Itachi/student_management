@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -20,13 +21,13 @@ public class Role {
     @Column(name = "descriptions", length = 100)
     private String descriptions;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "authorization_each_role",
             joinColumns = @JoinColumn(name = "role_name"),
             inverseJoinColumns = @JoinColumn(name = "per_id"))
-    private List<Permission> permissions;
+    private Set<Permission> permissions;
 
     @OneToMany(mappedBy = "role")
-    private List<User> users;
+    private Set<User> users;
 
 }

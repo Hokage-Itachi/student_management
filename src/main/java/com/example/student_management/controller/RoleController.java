@@ -7,6 +7,7 @@ import com.example.student_management.service.RoleService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class RoleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_roles')")
     public ResponseEntity<Object> getAllRole() {
         List<Role> roles = roleService.findAll();
         List<RoleDto> roleDtoList = roles.stream().map(roleConverter::toDto).collect(Collectors.toList());
@@ -32,6 +34,7 @@ public class RoleController {
     }
 
     @GetMapping("/{roleName}")
+    @PreAuthorize("hasAnyAuthority('can_view_role_by_id')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName) {
         Optional<Role> roleOptional = roleService.findByRoleName(roleName);
         if (roleOptional.isEmpty()) {
@@ -42,6 +45,7 @@ public class RoleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_role')")
     public ResponseEntity<Object> addRole(@RequestBody RoleDto roleDto) {
         if (roleService.findByRoleName(roleDto.getRoleName()).isPresent()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -53,6 +57,7 @@ public class RoleController {
     }
 
     @PutMapping("/{roleName}")
+    @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
         Optional<Role> roleOptional = roleService.findByRoleName(roleName);
         if (roleOptional.isEmpty()) {
@@ -69,6 +74,7 @@ public class RoleController {
     }
 
     @DeleteMapping("{roleName}")
+    @PreAuthorize("hasAnyAuthority('can_delet_role_by_id')")
     public ResponseEntity<Object> deleteRole(@PathVariable("roleName") String roleName) {
         try {
             roleService.deleteByRoleName(roleName);

@@ -14,6 +14,7 @@ import com.example.student_management.service.StudentService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class ExamResultController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_exam_results')")
     public ResponseEntity<Object> getAllExamResults() {
         List<ExamResult> examResults = examResultService.findAll();
         List<ExamResultDto> examResultDtoList = examResults.stream().map(examResultConverter::toDto).collect(Collectors.toList());
@@ -45,6 +47,7 @@ public class ExamResultController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id')")
     public ResponseEntity<Object> getExamResultById(@PathVariable("id") Long id) {
         Optional<ExamResult> examResultOptional = examResultService.findById(id);
         if (examResultOptional.isEmpty()) {
@@ -55,6 +58,7 @@ public class ExamResultController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_exam_result')")
     public ResponseEntity<Object> addExamResult(@RequestBody ExamResultRequest request) {
         Optional<Student> studentOptional = studentService.findById(request.getStudentId());
         if (studentOptional.isEmpty()) {
@@ -81,6 +85,7 @@ public class ExamResultController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
     public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultRequest request) {
         Optional<ExamResult> examResultOptional = examResultService.findById(id);
         if (examResultOptional.isEmpty()) {
@@ -113,10 +118,10 @@ public class ExamResultController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_exam_result_by_id')")
     public ResponseEntity<Object> deleteExamResult(@PathVariable("id") Long id) {
         try {
             examResultService.deleteById(id);
-            ;
         } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

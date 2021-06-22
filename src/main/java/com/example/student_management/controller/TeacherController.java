@@ -7,6 +7,7 @@ import com.example.student_management.service.TeacherService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class TeacherController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_teachers')")
     public ResponseEntity<Object> getAllTeacher() {
         List<Teacher> teachers = teacherService.findAll();
         List<TeacherDto> teacherDtoList = teachers.stream().map(teacherConverter::toDto).collect(Collectors.toList());
@@ -33,6 +35,7 @@ public class TeacherController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id')")
     public ResponseEntity<Object> getTeacherById(@PathVariable("id") Long id) {
         Optional<Teacher> teacherOptional = teacherService.findById(id);
         if (teacherOptional.isEmpty()) {
@@ -44,6 +47,7 @@ public class TeacherController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_teacher')")
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
         Optional<Teacher> teacherOptional = teacherService.findByEmail(teacherDto.getEmail());
         if (teacherOptional.isPresent()) {
@@ -55,6 +59,7 @@ public class TeacherController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_teacher')")
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
         Optional<Teacher> teacherOptional = teacherService.findById(id);
         if (teacherOptional.isEmpty()) {
@@ -73,6 +78,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_teacher_by_id')")
     public ResponseEntity<Object> deleteTeacher(@PathVariable("id") Long id) {
         try {
             teacherService.deleteById(id);

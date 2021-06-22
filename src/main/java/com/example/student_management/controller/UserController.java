@@ -9,6 +9,7 @@ import com.example.student_management.service.UserService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_users')")
     public ResponseEntity<Object> getAllUsers() {
         List<User> users = userService.findAll();
         List<UserDto> userDtoList = users.stream().map(userConverter::toDto).collect(Collectors.toList());
@@ -37,6 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_all_users', 'can_view_user_by_id')")
     public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
         Optional<User> userOptional = userService.findById(id);
         if (userOptional.isEmpty()) {
@@ -46,6 +49,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_user')")
     public ResponseEntity<Object> addUser(@RequestBody UserDto userDto) {
         Optional<Role> roleOptional = roleService.findByRoleName(userDto.getRole());
         if (roleOptional.isEmpty()) {
@@ -60,6 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_user')")
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
         Optional<User> userOptional = userService.findById(id);
         if (userOptional.isEmpty()) {
@@ -83,6 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_user_by_id')")
     public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
         try {
             userService.deleteById(id);

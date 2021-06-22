@@ -10,6 +10,7 @@ import com.example.student_management.service.ExamService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class ExamController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_exams')")
     public ResponseEntity<Object> getAllExam() {
         List<Exam> exams = examService.findAll();
         List<ExamDto> examDtoList = exams.stream().map(examConverter::toDto).collect(Collectors.toList());
@@ -37,6 +39,7 @@ public class ExamController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_exam_by_id')")
     public ResponseEntity<Object> getExamById(@PathVariable("id") Long id) {
         Optional<Exam> examOptional = examService.findById(id);
         if (examOptional.isEmpty()) {
@@ -48,6 +51,7 @@ public class ExamController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_exam')")
     public ResponseEntity<Object> addExam(@RequestBody ExamRequest request) {
         Optional<Course> courseOptional = courseService.findById(request.getCourseId());
         if (courseOptional.isEmpty()) {
@@ -61,6 +65,7 @@ public class ExamController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_exam')")
     public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamRequest request) {
         Optional<Exam> examOptional = examService.findById(id);
         if (examOptional.isEmpty()) {
@@ -80,6 +85,7 @@ public class ExamController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_exam_by_id')")
     public ResponseEntity<Object> deleteExam(@PathVariable("id") Long id) {
         try {
             examService.deleteById(id);

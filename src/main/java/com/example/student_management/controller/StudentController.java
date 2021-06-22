@@ -9,6 +9,7 @@ import com.example.student_management.service.StudentService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class StudentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_students')")
     public ResponseEntity<Object> getAllStudent() {
         List<Student> students = studentService.findAll();
         List<StudentDto> studentDtoList = students.stream().map(studentConverter::toDto).collect(Collectors.toList());
@@ -38,6 +40,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_student_by_id')")
     public ResponseEntity<Object> getStudentById(@PathVariable("id") Long id) {
         Optional<Student> studentOptional = studentService.findById(id);
         if (studentOptional.isEmpty()) {
@@ -48,6 +51,7 @@ public class StudentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_student')")
     public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
         Student student = studentConverter.toEntity(studentDto);
         Student insertedStudent = studentService.save(student);
@@ -55,6 +59,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_student')")
     public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
         Optional<Student> optionalStudent = studentService.findById(id);
         if (optionalStudent.isEmpty()) {
@@ -68,6 +73,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_student_by_id')")
     public ResponseEntity<Object> deleteStudent(@PathVariable("id") Long id) {
         try {
             studentService.deleteById(id);

@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -62,7 +63,7 @@ public class User {
     @JoinTable(name = "authorization_each_author",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "per_id"))
-    private List<Permission> permissions;
+    private Set<Permission> permissions;
 
 
 }

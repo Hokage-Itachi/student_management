@@ -10,6 +10,7 @@ import com.example.student_management.service.EventService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class EventController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_events')")
     public ResponseEntity<Object> getAllEvents() {
         List<Event> events = eventService.findAll();
         List<EventDto> eventDtoList = events.stream().map(eventConverter::toDto).collect(Collectors.toList());
@@ -37,6 +39,7 @@ public class EventController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_event_by_id')")
     public ResponseEntity<Object> getEventById(@PathVariable("id") Long id) {
         Optional<Event> eventOptional = eventService.findById(id);
         if (eventOptional.isEmpty()) {
@@ -49,6 +52,7 @@ public class EventController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_event')")
     public ResponseEntity<Object> addEvent(@RequestBody EventRequest request) {
         Optional<Class> classOptional = classService.findById(request.getClassId());
         if (classOptional.isEmpty()) {
@@ -64,6 +68,7 @@ public class EventController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_event')")
     public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventRequest request) {
         Optional<Class> classOptional = classService.findById(request.getClassId());
         if (classOptional.isEmpty()) {
@@ -83,6 +88,7 @@ public class EventController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_event_by_id')")
     public ResponseEntity<Object> deleteEvent(@PathVariable("id") Long id) {
         try {
             eventService.deleteById(id);
