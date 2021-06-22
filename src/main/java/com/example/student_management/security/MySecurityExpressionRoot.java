@@ -57,6 +57,7 @@ public class MySecurityExpressionRoot implements MethodSecurityExpressionOperati
         List<String> authorities = Arrays.asList(roles);
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             String authority = grantedAuthority.getAuthority();
+//            System.out.println(authority);
             if (authorities.contains(authority)) {
                 return true;
             }
