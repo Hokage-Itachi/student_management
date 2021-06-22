@@ -19,5 +19,11 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
+        String message = e.getMessage();
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 404, message);
+        return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+    }
 
 }
