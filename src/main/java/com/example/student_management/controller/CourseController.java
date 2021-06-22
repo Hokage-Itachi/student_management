@@ -7,6 +7,7 @@ import com.example.student_management.service.CourseService;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class CourseController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_courses')")
     public ResponseEntity<Object> getAllCourses() {
         List<Course> courses = courseService.findAll();
         List<CourseDto> courseDtoList = courses.stream().map(courseConverter::toDto).collect(Collectors.toList());
@@ -32,6 +34,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_course_by_id')")
     public ResponseEntity<Object> getCourseById(@PathVariable("id") Long id) {
         Optional<Course> courseOptional = courseService.findById(id);
         if (courseOptional.isEmpty()) {
@@ -44,6 +47,7 @@ public class CourseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_course')")
     public ResponseEntity<Object> addCourse(@RequestBody CourseDto courseDto) {
         Course course = courseConverter.toEntity(courseDto);
         Course insertedCourse = courseService.save(course);
@@ -51,14 +55,13 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_course')")
     public ResponseEntity<Object> updateCourse(@PathVariable("id") Long id, @RequestBody CourseDto courseDto) {
         Optional<Course> courseOptional = courseService.findById(id);
 
         if (courseOptional.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-//        Course updatedCourseInfo = courseOptional.get();
-//        updatedCourseInfo.setName(courseDto.getName());
         Course updatedCourseInfo = courseConverter.toEntity(courseDto);
         updatedCourseInfo.setId(id);
         Course updatedCourse = courseService.save(updatedCourseInfo);
@@ -67,6 +70,7 @@ public class CourseController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_course_by_id ')")
     public ResponseEntity<Object> deleteCourse(@PathVariable("id") Long id) {
         try {
             courseService.deleteById(id);

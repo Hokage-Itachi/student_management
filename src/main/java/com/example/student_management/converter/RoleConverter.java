@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,7 +20,7 @@ public class RoleConverter {
     }
 
     public RoleDto toDto(Role entity) {
-        List<User> userEntities = entity.getUsers();
+        Set<User> userEntities = entity.getUsers();
         List<UserDto> users = new ArrayList<>();
         if (userEntities != null) {
             users = userEntities.stream().map(userConverter::toDto).collect(Collectors.toList());

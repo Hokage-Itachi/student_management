@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class PlanController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('can_view_all_plans')")
     public ResponseEntity<Object> getAllPlan() {
         List<Plan> plans = planService.findAll();
         List<PlanDto> planDtoList = plans.stream().map(planConverter::toDto).collect(Collectors.toList());
@@ -38,6 +40,7 @@ public class PlanController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_view_plan_by_id')")
     public ResponseEntity<Object> getPlanById(@PathVariable("id") Long id) {
         Optional<Plan> planOptional = planService.findById(id);
         if (planOptional.isEmpty()) {
@@ -48,6 +51,7 @@ public class PlanController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('can_add_plan')")
     public ResponseEntity<Object> addPlan(@RequestBody PlanRequest request) {
         Optional<Course> courseOptional = courseService.findById(request.getCourseId());
         if (courseOptional.isEmpty()) {
@@ -61,6 +65,7 @@ public class PlanController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_update_plan')")
     public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanRequest request) {
         Optional<Plan> planOptional = planService.findById(id);
         if (planOptional.isEmpty()) {
@@ -79,6 +84,7 @@ public class PlanController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('can_delete_plan_by_id')")
     public ResponseEntity<Object> deletePlan(@PathVariable("id") Long id) {
         try {
             planService.deleteById(id);
