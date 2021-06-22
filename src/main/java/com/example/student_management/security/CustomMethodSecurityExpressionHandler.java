@@ -1,7 +1,6 @@
 package com.example.student_management.security;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
@@ -14,7 +13,7 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
 
     @Override
     protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication, MethodInvocation invocation) {
-        final MySecurityExpressionRoot root = new MySecurityExpressionRoot(authentication);
+        final CustomSecurityExpressionRoot root = new CustomSecurityExpressionRoot(authentication);
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(this.authenticationTrustResolver);
         root.setRoleHierarchy(getRoleHierarchy());

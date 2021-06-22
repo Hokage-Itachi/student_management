@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class MySecurityExpressionRoot implements MethodSecurityExpressionOperations {
+public class CustomSecurityExpressionRoot implements MethodSecurityExpressionOperations {
     protected final Authentication authentication;
     private AuthenticationTrustResolver trustResolver;
     private RoleHierarchy roleHierarchy;
@@ -26,7 +26,7 @@ public class MySecurityExpressionRoot implements MethodSecurityExpressionOperati
     private Object filterObject;
     private Object returnObject;
 
-    public MySecurityExpressionRoot(Authentication authentication) {
+    public CustomSecurityExpressionRoot(Authentication authentication) {
         if (authentication == null) {
             throw new IllegalArgumentException("Authentication object cannot be null");
         }
