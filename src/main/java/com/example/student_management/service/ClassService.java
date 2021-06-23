@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Class;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.ClassRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,14 @@ public class ClassService {
         return classRepository.findAll();
     }
 
-    public Optional<Class> findById(Long id) {
-        return classRepository.findById(id);
+    public Class findById(Long id) {
+        Optional<Class> classOptional = classRepository.findById(id);
+        if (classOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.CLASS_NOT_FOUND.toString(), id));
+        }
+
+        return classOptional.get();
+
     }
 
     public Class save(Class clazz) {
@@ -28,6 +37,10 @@ public class ClassService {
     }
 
     public void deleteById(Long id) {
-        classRepository.deleteById(id);
+        try {
+            classRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format("Class with id %d not found", id));
+        }
     }
 }

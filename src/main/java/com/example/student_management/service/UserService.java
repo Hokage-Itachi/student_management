@@ -1,8 +1,11 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.UserRepository;
 import com.example.student_management.security.authentication.CustomUserDetails;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,34 +26,51 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_ID.toString(), id));
+        }
+        return userOptional.get();
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_EMAIL.toString(), email));
+        }
+        return userOptional.get();
     }
 
     public User save(User user) {
         return userRepository.save(user);
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_USERNAME.toString(), username));
+        }
+        return userOptional.get();
     }
 
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+
+        try {
+            userRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_ID.toString(), id));
+        }
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = this.findByUsername(username);
-        if (userOptional.isEmpty()) {
+        try {
+            User user = this.findByUsername(username);
+            return new CustomUserDetails(user);
+        } catch (ResourceNotFoundException e) {
             throw new UsernameNotFoundException(username);
         }
-
-        return new CustomUserDetails(userOptional.get());
     }
 }

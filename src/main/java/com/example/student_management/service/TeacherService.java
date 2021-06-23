@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Teacher;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.TeacherRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,13 @@ public class TeacherService {
         return teacherRepository.findAll();
     }
 
-    public Optional<Teacher> findById(Long id) {
-        return teacherRepository.findById(id);
+    public Teacher findById(Long id) {
+
+        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
+        if (teacherOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_ID.toString(), id));
+        }
+        return teacherOptional.get();
     }
 
     public Teacher save(Teacher teacher) {
@@ -28,10 +36,19 @@ public class TeacherService {
     }
 
     public void deleteById(Long id) {
-        teacherRepository.deleteById(id);
+
+        try {
+            teacherRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_ID.toString(), id));
+        }
     }
 
-    public Optional<Teacher> findByEmail(String email) {
-        return teacherRepository.findByEmail(email);
+    public Teacher findByEmail(String email) {
+        Optional<Teacher> teacherOptional = teacherRepository.findByEmail(email);
+        if (teacherOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_EMAIL.toString(), email));
+        }
+        return teacherOptional.get();
     }
 }

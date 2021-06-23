@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Plan;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.PlanRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +12,7 @@ import java.util.Optional;
 
 @Service
 public class PlanService {
-    private PlanRepository planRepository;
+    private final PlanRepository planRepository;
 
     public PlanService(PlanRepository planRepository) {
         this.planRepository = planRepository;
@@ -19,8 +22,13 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Optional<Plan> findById(Long id) {
-        return planRepository.findById(id);
+    public Plan findById(Long id) {
+
+        Optional<Plan> planOptional = planRepository.findById(id);
+        if (planOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.PLAN_NOT_FOUND.toString(), id));
+        }
+        return planOptional.get();
     }
 
     public Plan save(Plan plan) {
@@ -28,6 +36,11 @@ public class PlanService {
     }
 
     public void deleteById(Long id) {
-        planRepository.deleteById(id);
+
+        try {
+            planRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.PLAN_NOT_FOUND.toString(), id));
+        }
     }
 }

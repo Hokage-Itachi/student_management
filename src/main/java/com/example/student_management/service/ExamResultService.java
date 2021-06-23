@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.ExamResult;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.ExamResultRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,12 @@ public class ExamResultService {
         return examResultRepository.findAll();
     }
 
-    public Optional<ExamResult> findById(Long id) {
-        return examResultRepository.findById(id);
+    public ExamResult findById(Long id) {
+        Optional<ExamResult> examResultOptional = examResultRepository.findById(id);
+        if (examResultOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.EXAM_RESULT_NOT_FOUND.toString(), id));
+        }
+        return examResultOptional.get();
     }
 
     public ExamResult save(ExamResult examResult) {
@@ -28,6 +35,10 @@ public class ExamResultService {
     }
 
     public void deleteById(Long id) {
-        examResultRepository.deleteById(id);
+        try {
+            examResultRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.EXAM_RESULT_NOT_FOUND.toString(), id));
+        }
     }
 }

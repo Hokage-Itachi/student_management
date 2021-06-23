@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Role;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RoleRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,13 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
-    public Optional<Role> findByRoleName(String roleName) {
-        return roleRepository.findByRoleName(roleName);
+    public Role findByRoleName(String roleName) {
+
+        Optional<Role> roleOptional = roleRepository.findByRoleName(roleName);
+        if (roleOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.ROLE_NOT_FOUND.toString(), roleName));
+        }
+        return roleOptional.get();
     }
 
     public Role save(Role role) {
@@ -28,6 +36,11 @@ public class RoleService {
     }
 
     public void deleteByRoleName(String roleName) {
-        roleRepository.deleteById(roleName);
+
+        try {
+            roleRepository.deleteById(roleName);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.ROLE_NOT_FOUND.toString(), roleName));
+        }
     }
 }

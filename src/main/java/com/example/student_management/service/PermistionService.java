@@ -1,7 +1,10 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Permission;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.PermistionRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +22,13 @@ public class PermistionService {
         return permistionRepository.findAll();
     }
 
-    public Optional<Permission> findById(Long id) {
-        return permistionRepository.findById(id);
+    public Permission findById(Long id) {
+
+        Optional<Permission> permissionOptional = permistionRepository.findById(id);
+        if (permissionOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.PERMISSION_NOT_FOUND.toString(), id));
+        }
+        return permissionOptional.get();
     }
 
     public Permission save(Permission permission) {
@@ -28,7 +36,12 @@ public class PermistionService {
     }
 
     public void deleteById(Long id) {
-        permistionRepository.deleteById(id);
+
+        try {
+            permistionRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.PERMISSION_NOT_FOUND.toString(), id));
+        }
     }
 
 
