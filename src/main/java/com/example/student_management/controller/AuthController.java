@@ -1,6 +1,5 @@
 package com.example.student_management.controller;
 
-import com.example.student_management.converter.UserConverter;
 import com.example.student_management.domain.Role;
 import com.example.student_management.domain.User;
 import com.example.student_management.request.LoginRequest;

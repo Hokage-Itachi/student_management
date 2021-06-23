@@ -1,6 +1,6 @@
 package com.example.student_management.controller;
 
-import com.example.student_management.converter.PermistionConverter;
+import com.example.student_management.converter.PermissionConverter;
 import com.example.student_management.domain.Permission;
 import com.example.student_management.dto.PermissionDto;
 import com.example.student_management.service.PermissionService;
@@ -11,23 +11,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+// TODO: testing api
 @RestController
-@RequestMapping("/api/permistions")
+@RequestMapping("/api/permissions")
 public class PermissionController {
     private final PermissionService permissionService;
-    private final PermistionConverter permistionConverter;
+    private final PermissionConverter permissionConverter;
 
-    public PermissionController(PermissionService permissionService, PermistionConverter permistionConverter) {
+    public PermissionController(PermissionService permissionService, PermissionConverter permissionConverter) {
         this.permissionService = permissionService;
-        this.permistionConverter = permistionConverter;
+        this.permissionConverter = permissionConverter;
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_permissions')")
     public ResponseEntity<Object> getAllPermistion() {
         List<Permission> permissions = permissionService.findAll();
-        List<PermissionDto> permissionDtoList = permissions.stream().map(permistionConverter::toDto).collect(Collectors.toList());
+        List<PermissionDto> permissionDtoList = permissions.stream().map(permissionConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(permissionDtoList, HttpStatus.OK);
     }
 
@@ -36,15 +36,15 @@ public class PermissionController {
     public ResponseEntity<Object> getPermistionById(@PathVariable("id") Long id) {
         Permission permission = permissionService.findById(id);
 
-        return new ResponseEntity<>(permistionConverter.toDto(permission), HttpStatus.OK);
+        return new ResponseEntity<>(permissionConverter.toDto(permission), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_permission')")
     public ResponseEntity<Object> addPermistion(@RequestBody PermissionDto permissionDto) {
-        Permission permission = permistionConverter.toEntity(permissionDto);
+        Permission permission = permissionConverter.toEntity(permissionDto);
         Permission insertedPermission = permissionService.save(permission);
-        return new ResponseEntity<>(permistionConverter.toDto(insertedPermission), HttpStatus.CREATED);
+        return new ResponseEntity<>(permissionConverter.toDto(insertedPermission), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -52,10 +52,10 @@ public class PermissionController {
     public ResponseEntity<Object> updatePermistion(@PathVariable("id") Long id, @RequestBody PermissionDto permissionDto) {
         Permission existPermission = permissionService.findById(id);
 
-        Permission permission = permistionConverter.toEntity(permissionDto);
+        Permission permission = permissionConverter.toEntity(permissionDto);
         permission.setId(existPermission.getId());
         Permission updatedPermission = permissionService.save(permission);
-        return new ResponseEntity<>(permistionConverter.toDto(updatedPermission), HttpStatus.OK);
+        return new ResponseEntity<>(permissionConverter.toDto(updatedPermission), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

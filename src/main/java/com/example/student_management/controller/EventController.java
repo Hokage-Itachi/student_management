@@ -7,14 +7,12 @@ import com.example.student_management.dto.EventDto;
 import com.example.student_management.request.EventRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.EventService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController

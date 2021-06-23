@@ -1,27 +1,20 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.ClassConverter;
-import com.example.student_management.converter.StudentConverter;
 import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Course;
-import com.example.student_management.domain.Student;
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.dto.StudentDto;
 import com.example.student_management.request.ClassRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.CourseService;
-import com.example.student_management.service.StudentService;
 import com.example.student_management.service.TeacherService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController

@@ -5,7 +5,7 @@ import com.example.student_management.dto.PermissionDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PermistionConverter {
+public class PermissionConverter {
     public PermissionDto toDto(Permission entity) {
         return PermissionDto.builder()
                 .id(entity.getId())

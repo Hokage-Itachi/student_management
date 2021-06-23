@@ -1,8 +1,6 @@
 package com.example.student_management.exception;
 
 import com.example.student_management.utils.ExceptionHandlerUtils;
-import net.bytebuddy.implementation.bind.annotation.Empty;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
