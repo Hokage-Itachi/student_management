@@ -21,14 +21,10 @@ import java.util.stream.Collectors;
 public class StudentController {
     private final StudentConverter studentConverter;
     private final StudentService studentService;
-    private final ClassConverter classConverter;
-    private final ClassService classService;
 
-    public StudentController(StudentConverter studentConverter, StudentService studentService, ClassConverter classConverter, ClassService classService) {
+    public StudentController(StudentConverter studentConverter, StudentService studentService) {
         this.studentConverter = studentConverter;
         this.studentService = studentService;
-        this.classConverter = classConverter;
-        this.classService = classService;
     }
 
     @GetMapping
@@ -42,17 +38,15 @@ public class StudentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_student_by_id')")
     public ResponseEntity<Object> getStudentById(@PathVariable("id") Long id) {
-        Optional<Student> studentOptional = studentService.findById(id);
-        if (studentOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Student student = studentService.findById(id);
 
-        return new ResponseEntity<>(studentConverter.toDto(studentOptional.get()), HttpStatus.OK);
+        return new ResponseEntity<>(studentConverter.toDto(student), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_student')")
     public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
+        // TODO: handle student duplicates email
         Student student = studentConverter.toEntity(studentDto);
         Student insertedStudent = studentService.save(student);
         return new ResponseEntity<>(studentConverter.toDto(insertedStudent), HttpStatus.CREATED);
@@ -61,10 +55,7 @@ public class StudentController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_student')")
     public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
-        Optional<Student> optionalStudent = studentService.findById(id);
-        if (optionalStudent.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Student student = studentService.findById(id);
 
         Student studentUpdateInfo = studentConverter.toEntity(studentDto);
         studentUpdateInfo.setId(id);
@@ -75,11 +66,8 @@ public class StudentController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_student_by_id')")
     public ResponseEntity<Object> deleteStudent(@PathVariable("id") Long id) {
-        try {
-            studentService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        studentService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

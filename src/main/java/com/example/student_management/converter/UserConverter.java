@@ -10,6 +10,7 @@ public class UserConverter {
         return UserDto.builder()
                 .id(entity.getId())
                 .username(entity.getUsername())
+                .password("")
                 .email(entity.getEmail())
                 .birthday(entity.getBirthday())
                 .fullName(entity.getFullName())

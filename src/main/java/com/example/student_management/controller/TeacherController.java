@@ -37,22 +37,15 @@ public class TeacherController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id')")
     public ResponseEntity<Object> getTeacherById(@PathVariable("id") Long id) {
-        Optional<Teacher> teacherOptional = teacherService.findById(id);
-        if (teacherOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Teacher teacher = teacherService.findById(id);
 
-        TeacherDto teacher = teacherConverter.toDto(teacherOptional.get());
-        return new ResponseEntity<>(teacher, HttpStatus.OK);
+        return new ResponseEntity<>(teacherConverter.toDto(teacher), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_teacher')")
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
-        Optional<Teacher> teacherOptional = teacherService.findByEmail(teacherDto.getEmail());
-        if (teacherOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        // TODO: handle teacher's email duplicate
         Teacher teacher = teacherConverter.toEntity(teacherDto);
         Teacher insertedTeacher = teacherService.save(teacher);
         return new ResponseEntity<>(teacherConverter.toDto(insertedTeacher), HttpStatus.CREATED);
@@ -61,17 +54,10 @@ public class TeacherController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_teacher')")
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
-        Optional<Teacher> teacherOptional = teacherService.findById(id);
-        if (teacherOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        Teacher teacher = teacherService.findById(id);
+        // TODO: handle teacher's email duplicate
         Teacher teacherUpdateInfo = teacherConverter.toEntity(teacherDto);
-        if (!teacherOptional.get().getEmail().equals(teacherUpdateInfo.getEmail()) && teacherService.findByEmail(teacherDto.getEmail()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
-        teacherUpdateInfo.setId(id);
+        teacherUpdateInfo.setId(teacher.getId());
 
         Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
         return new ResponseEntity<>(teacherConverter.toDto(updatedTeacher), HttpStatus.OK);
@@ -80,11 +66,8 @@ public class TeacherController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_teacher_by_id')")
     public ResponseEntity<Object> deleteTeacher(@PathVariable("id") Long id) {
-        try {
-            teacherService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        teacherService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -42,55 +42,41 @@ public class PlanController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_plan_by_id')")
     public ResponseEntity<Object> getPlanById(@PathVariable("id") Long id) {
-        Optional<Plan> planOptional = planService.findById(id);
-        if (planOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        PlanDto plan = planConverter.toDto(planOptional.get());
-        return new ResponseEntity<>(plan, HttpStatus.OK);
+        Plan plan = planService.findById(id);
+
+        return new ResponseEntity<>(planConverter.toDto(plan), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_plan')")
     public ResponseEntity<Object> addPlan(@RequestBody PlanRequest request) {
-        Optional<Course> courseOptional = courseService.findById(request.getCourseId());
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Course course = courseService.findById(request.getCourseId());
 
         Plan plan = planConverter.toEntity(request.getPlan());
-        plan.setCourse(courseOptional.get());
-        planService.save(plan);
-        return new ResponseEntity<>(HttpStatus.OK);
+        plan.setCourse(course);
+        Plan insertedPlan = planService.save(plan);
+        return new ResponseEntity<>(planConverter.toDto(insertedPlan), HttpStatus.OK);
     }
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_plan')")
     public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanRequest request) {
-        Optional<Plan> planOptional = planService.findById(id);
-        if (planOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Optional<Course> courseOptional = courseService.findById(request.getCourseId());
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Plan plan = planService.findById(id);
+        Course course = courseService.findById(request.getCourseId());
 
         Plan planUpdateInfo = planConverter.toEntity(request.getPlan());
-        planUpdateInfo.setId(id);
-        planUpdateInfo.setCourse(courseOptional.get());
+        planUpdateInfo.setId(plan.getId());
+        planUpdateInfo.setCourse(course);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        Plan updatedPlan = planService.save(planUpdateInfo);
+        return new ResponseEntity<>(planConverter.toDto(updatedPlan), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_plan_by_id')")
     public ResponseEntity<Object> deletePlan(@PathVariable("id") Long id) {
-        try {
-            planService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        planService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

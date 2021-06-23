@@ -50,10 +50,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody SignUpRequest request) {
 
-        if (userService.findByEmail(request.getEmail()).isPresent() || userService.findByUsername(request.getUsername()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        Role role = roleService.findByRoleName("user").get();
+        Role role = roleService.findByRoleName("user");
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))

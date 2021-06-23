@@ -47,10 +47,9 @@ public class RegistrationController {
     @PreAuthorize("hasAnyAuthority('can_view_registration_by_id')")
     public ResponseEntity<Object> getRegistrationById(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
+        classService.findById(classId);
+        studentService.findById(studentId);
         Optional<Registration> registrationOptional = registrationService.findById(id);
-        if (registrationOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         return new ResponseEntity<>(registrationConverter.toDto(registrationOptional.get()), HttpStatus.OK);
     }
@@ -58,27 +57,27 @@ public class RegistrationController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_registration')")
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
-        Optional<Student> studentOptional = studentService.findById(registrationDto.getId().getStudentId());
-        Optional<Class> classOptional = classService.findById(registrationDto.getId().getClassId());
-        if (studentOptional.isEmpty() || classOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Student student = studentService.findById(registrationDto.getId().getStudentId());
+        Class clazz = classService.findById(registrationDto.getId().getClassId());
+        // TODO: handle duplicate id
         Registration registration = registrationConverter.toEntity(registrationDto);
-        registration.setClazz(classOptional.get());
-        registration.setStudent(studentOptional.get());
+        registration.setClazz(clazz);
+        registration.setStudent(student);
         Registration insertedRegistration = registrationService.save(registration);
         return new ResponseEntity<>(registrationConverter.toDto(insertedRegistration), HttpStatus.CREATED);
     }
 
+    // TODO: add update registration
+
     @DeleteMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")
     public ResponseEntity<Object> deleteRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
+        classService.findById(classId);
+        studentService.findById(studentId);
+
         RegistrationId id = new RegistrationId(studentId, classId);
-        try {
-            registrationService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        registrationService.deleteById(id);
+        // TODO: handle registration id not found
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

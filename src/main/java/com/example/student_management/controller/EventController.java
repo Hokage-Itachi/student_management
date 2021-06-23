@@ -41,12 +41,9 @@ public class EventController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_event_by_id')")
     public ResponseEntity<Object> getEventById(@PathVariable("id") Long id) {
-        Optional<Event> eventOptional = eventService.findById(id);
-        if (eventOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Event event = eventService.findById(id);
 
-        EventDto eventDto = eventConverter.toDto(eventOptional.get());
+        EventDto eventDto = eventConverter.toDto(event);
 
         return new ResponseEntity<>(eventDto, HttpStatus.OK);
     }
@@ -54,13 +51,10 @@ public class EventController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_event')")
     public ResponseEntity<Object> addEvent(@RequestBody EventRequest request) {
-        Optional<Class> classOptional = classService.findById(request.getClassId());
-        if (classOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Class clazz = classService.findById(request.getClassId());
 
         Event event = eventConverter.toEntity(request.getEvent());
-        event.setClazz(classOptional.get());
+        event.setClazz(clazz);
         Event insertedEvent = eventService.save(event);
         return new ResponseEntity<>(eventConverter.toDto(insertedEvent), HttpStatus.CREATED);
 
@@ -70,19 +64,13 @@ public class EventController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_event')")
     public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventRequest request) {
-        Optional<Class> classOptional = classService.findById(request.getClassId());
-        if (classOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Class clazz = classService.findById(request.getClassId());
 
-        Optional<Event> eventOptional = eventService.findById(id);
-        if (eventOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Event event = eventService.findById(id);
 
         Event eventUpdateInfo = eventConverter.toEntity(request.getEvent());
-        eventUpdateInfo.setId(id);
-        eventUpdateInfo.setClazz(classOptional.get());
+        eventUpdateInfo.setId(event.getId());
+        eventUpdateInfo.setClazz(clazz);
         Event updatedEvent = eventService.save(eventUpdateInfo);
         return new ResponseEntity<>(eventConverter.toDto(updatedEvent), HttpStatus.OK);
     }
@@ -90,11 +78,8 @@ public class EventController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_event_by_id')")
     public ResponseEntity<Object> deleteEvent(@PathVariable("id") Long id) {
-        try {
-            eventService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        eventService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

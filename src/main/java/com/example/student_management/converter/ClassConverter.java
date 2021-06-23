@@ -30,7 +30,7 @@ public class ClassConverter {
         List<Registration> registrations = entity.getRegistrations();
         List<String> students = new ArrayList<>();
         if (registrations != null) {
-            students = registrations.stream().map(registrationId -> studentService.findById(registrationId.getId().getStudentId()).get().getFullName()).collect(Collectors.toList());
+            students = registrations.stream().map(registrationId -> studentService.findById(registrationId.getId().getStudentId()).getFullName()).collect(Collectors.toList());
 
         }
         return ClassDto.builder()

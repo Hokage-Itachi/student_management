@@ -41,57 +41,42 @@ public class ExamController {
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_exam_by_id')")
     public ResponseEntity<Object> getExamById(@PathVariable("id") Long id) {
-        Optional<Exam> examOptional = examService.findById(id);
-        if (examOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Exam exam = examService.findById(id);
+        ExamDto examDto = examConverter.toDto(exam);
 
-        ExamDto examDto = examConverter.toDto(examOptional.get());
         return new ResponseEntity<>(examDto, HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam')")
     public ResponseEntity<Object> addExam(@RequestBody ExamRequest request) {
-        Optional<Course> courseOptional = courseService.findById(request.getCourseId());
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Course course = courseService.findById(request.getCourseId());
 
         Exam exam = examConverter.toEntity(request.getExam());
-        exam.setCourse(courseOptional.get());
-        examService.save(exam);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        exam.setCourse(course);
+        Exam insertedExam = examService.save(exam);
+
+        return new ResponseEntity<>(examConverter.toDto(insertedExam), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam')")
     public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamRequest request) {
-        Optional<Exam> examOptional = examService.findById(id);
-        if (examOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Optional<Course> courseOptional = courseService.findById(request.getCourseId());
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        Exam exam = examService.findById(id);
+        Course course = courseService.findById(request.getCourseId());
         Exam examUpdateInfo = examConverter.toEntity(request.getExam());
-        examUpdateInfo.setId(id);
-        examUpdateInfo.setCourse(courseOptional.get());
+        examUpdateInfo.setId(exam.getId());
+        examUpdateInfo.setCourse(course);
 
-        examService.save(examUpdateInfo);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Exam updatedExam = examService.save(examUpdateInfo);
+        return new ResponseEntity<>(examConverter.toDto(updatedExam), HttpStatus.OK);
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_exam_by_id')")
     public ResponseEntity<Object> deleteExam(@PathVariable("id") Long id) {
-        try {
-            examService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        examService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

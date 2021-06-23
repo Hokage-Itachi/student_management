@@ -36,12 +36,9 @@ public class PermistionController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_permission_by_id')")
     public ResponseEntity<Object> getPermistionById(@PathVariable("id") Long id) {
-        Optional<Permission> permistionOptional = permistionService.findById(id);
-        if (permistionOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Permission permission = permistionService.findById(id);
 
-        return new ResponseEntity<>(permistionConverter.toDto(permistionOptional.get()), HttpStatus.OK);
+        return new ResponseEntity<>(permistionConverter.toDto(permission), HttpStatus.OK);
     }
 
     @PostMapping
@@ -55,13 +52,10 @@ public class PermistionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_permission')")
     public ResponseEntity<Object> updatePermistion(@PathVariable("id") Long id, @RequestBody PermistionDto permistionDto) {
-        Optional<Permission> permistionOptional = permistionService.findById(id);
-        if (permistionOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Permission existPermission = permistionService.findById(id);
 
         Permission permission = permistionConverter.toEntity(permistionDto);
-        permission.setId(id);
+        permission.setId(existPermission.getId());
         Permission updatedPermission = permistionService.save(permission);
         return new ResponseEntity<>(permistionConverter.toDto(updatedPermission), HttpStatus.OK);
     }
@@ -69,12 +63,7 @@ public class PermistionController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_permission_by_id')")
     public ResponseEntity<Object> deletePermistion(@PathVariable("id") Long id) {
-        try {
-            permistionService.deleteById(id);
-            ;
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        permistionService.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

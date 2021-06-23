@@ -36,12 +36,8 @@ public class CourseController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_course_by_id')")
     public ResponseEntity<Object> getCourseById(@PathVariable("id") Long id) {
-        Optional<Course> courseOptional = courseService.findById(id);
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        CourseDto courseDto = courseConverter.toDto(courseOptional.get());
+        Course course = courseService.findById(id);
+        CourseDto courseDto = courseConverter.toDto(course);
 
         return new ResponseEntity<>(courseDto, HttpStatus.OK);
     }
@@ -57,11 +53,7 @@ public class CourseController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_course')")
     public ResponseEntity<Object> updateCourse(@PathVariable("id") Long id, @RequestBody CourseDto courseDto) {
-        Optional<Course> courseOptional = courseService.findById(id);
-
-        if (courseOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Course course = courseService.findById(id);
         Course updatedCourseInfo = courseConverter.toEntity(courseDto);
         updatedCourseInfo.setId(id);
         Course updatedCourse = courseService.save(updatedCourseInfo);
@@ -72,12 +64,7 @@ public class CourseController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_course_by_id ')")
     public ResponseEntity<Object> deleteCourse(@PathVariable("id") Long id) {
-        try {
-            courseService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
+        courseService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
