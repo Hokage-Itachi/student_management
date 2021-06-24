@@ -37,7 +37,7 @@ public class ExamController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_exam_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_exam_by_id', 'can_view_all_exams')")
     public ResponseEntity<Object> getExamById(@PathVariable("id") Long id) {
         Exam exam = examService.findById(id);
         ExamDto examDto = examConverter.toDto(exam);

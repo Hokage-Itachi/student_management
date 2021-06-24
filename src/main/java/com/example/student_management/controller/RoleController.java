@@ -36,7 +36,7 @@ public class RoleController {
     }
 
     @GetMapping("/{roleName}")
-    @PreAuthorize("hasAnyAuthority('can_view_role_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_role_by_id', 'can_view_all_roles')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName) {
         Role role = roleService.findByRoleName(roleName);
 

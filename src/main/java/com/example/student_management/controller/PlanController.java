@@ -37,7 +37,7 @@ public class PlanController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_plan_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_plan_by_id', 'can_view_all_plans')")
     public ResponseEntity<Object> getPlanById(@PathVariable("id") Long id) {
         Plan plan = planService.findById(id);
 

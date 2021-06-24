@@ -34,7 +34,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_course_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_course_by_id', 'can_view_all_courses')")
     public ResponseEntity<Object> getCourseById(@PathVariable("id") Long id) {
         Course course = courseService.findById(id);
         CourseDto courseDto = courseConverter.toDto(course);

@@ -37,7 +37,7 @@ public class EventController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_event_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_event_by_id', 'can_view_all_events')")
     public ResponseEntity<Object> getEventById(@PathVariable("id") Long id) {
         Event event = eventService.findById(id);
 

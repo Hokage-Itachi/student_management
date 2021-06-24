@@ -33,7 +33,7 @@ public class TeacherController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id','can_view_all_teachers')")
     public ResponseEntity<Object> getTeacherById(@PathVariable("id") Long id) {
         Teacher teacher = teacherService.findById(id);
 

@@ -44,7 +44,7 @@ public class RegistrationController {
     }
 
     @GetMapping("/{classId}/{studentId}")
-    @PreAuthorize("hasAnyAuthority('can_view_registration_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_registration_by_id', 'can_view_all_registrations')")
     public ResponseEntity<Object> getRegistrationById(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
         classService.findById(classId);

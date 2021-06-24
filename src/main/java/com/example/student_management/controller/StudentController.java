@@ -32,7 +32,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_student_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_student_by_id','can_view_all_students')")
     public ResponseEntity<Object> getStudentById(@PathVariable("id") Long id) {
         Student student = studentService.findById(id);
 

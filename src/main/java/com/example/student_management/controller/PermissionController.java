@@ -32,7 +32,7 @@ public class PermissionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_permission_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_permission_by_id', 'can_view_all_permissions')")
     public ResponseEntity<Object> getPermistionById(@PathVariable("id") Long id) {
         Permission permission = permissionService.findById(id);
 
