@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: testing api
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
@@ -48,7 +47,6 @@ public class RoleController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_role')")
     public ResponseEntity<Object> addRole(@RequestBody RoleDto roleDto) {
-        // TODO: handle duplicate role name
         Role role = roleConverter.toEntity(roleDto);
         Role insertedRole = roleService.save(role);
         return new ResponseEntity<>(roleConverter.toDto(insertedRole), HttpStatus.CREATED);
@@ -57,8 +55,7 @@ public class RoleController {
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
-        Role existRole = roleService.findByRoleName(roleName);
-        // TODO: check role duplicate error
+        roleService.findByRoleName(roleName);
         Role role = roleConverter.toEntity(roleDto);
         Role updatedRole = roleService.save(role);
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.CREATED);
