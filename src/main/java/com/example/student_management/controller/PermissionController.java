@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
-// TODO: testing api
 @RestController
 @RequestMapping("/api/permissions")
 public class PermissionController {
