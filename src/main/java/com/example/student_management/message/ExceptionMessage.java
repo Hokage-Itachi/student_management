@@ -1,6 +1,7 @@
 package com.example.student_management.message;
 
 public enum ExceptionMessage {
+    // Not found exception message
     CLASS_NOT_FOUND("Class with id %d not found"),
     COURSE_NOT_FOUND("Course with id %d not found"),
     EVENT_NOT_FOUND("Event with id %d not found"),
@@ -15,8 +16,10 @@ public enum ExceptionMessage {
     TEACHER_NOT_FOUND_BY_EMAIL("Teacher with email '%s' not found"),
     USER_NOT_FOUND_BY_ID("User with id %d not found"),
     USER_NOT_FOUND_BY_EMAIL("User with email '%s' not found"),
-    USER_NOT_FOUND_BY_USERNAME("User with username '%s' not found");
+    USER_NOT_FOUND_BY_USERNAME("User with username '%s' not found"),
 
+    // Invalid expression message
+    ROLE_NAME_INVALID("Role name invalid");
     public final String message;
 
     ExceptionMessage(String message) {

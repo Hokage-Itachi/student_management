@@ -34,13 +34,12 @@ public class RoleService {
 
     public Role save(Role role) {
         if (role.getRoleName() == null || role.getRoleName().isBlank()) {
-            throw new DataInvalidException("Role name invalid.");
+            throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
         }
         return roleRepository.save(role);
     }
 
     public void deleteByRoleName(String roleName) {
-
         try {
             roleRepository.deleteById(roleName);
         } catch (EmptyResultDataAccessException e) {
