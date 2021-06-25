@@ -1,18 +1,18 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.RoleConverter;
+import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.Role;
 import com.example.student_management.dto.RoleDto;
+import com.example.student_management.request.PermissionRequest;
+import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
-import com.sun.xml.bind.v2.TODO;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 // TODO: testing api
@@ -21,10 +21,12 @@ import java.util.stream.Collectors;
 public class RoleController {
     private final RoleService roleService;
     private final RoleConverter roleConverter;
+    private final PermissionService permissionService;
 
-    public RoleController(RoleService roleService, RoleConverter roleConverter) {
+    public RoleController(RoleService roleService, RoleConverter roleConverter, PermissionService permissionService) {
         this.roleService = roleService;
         this.roleConverter = roleConverter;
+        this.permissionService = permissionService;
     }
 
     @GetMapping
@@ -68,7 +70,18 @@ public class RoleController {
         roleService.deleteByRoleName(roleName);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
 
+    @PostMapping("/{roleName}/permission")
+    @PreAuthorize("hasAnyAuthority('can_authorize_role')")
+    public ResponseEntity<Object> addRolePermission(@PathVariable("roleName") String roleName, @RequestBody PermissionRequest request) {
+        Role role = roleService.findByRoleName(roleName);
+        Permission permission = permissionService.findById(request.getPermissionId());
+
+        role.getPermissions().add(permission);
+        Role updatedRole = roleService.save(role);
+
+        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
 
     }
 
