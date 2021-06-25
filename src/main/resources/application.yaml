@@ -7,6 +7,7 @@ spring:
     username: postgres
     password: 123456
     url: jdbc:postgresql://localhost:5432/student_management
+# config logging
 logging:
   file:
     name: logs/applications.log
@@ -23,3 +24,9 @@ logging:
     com:
       example:
         student_management: TRACE
+# set static variable value
+student_management:
+  auth:
+    jwt:
+      JWT_SECRET: itachi
+      JWT_EXPIRATION: 86400000 # expire in one day (unit: ms)

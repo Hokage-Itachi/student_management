@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "student_management.auth.jwt.JWT_SECRET",
+      "type": "java.lang.String",
+      "description": "Description for student_management.auth.jwt.JWT_SECRET."
+    },
+    {
+      "name": "student_management.auth.jwt.JWT_EXPIRE",
+      "type": "java.lang.String",
+      "description": "Description for student_management.auth.jwt.JWT_EXPIRE."
+    }
+  ] }
