@@ -19,6 +19,10 @@ public enum ExceptionMessage {
     USER_NOT_FOUND_BY_USERNAME("User with username '%s' not found"),
 
     // Invalid expression message
+    STUDENT_NAME_INVALID("Student name invalid"),
+    STUDENT_EMAIL_INVALID("Student email invalid"),
+    STUDENT_ADDRESS_INVALID("Student address invalid"),
+    STUDENT_EMAIL_DUPLICATE("Email '%s' duplicate"),
     ROLE_NAME_INVALID("Role name invalid");
     public final String message;
 
