@@ -26,4 +26,11 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DataInvalidException.class)
+    public ResponseEntity<Object> handleDataInvalidException(DataInvalidException e, WebRequest request) {
+        String message = e.getMessage();
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 400, e.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
 }

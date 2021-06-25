@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Role;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RoleRepository;
@@ -32,6 +33,9 @@ public class RoleService {
     }
 
     public Role save(Role role) {
+        if (role.getRoleName() == null || role.getRoleName().isBlank()) {
+            throw new DataInvalidException("Role name invalid.");
+        }
         return roleRepository.save(role);
     }
 
