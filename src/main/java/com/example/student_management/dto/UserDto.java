@@ -3,6 +3,7 @@ package com.example.student_management.dto;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,4 +23,5 @@ public class UserDto {
     private Date registerDate;
     private String forgotPasswordToken;
     private String role;
+    private List<String> permissions;
 }
