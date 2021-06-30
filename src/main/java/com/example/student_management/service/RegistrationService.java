@@ -2,7 +2,11 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Registration;
 import com.example.student_management.domain.RegistrationId;
+import com.example.student_management.exception.ResourceConflictException;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RegistrationRepository;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +24,12 @@ public class RegistrationService {
         return registrationRepository.findAll();
     }
 
-    public Optional<Registration> findById(RegistrationId id) {
-        return registrationRepository.findById(id);
+    public Registration findById(RegistrationId id) {
+        Optional<Registration> registrationOptional = registrationRepository.findById(id);
+        if (registrationOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.REGISTRATION_NOT_FOUND.toString(), id.getStudentId(), id.getClassId()));
+        }
+        return registrationOptional.get();
     }
 
     public Registration save(Registration registration) {
@@ -29,6 +37,10 @@ public class RegistrationService {
     }
 
     public void deleteById(RegistrationId id) {
-        registrationRepository.deleteById(id);
+        try {
+            registrationRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.REGISTRATION_NOT_FOUND.toString(), id.getStudentId(), id.getClassId()));
+        }
     }
 }

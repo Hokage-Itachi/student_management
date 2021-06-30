@@ -47,11 +47,9 @@ public class RegistrationController {
     @PreAuthorize("hasAnyAuthority('can_view_registration_by_id', 'can_view_all_registrations')")
     public ResponseEntity<Object> getRegistrationById(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
-        classService.findById(classId);
-        studentService.findById(studentId);
-        Optional<Registration> registrationOptional = registrationService.findById(id);
+        Registration registration = registrationService.findById(id);
 
-        return new ResponseEntity<>(registrationConverter.toDto(registrationOptional.get()), HttpStatus.OK);
+        return new ResponseEntity<>(registrationConverter.toDto(registration), HttpStatus.OK);
     }
 
     @PostMapping
@@ -72,12 +70,8 @@ public class RegistrationController {
     @DeleteMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")
     public ResponseEntity<Object> deleteRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
-        classService.findById(classId);
-        studentService.findById(studentId);
-
         RegistrationId id = new RegistrationId(studentId, classId);
         registrationService.deleteById(id);
-        // TODO: handle registration id not found
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
