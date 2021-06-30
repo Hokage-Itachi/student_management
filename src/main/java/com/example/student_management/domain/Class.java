@@ -44,6 +44,6 @@ public class Class {
     @OneToMany(mappedBy = "clazz")
     private List<Event> events;
 
-    @OneToMany(mappedBy = "clazz", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clazz")
     private List<Registration> registrations;
 }

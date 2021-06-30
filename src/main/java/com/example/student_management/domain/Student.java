@@ -49,7 +49,7 @@ public class Student {
     @OneToMany(mappedBy = "student")
     private List<ExamResult> examResults;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     private List<Registration> registrations;
 
 }
