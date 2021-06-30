@@ -9,7 +9,7 @@ public enum ExceptionMessage {
     EXAM_RESULT_NOT_FOUND("Exam result with id %d not found"),
     PERMISSION_NOT_FOUND("Permission with id %d not found"),
     PLAN_NOT_FOUND("Plan with id %d not found"),
-    REGISTRATION_NOT_FOUND("Registration with id %d not found"),
+    REGISTRATION_NOT_FOUND("No registration found of student %d for class %d"),
     ROLE_NOT_FOUND("Role with name '%s' not found"),
     STUDENT_NOT_FOUND("Student with id %d not found"),
     TEACHER_NOT_FOUND_BY_ID("Teacher with id %d not found"),
@@ -23,7 +23,12 @@ public enum ExceptionMessage {
     STUDENT_EMAIL_INVALID("Student email invalid"),
     STUDENT_ADDRESS_INVALID("Student address invalid"),
     STUDENT_EMAIL_DUPLICATE("Email '%s' duplicate"),
-    ROLE_NAME_INVALID("Role name invalid");
+    ROLE_NAME_INVALID("Role name invalid"),
+
+    // Resource conflict message
+    STUDENT_EMAIL_CONFLICT("Student email '%s' has exist"),
+    REGISTRATION_CONFLICT("Registration of student %d for class %d has exist")
+    ;
     public final String message;
 
     ExceptionMessage(String message) {

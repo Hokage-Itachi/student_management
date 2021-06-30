@@ -2,10 +2,12 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Student;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.StudentRepository;
 import com.example.student_management.utils.ServiceUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -46,14 +48,11 @@ public class StudentService {
         if (!ServiceUtils.isStringValid(student.getAddress(), "[^$&+,:;=?@#|'<>.^*()%!-]+")) {
             throw new DataInvalidException(ExceptionMessage.STUDENT_ADDRESS_INVALID.message);
         }
-        Optional<Student> studentOptional = findByEmail(student.getEmail());
-        if (studentOptional.isPresent()) {
-            if (!studentOptional.get().getEmail().equals(student.getEmail())) {
-                // TODO: consider throw conflict exception
-                throw new DataInvalidException(String.format(ExceptionMessage.STUDENT_EMAIL_DUPLICATE.toString(), student.getEmail()));
-            }
+        try {
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceConflictException(String.format(ExceptionMessage.STUDENT_EMAIL_CONFLICT.toString(), student.getEmail()));
         }
-        return studentRepository.save(student);
     }
 
     public void deleteById(Long id) {

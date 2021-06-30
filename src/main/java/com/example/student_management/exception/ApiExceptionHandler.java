@@ -21,16 +21,23 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
-        String message = e.getMessage();
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 404, message);
+        String message = "Resource not found";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 404, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DataInvalidException.class)
     public ResponseEntity<Object> handleDataInvalidException(DataInvalidException e, WebRequest request) {
-        String message = e.getMessage();
+        String message = "Data invalid";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 400, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceConflictException.class)
+    public ResponseEntity<Object> handleResourceConflictException(ResourceConflictException e, WebRequest request) {
+        String message = "Resource conflict";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(message, 409, e.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.CONFLICT);
     }
 
 }

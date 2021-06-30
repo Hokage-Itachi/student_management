@@ -42,7 +42,6 @@ public class StudentController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_student')")
     public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
-        // TODO: handle student duplicates email
         Student student = studentConverter.toEntity(studentDto);
         Student insertedStudent = studentService.save(student);
         return new ResponseEntity<>(studentConverter.toDto(insertedStudent), HttpStatus.CREATED);
@@ -51,7 +50,7 @@ public class StudentController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_student')")
     public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
-        Student student = studentService.findById(id);
+        studentService.findById(id);
 
         Student studentUpdateInfo = studentConverter.toEntity(studentDto);
         studentUpdateInfo.setId(id);
