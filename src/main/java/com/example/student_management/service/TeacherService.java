@@ -2,6 +2,7 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
@@ -55,6 +56,8 @@ public class TeacherService {
             teacherRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_ID.toString(), id));
+        } catch (DataIntegrityViolationException e) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE.toString(), id));
         }
     }
 

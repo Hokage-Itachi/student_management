@@ -22,12 +22,17 @@ public enum ExceptionMessage {
     STUDENT_NAME_INVALID("Student name invalid"),
     STUDENT_EMAIL_INVALID("Student email invalid"),
     STUDENT_ADDRESS_INVALID("Student address invalid"),
-    STUDENT_EMAIL_DUPLICATE("Email '%s' duplicate"),
+    TEACHER_NAME_INVALID("Teacher name invalid"),
+    TEACHER_EMAIL_INVALID("Teacher email invalid"),
     ROLE_NAME_INVALID("Role name invalid"),
 
     // Resource conflict message
     STUDENT_EMAIL_CONFLICT("Student email '%s' has exist"),
-    REGISTRATION_CONFLICT("Registration of student %d for class %d has exist")
+    TEACHER_EMAIL_CONFLICT("Teacher email '%s' has exist"),
+    REGISTRATION_CONFLICT("Registration of student %d for class %d has exist"),
+
+    // Foreign key exception message
+    TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has class reference")
     ;
     public final String message;
 

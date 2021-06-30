@@ -43,7 +43,6 @@ public class TeacherController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_teacher')")
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
-        // TODO: handle teacher's email duplicate
         Teacher teacher = teacherConverter.toEntity(teacherDto);
         Teacher insertedTeacher = teacherService.save(teacher);
         return new ResponseEntity<>(teacherConverter.toDto(insertedTeacher), HttpStatus.CREATED);
@@ -52,10 +51,10 @@ public class TeacherController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_teacher')")
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
-        Teacher teacher = teacherService.findById(id);
-        // TODO: handle teacher's email duplicate
+        teacherService.findById(id);
+
         Teacher teacherUpdateInfo = teacherConverter.toEntity(teacherDto);
-        teacherUpdateInfo.setId(teacher.getId());
+        teacherUpdateInfo.setId(id);
 
         Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
         return new ResponseEntity<>(teacherConverter.toDto(updatedTeacher), HttpStatus.OK);

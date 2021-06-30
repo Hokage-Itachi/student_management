@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ExceptionHandlerUtils {
-    public static Map<String, Object> createResponseData(String message, Integer status, String error) {
+    public static Map<String, Object> createResponseData(String error, Integer status, String message) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("timestamp", new Timestamp(System.currentTimeMillis()));
         data.put("status", status);
