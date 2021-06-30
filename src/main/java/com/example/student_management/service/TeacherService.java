@@ -1,9 +1,11 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Teacher;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.TeacherRepository;
+import com.example.student_management.utils.ServiceUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,9 @@ public class TeacherService {
     }
 
     public Teacher save(Teacher teacher) {
+        if (!ServiceUtils.isStringValid(teacher.getFullName(), "[^0-9]+")) {
+            throw new DataInvalidException(ExceptionMessage.TEACHER_NAME_INVALID.message);
+        }
         return teacherRepository.save(teacher);
     }
 
