@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// TODO: remove unnecessary fields
 public class StudentDto {
     private Long id;
     private String fullName;
