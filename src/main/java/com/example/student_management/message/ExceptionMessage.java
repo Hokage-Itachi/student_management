@@ -32,7 +32,9 @@ public enum ExceptionMessage {
     REGISTRATION_CONFLICT("Registration of student %d for class %d has exist"),
 
     // Foreign key exception message
-    TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has class reference")
+    TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has foreign key reference"),
+    STUDENT_FOREIGN_KEY_EXCEPTION_MESSAGE("Student %d still has foreign key reference")
+
     ;
     public final String message;
 
