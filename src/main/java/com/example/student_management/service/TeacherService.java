@@ -2,10 +2,12 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.TeacherRepository;
 import com.example.student_management.utils.ServiceUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,14 @@ public class TeacherService {
         if (!ServiceUtils.isStringValid(teacher.getFullName(), "[^0-9]+")) {
             throw new DataInvalidException(ExceptionMessage.TEACHER_NAME_INVALID.message);
         }
-        return teacherRepository.save(teacher);
+        if (!ServiceUtils.isStringValid(teacher.getEmail(), "^(.+)@(.+)$")) {
+            throw new DataInvalidException(ExceptionMessage.TEACHER_EMAIL_INVALID.message);
+        }
+        try {
+            return teacherRepository.save(teacher);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceConflictException(String.format(ExceptionMessage.TEACHER_EMAIL_CONFLICT.toString(), teacher.getEmail()));
+        }
     }
 
     public void deleteById(Long id) {
