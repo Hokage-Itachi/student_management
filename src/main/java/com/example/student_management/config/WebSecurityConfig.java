@@ -1,7 +1,7 @@
 package com.example.student_management.config;
 
 import com.example.student_management.exception.CustomAccessDeniedHandler;
-import com.example.student_management.exception.CustomAuthenticationEntryPoint;
+import com.example.student_management.exception.CustomAuthenticationEntryPointHandler;
 import com.example.student_management.filter.JwtAuthenticationFilter;
 import com.example.student_management.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
-        return new CustomAuthenticationEntryPoint();
+    public CustomAuthenticationEntryPointHandler customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPointHandler();
     }
 
     @Bean
