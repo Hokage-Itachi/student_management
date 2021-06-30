@@ -29,4 +29,5 @@ student_management:
   auth:
     jwt:
       JWT_SECRET: itachi
-      JWT_EXPIRATION: 86400000 # expire in one day (unit: ms)
+      # expire in one day (unit: ms)
+      JWT_EXPIRATION: 86400000

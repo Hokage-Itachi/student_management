@@ -6,8 +6,8 @@
       "description": "Description for student_management.auth.jwt.JWT_SECRET."
     },
     {
-      "name": "student_management.auth.jwt.JWT_EXPIRE",
+      "name": "student_management.auth.jwt.JWT_EXPIRATION",
       "type": "java.lang.String",
-      "description": "Description for student_management.auth.jwt.JWT_EXPIRE."
+      "description": "Description for student_management.auth.jwt.JWT_EXPIRATION."
     }
   ] }
