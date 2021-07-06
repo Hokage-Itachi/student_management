@@ -12,4 +12,13 @@ public class ServiceUtils {
         Matcher matcher = p.matcher(s);
         return matcher.matches();
     }
+
+    public static String messageFormat(String s) {
+        String [] arr = s.split("Detail: Key ");
+        String message = arr[1];
+        message = message.replace(")=(", " '");
+        message = message.replace("(", "");
+        message = message.replace(")", "'");
+        return message;
+    }
 }
