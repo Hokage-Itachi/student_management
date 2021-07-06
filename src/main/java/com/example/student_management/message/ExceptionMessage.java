@@ -27,9 +27,8 @@ public enum ExceptionMessage {
     ROLE_NAME_INVALID("Role name invalid"),
 
     // Resource conflict message
-    STUDENT_EMAIL_CONFLICT("Student email '%s' has exist"),
-    TEACHER_EMAIL_CONFLICT("Teacher email '%s' has exist"),
-    REGISTRATION_CONFLICT("Registration of student %d for class %d has exist"),
+    ROLE_NAME_CONFLICT("Role '%s' has already exists"),
+
 
     // Foreign key exception message
     TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has foreign key reference"),

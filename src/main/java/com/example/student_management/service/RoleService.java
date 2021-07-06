@@ -2,6 +2,7 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Role;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RoleRepository;
@@ -32,7 +33,17 @@ public class RoleService {
         return roleOptional.get();
     }
 
-    public Role save(Role role) {
+    public Role add(Role role) {
+        if (role.getRoleName() == null || role.getRoleName().isBlank()) {
+            throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
+        }
+        if (roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
+            throw new ResourceConflictException(String.format(ExceptionMessage.ROLE_NAME_CONFLICT.message, role.getRoleName()));
+        }
+        return roleRepository.save(role);
+    }
+
+    public Role update(Role role) {
         if (role.getRoleName() == null || role.getRoleName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
         }
