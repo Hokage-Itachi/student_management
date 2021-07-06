@@ -8,14 +8,17 @@ import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.StudentRepository;
 import com.example.student_management.utils.ServiceUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
 
@@ -51,8 +54,11 @@ public class StudentService {
         }
         try {
             return studentRepository.save(student);
+
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceConflictException(String.format(ExceptionMessage.STUDENT_EMAIL_CONFLICT.toString(), student.getEmail()));
+            SQLException ex = (SQLException) e.getRootCause();
+            String message = ServiceUtils.messageFormat(ex.getMessage());
+            throw new ResourceConflictException(message);
         }
     }
 
