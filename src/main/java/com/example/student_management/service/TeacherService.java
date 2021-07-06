@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,9 @@ public class TeacherService {
         try {
             return teacherRepository.save(teacher);
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceConflictException(String.format(ExceptionMessage.TEACHER_EMAIL_CONFLICT.toString(), teacher.getEmail()));
+            SQLException ex = (SQLException) e.getRootCause();
+            String message = ServiceUtils.messageFormat(ex.getMessage());
+            throw new ResourceConflictException(message);
         }
     }
 
