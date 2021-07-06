@@ -48,7 +48,7 @@ public class RoleController {
     @PreAuthorize("hasAnyAuthority('can_add_role')")
     public ResponseEntity<Object> addRole(@RequestBody RoleDto roleDto) {
         Role role = roleConverter.toEntity(roleDto);
-        Role insertedRole = roleService.save(role);
+        Role insertedRole = roleService.add(role);
         return new ResponseEntity<>(roleConverter.toDto(insertedRole), HttpStatus.CREATED);
     }
 
@@ -57,7 +57,7 @@ public class RoleController {
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
         roleService.findByRoleName(roleName);
         Role role = roleConverter.toEntity(roleDto);
-        Role updatedRole = roleService.save(role);
+        Role updatedRole = roleService.update(role);
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.CREATED);
     }
 
@@ -76,7 +76,7 @@ public class RoleController {
         Permission permission = permissionService.findById(request.getPermissionId());
 
         role.getPermissions().add(permission);
-        Role updatedRole = roleService.save(role);
+        Role updatedRole = roleService.update(role);
 
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
 
