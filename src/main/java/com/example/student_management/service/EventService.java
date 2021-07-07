@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Event;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.EventRepository;
@@ -31,6 +32,15 @@ public class EventService {
     }
 
     public Event save(Event event) {
+        if (event.getName() == null || event.getName().isBlank()) {
+            throw new DataInvalidException(ExceptionMessage.EVENT_NAME_INVALID.message);
+        }
+        if (event.getCreateDate() == null) {
+            throw new DataInvalidException(ExceptionMessage.EVENT_CREATE_DATE_INVALID.message);
+        }
+        if (event.getStatus() == null || event.getStatus().isBlank()) {
+            throw new DataInvalidException(ExceptionMessage.EVENT_STATUS_INVALID.message);
+        }
         return eventRepository.save(event);
     }
 
