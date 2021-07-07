@@ -43,8 +43,8 @@ public enum ExceptionMessage {
     TEACHER_FOREIGN_KEY("Teacher %d still has foreign key reference"),
     STUDENT_FOREIGN_KEY("Student %d still has foreign key reference"),
     PERMISSION_FOREIGN_KEY("Permission '%d' still has foreign key reference"),
-    EXAM_FOREIGN_KEY("Exam '%id' still has foreign key reference"),
-
+    EXAM_FOREIGN_KEY("Exam '%d' still has foreign key reference"),
+    COURSE_FOREIGN_KEY("Course '%d' still has foreign key reference")
     ;
     public final String message;
 

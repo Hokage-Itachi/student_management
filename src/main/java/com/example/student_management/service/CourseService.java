@@ -1,9 +1,11 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Course;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.CourseRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,8 @@ public class CourseService {
             courseRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.COURSE_NOT_FOUND.toString(), id));
+        } catch (DataIntegrityViolationException e) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.COURSE_FOREIGN_KEY.message, id));
         }
     }
 
