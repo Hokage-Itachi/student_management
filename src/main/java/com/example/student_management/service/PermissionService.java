@@ -35,7 +35,7 @@ public class PermissionService {
     }
 
     public Permission save(Permission permission) {
-        if (permission.getPerName() == null) {
+        if (permission.getPerName() == null || permission.getPerName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.PERMISSION_NAME_INVALID.message);
         }
         return permissionRepository.save(permission);
