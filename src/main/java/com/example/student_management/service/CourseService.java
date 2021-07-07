@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Course;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
@@ -34,6 +35,12 @@ public class CourseService {
 
 
     public Course save(Course course) {
+        if (course.getName() == null || course.getName().isBlank()) {
+            throw new DataInvalidException(ExceptionMessage.COURSE_NAME_INVALID.message);
+        }
+        if (course.getCreateDate() == null) {
+            throw new DataInvalidException(ExceptionMessage.CREATE_DATE_INVALID.message);
+        }
         return courseRepository.save(course);
     }
 

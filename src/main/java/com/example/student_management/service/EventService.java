@@ -36,7 +36,7 @@ public class EventService {
             throw new DataInvalidException(ExceptionMessage.EVENT_NAME_INVALID.message);
         }
         if (event.getCreateDate() == null) {
-            throw new DataInvalidException(ExceptionMessage.EVENT_CREATE_DATE_INVALID.message);
+            throw new DataInvalidException(ExceptionMessage.CREATE_DATE_INVALID.message);
         }
         if (event.getStatus() == null || event.getStatus().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.EVENT_STATUS_INVALID.message);

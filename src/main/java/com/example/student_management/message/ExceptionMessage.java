@@ -30,8 +30,9 @@ public enum ExceptionMessage {
     EXAM_RESULT_DATE_INVALID("Register date invalid"),
     EXAM_NAME_INVALID("Exam name invalid"),
     EVENT_NAME_INVALID("Event name invalid"),
-    EVENT_CREATE_DATE_INVALID("Create date invalid"),
+    CREATE_DATE_INVALID("Create date invalid"),
     EVENT_STATUS_INVALID("Event status invalid"),
+    COURSE_NAME_INVALID("Course name invalid"),
 
 
     // Resource conflict message
