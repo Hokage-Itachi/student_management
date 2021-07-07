@@ -1,9 +1,11 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Permission;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.PermissionRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +43,8 @@ public class PermissionService {
             permissionRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.PERMISSION_NOT_FOUND.toString(), id));
+        } catch (DataIntegrityViolationException e) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.PERMISSION_FOREIGN_KEY_EXCEPTION_MESSAGE.toString(), id));
         }
     }
 
