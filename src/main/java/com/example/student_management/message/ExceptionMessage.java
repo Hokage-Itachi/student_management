@@ -33,6 +33,7 @@ public enum ExceptionMessage {
     CREATE_DATE_INVALID("Create date invalid"),
     EVENT_STATUS_INVALID("Event status invalid"),
     COURSE_NAME_INVALID("Course name invalid"),
+    CLASS_START_DATE_INVALID("Start date invalid"),
 
 
     // Resource conflict message

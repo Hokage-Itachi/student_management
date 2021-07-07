@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Class;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
@@ -35,6 +36,9 @@ public class ClassService {
     }
 
     public Class save(Class clazz) {
+        if (clazz.getStartDate() == null) {
+            throw new DataInvalidException(ExceptionMessage.CLASS_START_DATE_INVALID.message);
+        }
         return classRepository.save(clazz);
     }
 
