@@ -25,6 +25,7 @@ public enum ExceptionMessage {
     TEACHER_NAME_INVALID("Teacher name invalid"),
     TEACHER_EMAIL_INVALID("Teacher email invalid"),
     ROLE_NAME_INVALID("Role name invalid"),
+    PERMISSION_NAME_INVALID("Permission name invalid"),
 
     // Resource conflict message
     ROLE_NAME_CONFLICT("Role '%s' already exists"),
@@ -33,7 +34,8 @@ public enum ExceptionMessage {
 
     // Foreign key exception message
     TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has foreign key reference"),
-    STUDENT_FOREIGN_KEY_EXCEPTION_MESSAGE("Student %d still has foreign key reference")
+    STUDENT_FOREIGN_KEY_EXCEPTION_MESSAGE("Student %d still has foreign key reference"),
+    PERMISSION_FOREIGN_KEY_EXCEPTION_MESSAGE("Permission '%d' still has foreign key reference")
 
     ;
     public final String message;

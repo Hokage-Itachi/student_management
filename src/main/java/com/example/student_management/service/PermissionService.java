@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Permission;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
@@ -34,6 +35,9 @@ public class PermissionService {
     }
 
     public Permission save(Permission permission) {
+        if (permission.getPerName() == null) {
+            throw new DataInvalidException(ExceptionMessage.PERMISSION_NAME_INVALID.message);
+        }
         return permissionRepository.save(permission);
     }
 
