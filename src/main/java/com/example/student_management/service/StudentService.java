@@ -68,7 +68,7 @@ public class StudentService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.STUDENT_NOT_FOUND.toString(), id));
         } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyException(String.format(ExceptionMessage.STUDENT_FOREIGN_KEY_EXCEPTION_MESSAGE.toString(), id));
+            throw new ForeignKeyException(String.format(ExceptionMessage.STUDENT_FOREIGN_KEY.toString(), id));
         }
     }
 

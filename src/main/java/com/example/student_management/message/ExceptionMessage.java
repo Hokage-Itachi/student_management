@@ -28,6 +28,7 @@ public enum ExceptionMessage {
     PERMISSION_NAME_INVALID("Permission name invalid"),
     EXAM_RESULT_SCORE_INVALID("Exam result score invalid"),
     EXAM_RESULT_DATE_INVALID("Register date invalid"),
+    EXAM_NAME_INVALID("Exam name invalid"),
 
 
     // Resource conflict message
@@ -36,9 +37,10 @@ public enum ExceptionMessage {
 
 
     // Foreign key exception message
-    TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE("Teacher %d still has foreign key reference"),
-    STUDENT_FOREIGN_KEY_EXCEPTION_MESSAGE("Student %d still has foreign key reference"),
-    PERMISSION_FOREIGN_KEY_EXCEPTION_MESSAGE("Permission '%d' still has foreign key reference")
+    TEACHER_FOREIGN_KEY("Teacher %d still has foreign key reference"),
+    STUDENT_FOREIGN_KEY("Student %d still has foreign key reference"),
+    PERMISSION_FOREIGN_KEY("Permission '%d' still has foreign key reference"),
+    EXAM_FOREIGN_KEY("Exam '%id' still has foreign key reference"),
 
     ;
     public final String message;

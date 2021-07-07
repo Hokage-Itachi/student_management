@@ -60,7 +60,7 @@ public class TeacherService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_ID.toString(), id));
         } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyException(String.format(ExceptionMessage.TEACHER_FOREIGN_KEY_EXCEPTION_MESSAGE.toString(), id));
+            throw new ForeignKeyException(String.format(ExceptionMessage.TEACHER_FOREIGN_KEY.toString(), id));
         }
     }
 
