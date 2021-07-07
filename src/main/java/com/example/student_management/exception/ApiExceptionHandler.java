@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -45,6 +47,20 @@ public class ApiExceptionHandler {
         String error = "Foreign key error";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<Object> handleMessagingException(MessagingException e, WebRequest request) {
+        String error = "Error while sending mail";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, "");
+        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UnsupportedEncodingException.class)
+    public ResponseEntity<Object> handleUnsupportedEncodingException(UnsupportedEncodingException e, WebRequest request) {
+        String error = "Error while sending mail";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, "");
+        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
