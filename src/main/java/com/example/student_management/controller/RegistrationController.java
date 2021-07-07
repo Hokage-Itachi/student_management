@@ -9,15 +9,12 @@ import com.example.student_management.dto.RegistrationDto;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.RegistrationService;
 import com.example.student_management.service.StudentService;
-import com.sun.xml.bind.v2.TODO;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,15 +54,28 @@ public class RegistrationController {
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
         Student student = studentService.findById(registrationDto.getId().getStudentId());
         Class clazz = classService.findById(registrationDto.getId().getClassId());
-        // TODO: handle duplicate id
+
         Registration registration = registrationConverter.toEntity(registrationDto);
         registration.setClazz(clazz);
         registration.setStudent(student);
-        Registration insertedRegistration = registrationService.save(registration);
+        Registration insertedRegistration = registrationService.add(registration);
         return new ResponseEntity<>(registrationConverter.toDto(insertedRegistration), HttpStatus.CREATED);
     }
 
-    // TODO: add update registration
+    @PutMapping("/{classId}/{studentId}")
+    @PreAuthorize("hasAnyAuthority('can_update_registration')")
+    public ResponseEntity<Object> updateRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId, @RequestBody RegistrationDto registrationDto) {
+        Student student = studentService.findById(studentId);
+        Class clazz = classService.findById(classId);
+
+        Registration registration = registrationConverter.toEntity(registrationDto);
+        registration.setId(new RegistrationId(studentId, classId));
+        registration.setClazz(clazz);
+        registration.setStudent(student);
+
+        Registration updatedRegistration = registrationService.update(registration);
+        return new ResponseEntity<>(registrationConverter.toDto(updatedRegistration), HttpStatus.OK);
+    }
 
     @DeleteMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")

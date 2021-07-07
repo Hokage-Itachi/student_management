@@ -32,7 +32,17 @@ public class RegistrationService {
         return registrationOptional.get();
     }
 
-    public Registration save(Registration registration) {
+    public Registration update(Registration registration) {
+        if (registrationRepository.findById(registration.getId()).isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.REGISTRATION_NOT_FOUND.toString(), registration.getId().getStudentId(), registration.getId().getClassId()));
+        }
+        return registrationRepository.save(registration);
+    }
+
+    public Registration add(Registration registration) {
+        if (registrationRepository.findById(registration.getId()).isPresent()) {
+            throw new ResourceConflictException(String.format(ExceptionMessage.REGISTRATION_CONFLICT.toString(), registration.getId().getStudentId(), registration.getId().getClassId()));
+        }
         return registrationRepository.save(registration);
     }
 

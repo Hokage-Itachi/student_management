@@ -9,7 +9,7 @@ public enum ExceptionMessage {
     EXAM_RESULT_NOT_FOUND("Exam result with id %d not found"),
     PERMISSION_NOT_FOUND("Permission with id %d not found"),
     PLAN_NOT_FOUND("Plan with id %d not found"),
-    REGISTRATION_NOT_FOUND("No registration found of student %d for class %d"),
+    REGISTRATION_NOT_FOUND("No registration of student %d for class %d"),
     ROLE_NOT_FOUND("Role with name '%s' not found"),
     STUDENT_NOT_FOUND("Student with id %d not found"),
     TEACHER_NOT_FOUND_BY_ID("Teacher with id %d not found"),
@@ -27,7 +27,8 @@ public enum ExceptionMessage {
     ROLE_NAME_INVALID("Role name invalid"),
 
     // Resource conflict message
-    ROLE_NAME_CONFLICT("Role '%s' has already exists"),
+    ROLE_NAME_CONFLICT("Role '%s' already exists"),
+    REGISTRATION_CONFLICT("Registration of student '%d' for class '%d' already exists"),
 
 
     // Foreign key exception message
