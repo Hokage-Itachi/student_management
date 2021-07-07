@@ -15,35 +15,35 @@ public class ApiExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadRequestException(BadCredentialsException e, WebRequest request) {
         String error = "Username or password invalid";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, 400, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
         String error = "Resource not found";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, 404, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DataInvalidException.class)
     public ResponseEntity<Object> handleDataInvalidException(DataInvalidException e, WebRequest request) {
         String error = "Data invalid";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, 400, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceConflictException.class)
     public ResponseEntity<Object> handleResourceConflictException(ResourceConflictException e, WebRequest request) {
         String error = "Resource conflict";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, 409, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ForeignKeyException.class)
-    public ResponseEntity<Object> handleForeignKeyException(ForeignKeyException e, WebRequest request){
+    public ResponseEntity<Object> handleForeignKeyException(ForeignKeyException e, WebRequest request) {
         String error = "Foreign key error";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, 400, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 

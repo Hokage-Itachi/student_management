@@ -16,7 +16,7 @@ public class CustomAuthenticationEntryPointHandler implements AuthenticationEntr
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData("unauthorized", 401, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData("unauthorized", e.getMessage());
         httpServletResponse.getOutputStream().println((new JSONObject(data)).toString());
 
     }
