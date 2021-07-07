@@ -26,6 +26,9 @@ public enum ExceptionMessage {
     TEACHER_EMAIL_INVALID("Teacher email invalid"),
     ROLE_NAME_INVALID("Role name invalid"),
     PERMISSION_NAME_INVALID("Permission name invalid"),
+    EXAM_RESULT_SCORE_INVALID("Exam result score invalid"),
+    EXAM_RESULT_DATE_INVALID("Register date invalid"),
+
 
     // Resource conflict message
     ROLE_NAME_CONFLICT("Role '%s' already exists"),

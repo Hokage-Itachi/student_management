@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.ExamResult;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.ExamResultRepository;
@@ -31,6 +32,12 @@ public class ExamResultService {
     }
 
     public ExamResult save(ExamResult examResult) {
+        if (examResult.getScore() == null) {
+            throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_SCORE_INVALID.message);
+        }
+        if (examResult.getResultDate() == null) {
+            throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_DATE_INVALID.message);
+        }
         return examResultRepository.save(examResult);
     }
 
