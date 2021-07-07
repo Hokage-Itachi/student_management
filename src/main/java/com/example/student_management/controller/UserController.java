@@ -99,5 +99,6 @@ public class UserController {
         return new ResponseEntity<>(userConverter.toDto(updatedUser), HttpStatus.OK);
     }
 
+    // TODO: add delete user permission api
 
 }

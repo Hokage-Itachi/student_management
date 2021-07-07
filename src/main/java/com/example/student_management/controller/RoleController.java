@@ -79,7 +79,8 @@ public class RoleController {
         Role updatedRole = roleService.update(role);
 
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
-
     }
+
+    // TODO: add delete role permission api
 
 }
