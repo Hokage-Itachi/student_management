@@ -48,7 +48,7 @@ public class PermissionService {
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.PERMISSION_NOT_FOUND.toString(), id));
         } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyException(String.format(ExceptionMessage.PERMISSION_FOREIGN_KEY_EXCEPTION_MESSAGE.toString(), id));
+            throw new ForeignKeyException(String.format(ExceptionMessage.PERMISSION_FOREIGN_KEY.toString(), id));
         }
     }
 
