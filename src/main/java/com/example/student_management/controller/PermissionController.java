@@ -42,6 +42,7 @@ public class PermissionController {
     @PreAuthorize("hasAnyAuthority('can_add_permission')")
     public ResponseEntity<Object> addPermission(@RequestBody PermissionDto permissionDto) {
         Permission permission = permissionConverter.toEntity(permissionDto);
+        permission.setId(null);
         Permission insertedPermission = permissionService.save(permission);
         return new ResponseEntity<>(permissionConverter.toDto(insertedPermission), HttpStatus.CREATED);
     }
@@ -49,10 +50,10 @@ public class PermissionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_permission')")
     public ResponseEntity<Object> updatePermission(@PathVariable("id") Long id, @RequestBody PermissionDto permissionDto) {
-        Permission existPermission = permissionService.findById(id);
+        permissionService.findById(id);
 
         Permission permission = permissionConverter.toEntity(permissionDto);
-        permission.setId(existPermission.getId());
+        permission.setId(id);
         Permission updatedPermission = permissionService.save(permission);
         return new ResponseEntity<>(permissionConverter.toDto(updatedPermission), HttpStatus.OK);
     }

@@ -44,6 +44,7 @@ public class TeacherController {
     @PreAuthorize("hasAnyAuthority('can_add_teacher')")
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
         Teacher teacher = teacherConverter.toEntity(teacherDto);
+        teacher.setId(null);
         Teacher insertedTeacher = teacherService.save(teacher);
         return new ResponseEntity<>(teacherConverter.toDto(insertedTeacher), HttpStatus.CREATED);
     }

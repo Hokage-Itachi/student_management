@@ -52,6 +52,7 @@ public class EventController {
         Class clazz = classService.findById(request.getClassId());
 
         Event event = eventConverter.toEntity(request.getEvent());
+        event.setId(null);
         event.setClazz(clazz);
         Event insertedEvent = eventService.save(event);
         return new ResponseEntity<>(eventConverter.toDto(insertedEvent), HttpStatus.CREATED);
@@ -64,10 +65,10 @@ public class EventController {
     public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventRequest request) {
         Class clazz = classService.findById(request.getClassId());
 
-        Event event = eventService.findById(id);
+        eventService.findById(id);
 
         Event eventUpdateInfo = eventConverter.toEntity(request.getEvent());
-        eventUpdateInfo.setId(event.getId());
+        eventUpdateInfo.setId(id);
         eventUpdateInfo.setClazz(clazz);
         Event updatedEvent = eventService.save(eventUpdateInfo);
         return new ResponseEntity<>(eventConverter.toDto(updatedEvent), HttpStatus.OK);

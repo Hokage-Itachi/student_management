@@ -46,6 +46,7 @@ public class CourseController {
     @PreAuthorize("hasAnyAuthority('can_add_course')")
     public ResponseEntity<Object> addCourse(@RequestBody CourseDto courseDto) {
         Course course = courseConverter.toEntity(courseDto);
+        course.setId(null);
         Course insertedCourse = courseService.save(course);
         return new ResponseEntity<>(courseConverter.toDto(insertedCourse), HttpStatus.CREATED);
     }
@@ -53,7 +54,7 @@ public class CourseController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_course')")
     public ResponseEntity<Object> updateCourse(@PathVariable("id") Long id, @RequestBody CourseDto courseDto) {
-        Course course = courseService.findById(id);
+        courseService.findById(id);
         Course updatedCourseInfo = courseConverter.toEntity(courseDto);
         updatedCourseInfo.setId(id);
         Course updatedCourse = courseService.save(updatedCourseInfo);

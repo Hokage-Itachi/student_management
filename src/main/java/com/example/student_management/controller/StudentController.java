@@ -43,6 +43,7 @@ public class StudentController {
     @PreAuthorize("hasAnyAuthority('can_add_student')")
     public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
         Student student = studentConverter.toEntity(studentDto);
+        student.setId(null);
         Student insertedStudent = studentService.save(student);
         return new ResponseEntity<>(studentConverter.toDto(insertedStudent), HttpStatus.CREATED);
     }

@@ -60,6 +60,7 @@ public class ExamResultController {
         Exam exam = examService.findById(request.getExamId());
 
         ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
+        examResult.setId(null);
         examResult.setExam(exam);
         examResult.setClazz(clazz);
         examResult.setStudent(student);
@@ -71,13 +72,13 @@ public class ExamResultController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
     public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultRequest request) {
-        ExamResult existExamResult = examResultService.findById(id);
+        examResultService.findById(id);
         Student student = studentService.findById(request.getStudentId());
         Class clazz = classService.findById(request.getClassId());
         Exam exam = examService.findById(request.getExamId());
 
         ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
-        examResult.setId(existExamResult.getId());
+        examResult.setId(id);
         examResult.setExam(exam);
         examResult.setClazz(clazz);
         examResult.setStudent(student);

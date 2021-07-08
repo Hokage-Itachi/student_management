@@ -54,6 +54,7 @@ public class ClassController {
         Class clazz = classConverter.toEntity(request.getClazz());
         Teacher teacher = teacherService.findById(request.getTeacherId());
         Course course = courseService.findById(request.getCourseId());
+        clazz.setId(null);
         clazz.setTeacher(teacher);
         clazz.setCourse(course);
         Class insertedClass = classService.save(clazz);
@@ -63,12 +64,12 @@ public class ClassController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_class')")
     public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassRequest request) {
-        Class existClass = classService.findById(id);
+        classService.findById(id);
         Teacher teacher = teacherService.findById(request.getTeacherId());
         Course course = courseService.findById(request.getCourseId());
         Class clazz = classConverter.toEntity(request.getClazz());
 
-        clazz.setId(existClass.getId());
+        clazz.setId(null);
         clazz.setTeacher(teacher);
         clazz.setCourse(course);
 

@@ -50,6 +50,7 @@ public class PlanController {
         Course course = courseService.findById(request.getCourseId());
 
         Plan plan = planConverter.toEntity(request.getPlan());
+        plan.setId(null);
         plan.setCourse(course);
         Plan insertedPlan = planService.save(plan);
         return new ResponseEntity<>(planConverter.toDto(insertedPlan), HttpStatus.OK);
@@ -58,11 +59,11 @@ public class PlanController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_plan')")
     public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanRequest request) {
-        Plan plan = planService.findById(id);
+        planService.findById(id);
         Course course = courseService.findById(request.getCourseId());
 
         Plan planUpdateInfo = planConverter.toEntity(request.getPlan());
-        planUpdateInfo.setId(plan.getId());
+        planUpdateInfo.setId(id);
         planUpdateInfo.setCourse(course);
 
         Plan updatedPlan = planService.save(planUpdateInfo);

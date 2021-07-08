@@ -51,6 +51,7 @@ public class ExamController {
         Course course = courseService.findById(request.getCourseId());
 
         Exam exam = examConverter.toEntity(request.getExam());
+        exam.setId(null);
         exam.setCourse(course);
         Exam insertedExam = examService.save(exam);
 
@@ -60,10 +61,10 @@ public class ExamController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam')")
     public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamRequest request) {
-        Exam exam = examService.findById(id);
+        examService.findById(id);
         Course course = courseService.findById(request.getCourseId());
         Exam examUpdateInfo = examConverter.toEntity(request.getExam());
-        examUpdateInfo.setId(exam.getId());
+        examUpdateInfo.setId(id);
         examUpdateInfo.setCourse(course);
 
         Exam updatedExam = examService.save(examUpdateInfo);
