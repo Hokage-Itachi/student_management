@@ -13,12 +13,19 @@ public class ServiceUtils {
         return matcher.matches();
     }
 
-    public static String messageFormat(String s) {
-        String [] arr = s.split("Detail: Key ");
+    public static String sqlExceptionMessageFormat(String s) {
+        String[] arr = s.split("Detail: Key ");
         String message = arr[1];
         message = message.replace(")=(", " '");
         message = message.replace("(", "");
         message = message.replace(")", "'");
+        return message;
+    }
+
+    public static String propertyValueExceptionMessageFormat(String s) {
+        String[] arr = s.split("\\.");
+        String message = arr[arr.length - 1];
+        message = message + " can not be null";
         return message;
     }
 }
