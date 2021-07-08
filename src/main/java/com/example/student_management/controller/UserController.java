@@ -1,12 +1,9 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.UserConverter;
-import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.Role;
 import com.example.student_management.domain.User;
 import com.example.student_management.dto.UserDto;
-import com.example.student_management.request.PermissionRequest;
-import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -25,15 +22,13 @@ public class UserController {
     private final UserConverter userConverter;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final PermissionService permissionService;
 
 
-    public UserController(UserService userService, UserConverter userConverter, RoleService roleService, PasswordEncoder passwordEncoder, PermissionService permissionService) {
+    public UserController(UserService userService, UserConverter userConverter, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userConverter = userConverter;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
-        this.permissionService = permissionService;
     }
 
     @GetMapping
