@@ -13,5 +13,4 @@ public class ExamDto {
     private Long id;
     private String name;
     private String course;
-    private List<String> examResults;
 }
