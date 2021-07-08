@@ -30,6 +30,7 @@ public class UserAuthorizationController {
             throw new ResourceConflictException(String.format(ExceptionMessage.USER_AUTHORIZATION_CONFLICT.message, userId, permissionId));
         }
         user.getPermissions().add(permission);
+        userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
@@ -42,6 +43,7 @@ public class UserAuthorizationController {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_PERMISSION_NOT_FOUND.message, userId, permissionId));
         }
         user.getPermissions().remove(permission);
+        userService.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
