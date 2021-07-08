@@ -9,6 +9,7 @@ import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserAuthorizationController {
         this.userService = userService;
         this.permissionService = permissionService;
     }
-
+    @PreAuthorize("hasAnyAuthority('can_authorize_user')")
     @PostMapping("/{userId}/{permissionId}")
     public ResponseEntity<Object> authorizeUser(@PathVariable("userId") Long userId, @PathVariable("permissionId") Long permissionId) {
         User user = userService.findById(userId);
@@ -34,7 +35,7 @@ public class UserAuthorizationController {
         return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
-
+    @PreAuthorize("hasAnyAuthority('can_unauthorize_user')")
     @DeleteMapping("/{userId}/{permissionId}")
     public ResponseEntity<Object> unAuthorizeUser(@PathVariable("userId") Long userId, @PathVariable("permissionId") Long permissionId) {
         User user = userService.findById(userId);
