@@ -26,6 +26,9 @@ public class ClassService {
     }
 
     public Class findById(Long id) {
+        if (id == null){
+            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+        }
         Optional<Class> classOptional = classRepository.findById(id);
         if (classOptional.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.CLASS_NOT_FOUND.toString(), id));

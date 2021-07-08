@@ -29,7 +29,9 @@ public class TeacherService {
     }
 
     public Teacher findById(Long id) {
-
+        if (id == null){
+            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+        }
         Optional<Teacher> teacherOptional = teacherRepository.findById(id);
         if (teacherOptional.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_ID.toString(), id));

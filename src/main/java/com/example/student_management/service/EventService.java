@@ -24,6 +24,9 @@ public class EventService {
     }
 
     public Event findById(Long id) {
+        if (id == null){
+            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+        }
         Optional<Event> eventOptional = eventRepository.findById(id);
         if (eventOptional.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.EVENT_NOT_FOUND.toString(), id));

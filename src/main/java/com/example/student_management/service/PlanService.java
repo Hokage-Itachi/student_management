@@ -1,6 +1,7 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Plan;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.PlanRepository;
@@ -23,7 +24,9 @@ public class PlanService {
     }
 
     public Plan findById(Long id) {
-
+        if (id == null){
+            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+        }
         Optional<Plan> planOptional = planRepository.findById(id);
         if (planOptional.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.PLAN_NOT_FOUND.toString(), id));

@@ -31,6 +31,9 @@ public class StudentService {
     }
 
     public Student findById(Long id) {
+        if (id == null){
+            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+        }
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.STUDENT_NOT_FOUND.toString(), id));
