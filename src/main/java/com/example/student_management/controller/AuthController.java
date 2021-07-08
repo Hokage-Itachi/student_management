@@ -80,6 +80,7 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<Object> forgotPassword(@RequestBody ForgotPasswordRequest request, HttpServletRequest httpServletRequest) throws MessagingException, UnsupportedEncodingException {
         User user = userService.findByEmail(request.getEmail());
+        // TODO: add expiration into token
         String token = RandomString.make(100);
         user.setForgotPasswordToken(token);
         userService.save(user);
