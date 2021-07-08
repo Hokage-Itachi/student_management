@@ -25,7 +25,7 @@ public class ExamResultService {
 
     public ExamResult findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Exam result"));
         }
         Optional<ExamResult> examResultOptional = examResultRepository.findById(id);
         if (examResultOptional.isEmpty()) {

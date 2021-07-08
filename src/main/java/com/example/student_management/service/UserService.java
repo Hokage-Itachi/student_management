@@ -34,7 +34,7 @@ public class UserService implements UserDetailsService {
 
     public User findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "User"));
         }
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {

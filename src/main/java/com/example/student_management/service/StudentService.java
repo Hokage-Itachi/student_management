@@ -32,7 +32,7 @@ public class StudentService {
 
     public Student findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Student"));
         }
         Optional<Student> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty()) {

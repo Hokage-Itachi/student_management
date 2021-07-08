@@ -30,7 +30,7 @@ public class TeacherService {
 
     public Teacher findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Teacher"));
         }
         Optional<Teacher> teacherOptional = teacherRepository.findById(id);
         if (teacherOptional.isEmpty()) {

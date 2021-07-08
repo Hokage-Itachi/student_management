@@ -25,7 +25,7 @@ public class PlanService {
 
     public Plan findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Plan"));
         }
         Optional<Plan> planOptional = planRepository.findById(id);
         if (planOptional.isEmpty()) {

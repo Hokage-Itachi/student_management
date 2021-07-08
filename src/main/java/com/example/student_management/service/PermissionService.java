@@ -27,7 +27,7 @@ public class PermissionService {
 
     public Permission findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Permission"));
         }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);
         if (permissionOptional.isEmpty()) {

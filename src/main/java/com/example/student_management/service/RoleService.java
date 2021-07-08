@@ -26,7 +26,7 @@ public class RoleService {
 
     public Role findByRoleName(String roleName) {
         if (roleName == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Role"));
         }
         Optional<Role> roleOptional = roleRepository.findByRoleName(roleName);
         if (roleOptional.isEmpty()) {

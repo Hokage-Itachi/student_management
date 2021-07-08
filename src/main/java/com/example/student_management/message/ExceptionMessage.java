@@ -37,7 +37,7 @@ public enum ExceptionMessage {
     COURSE_NAME_INVALID("Course name invalid"),
     CLASS_START_DATE_INVALID("Start date invalid"),
     TOKEN_INVALID("Token invalid"),
-    ID_INVALID("ID must not be null"),
+    ID_INVALID("%s ID must not be null"),
 
 
     // Resource conflict message

@@ -27,7 +27,7 @@ public class CourseService {
 
     public Course findById(Long id) {
         if (id == null){
-            throw new DataInvalidException(ExceptionMessage.ID_INVALID.message);
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Course"));
         }
         Optional<Course> courseOptional = courseRepository.findById(id);
         if (courseOptional.isEmpty()) {
