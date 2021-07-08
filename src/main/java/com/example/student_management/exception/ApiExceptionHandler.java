@@ -3,6 +3,7 @@ package com.example.student_management.exception;
 import com.example.student_management.utils.ExceptionHandlerUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,12 +17,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception e){
-        String error = "Internal Server Error";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
-        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    //    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleException(Exception e){
+//        String error = "Internal Server Error";
+//        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+//        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadRequestException(BadCredentialsException e, WebRequest request) {
         String error = "Username or password invalid";
@@ -70,19 +71,28 @@ public class ApiExceptionHandler {
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, "");
         return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+    public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         String error = "Method not allowed";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.METHOD_NOT_ALLOWED);
     }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         String error = "Argument type mismatch";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        String error = "Json error";
+        String message = "Error while parsing Json";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
 
 
 }

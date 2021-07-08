@@ -69,7 +69,7 @@ public class ClassController {
         Course course = courseService.findById(request.getCourseId());
         Class clazz = classConverter.toEntity(request.getClazz());
 
-        clazz.setId(null);
+        clazz.setId(id);
         clazz.setTeacher(teacher);
         clazz.setCourse(course);
 
