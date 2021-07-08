@@ -17,6 +17,7 @@ public enum ExceptionMessage {
     USER_NOT_FOUND_BY_ID("User with id %d not found"),
     USER_NOT_FOUND_BY_EMAIL("User with email '%s' not found"),
     USER_NOT_FOUND_BY_USERNAME("User with username '%s' not found"),
+    USER_PERMISSION_NOT_FOUND("User %d does not have permission %d"),
 
     // Invalid expression message
     STUDENT_NAME_INVALID("Student name invalid"),
@@ -39,7 +40,8 @@ public enum ExceptionMessage {
 
     // Resource conflict message
     ROLE_NAME_CONFLICT("Role '%s' already exists"),
-    REGISTRATION_CONFLICT("Registration of student '%d' for class '%d' already exists"),
+    REGISTRATION_CONFLICT("Registration of student %d for class %d already exists"),
+    USER_AUTHORIZATION_CONFLICT("User %d already has permission %d"),
 
 
     // Foreign key exception message
@@ -47,8 +49,8 @@ public enum ExceptionMessage {
     STUDENT_FOREIGN_KEY("Student %d still has foreign key reference"),
     PERMISSION_FOREIGN_KEY("Permission '%d' still has foreign key reference"),
     EXAM_FOREIGN_KEY("Exam '%d' still has foreign key reference"),
-    COURSE_FOREIGN_KEY("Course '%d' still has foreign key reference"),
-    CLASS_FOREIGN_KEY("Class '%d' still has foreign key reference")
+    COURSE_FOREIGN_KEY("Course %d still has foreign key reference"),
+    CLASS_FOREIGN_KEY("Class %d still has foreign key reference")
     ;
     public final String message;
 

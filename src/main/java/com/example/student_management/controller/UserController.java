@@ -88,17 +88,4 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @PostMapping("/{id}/permission")
-    @PreAuthorize("hasAnyAuthority('can_authorize_user')")
-    public ResponseEntity<Object> addUserPermission(@PathVariable("id") Long userId, @RequestBody PermissionRequest request) {
-        User user = userService.findById(userId);
-        Permission permission = permissionService.findById(request.getPermissionId());
-        user.getPermissions().add(permission);
-        User updatedUser = userService.save(user);
-        return new ResponseEntity<>(userConverter.toDto(updatedUser), HttpStatus.OK);
-    }
-
-    // TODO: add delete user permission api
-
 }
