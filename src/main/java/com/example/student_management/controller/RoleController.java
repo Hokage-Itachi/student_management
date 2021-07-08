@@ -55,14 +55,13 @@ public class RoleController {
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
-        // TODO: handle role name not found
-        roleService.findByRoleName(roleName);
         Role role = roleConverter.toEntity(roleDto);
+        role.setRoleName(roleName);
         Role updatedRole = roleService.update(role);
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("{roleName}")
+    @DeleteMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_delet_role_by_id')")
     public ResponseEntity<Object> deleteRole(@PathVariable("roleName") String roleName) {
         roleService.deleteByRoleName(roleName);
