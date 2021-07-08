@@ -9,6 +9,7 @@ import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class RoleAuthorizationController {
         this.roleService = roleService;
         this.permissionService = permissionService;
     }
-
+    @PreAuthorize("hasAnyAuthority('can_authorize_role')")
     @PostMapping("/{roleName}/{permissionId}")
     public ResponseEntity<Object> authorizeRole(@PathVariable("roleName") String roleName, @PathVariable("permissionId") Long permissionId) {
         Role role = roleService.findByRoleName(roleName);
@@ -33,7 +34,7 @@ public class RoleAuthorizationController {
         roleService.update(role);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAnyAuthority('can_unauthorize_role')")
     @DeleteMapping("/{roleName}/{permissionId}")
     public ResponseEntity<Object> unAuthorizeRole(@PathVariable("roleName") String roleName, @PathVariable("permissionId") Long permissionId) {
         Role role = roleService.findByRoleName(roleName);
