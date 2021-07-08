@@ -43,7 +43,7 @@ public class ExamResultService {
             throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_DATE_INVALID.message);
         }
         Optional<ExamResult> examResultOptional = examResultRepository.findByStudentIdAndExamIdAndClazzId(examResult.getStudent().getId(), examResult.getExam().getId(), examResult.getClazz().getId());
-        if (examResultOptional.isPresent() && examResultOptional.get().getId().equals(examResult.getId())) {
+        if (examResultOptional.isPresent() && !examResultOptional.get().getId().equals(examResult.getId())) {
             throw new ResourceConflictException(ExceptionMessage.EXAM_RESULT_CONFLICT.message);
         }
         return examResultRepository.save(examResult);
