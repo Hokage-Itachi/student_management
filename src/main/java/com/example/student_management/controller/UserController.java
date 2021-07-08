@@ -58,6 +58,7 @@ public class UserController {
         Role role = roleService.findByRoleName(userDto.getRole());
 
         User user = userConverter.toEntity(userDto);
+        user.setId(null);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRole(role);
         User insertedUser = userService.save(user);
@@ -73,7 +74,6 @@ public class UserController {
         Role role = roleService.findByRoleName(userDto.getRole());
 
         User user = userConverter.toEntity(userDto);
-        //TODO: handle user email duplicates
         user.setId(id);
         user.setRole(role);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
