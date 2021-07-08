@@ -4,9 +4,11 @@ import com.example.student_management.utils.ExceptionHandlerUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -61,6 +63,18 @@ public class ApiExceptionHandler {
         String error = "Error while sending mail";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, "");
         return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        String error = "Method not allowed";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        String error = "Argument type mismatch";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
 }
