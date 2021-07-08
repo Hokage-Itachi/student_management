@@ -10,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// TODO: remove unnecessary fields
 public class StudentDto {
     private Long id;
     private String fullName;
@@ -21,6 +20,5 @@ public class StudentDto {
     private String note;
     private String facebook;
     private Date createDate;
-    private List<String> examResults;
     private List<String> classes;
 }
