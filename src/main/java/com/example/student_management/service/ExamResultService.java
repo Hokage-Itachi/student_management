@@ -42,12 +42,19 @@ public class ExamResultService {
         if (examResult.getResultDate() == null) {
             throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_DATE_INVALID.message);
         }
+        Optional<ExamResult> examResultOptional = examResultRepository.findByStudentIdAndExamIdAndClazzId(examResult.getStudent().getId(), examResult.getExam().getId(), examResult.getClazz().getId());
+        if (examResultOptional.isPresent() && examResultOptional.get().getId().equals(examResult.getId())) {
+            throw new ResourceConflictException(ExceptionMessage.EXAM_RESULT_CONFLICT.message);
+        }
         return examResultRepository.save(examResult);
     }
 
     public ExamResult add(ExamResult examResult) {
         if (examResult.getScore() == null) {
             throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_SCORE_INVALID.message);
+        }
+        if (examResult.getResultDate() == null) {
+            throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_DATE_INVALID.message);
         }
         Optional<ExamResult> examResultOptional = examResultRepository.findByStudentIdAndExamIdAndClazzId(examResult.getStudent().getId(), examResult.getExam().getId(), examResult.getClazz().getId());
         if (examResultOptional.isPresent()) {
