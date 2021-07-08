@@ -45,7 +45,7 @@ public class ExamResultController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id', can_view_all_exam_results)")
+    @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id', 'can_view_all_exam_results')")
     public ResponseEntity<Object> getExamResultById(@PathVariable("id") Long id) {
         ExamResult examResult = examResultService.findById(id);
 
