@@ -41,15 +41,20 @@ public class TeacherService {
         if (!ServiceUtils.isStringValid(teacher.getFullName(), "[^0-9]+")) {
             throw new DataInvalidException(ExceptionMessage.TEACHER_NAME_INVALID.message);
         }
-        if (!ServiceUtils.isStringValid(teacher.getEmail(), "^(.+)@(.+)$")) {
+        if (teacher.getEmail() != null && !ServiceUtils.isStringValid(teacher.getEmail(), "^(.+)@(.+)$")) {
             throw new DataInvalidException(ExceptionMessage.TEACHER_EMAIL_INVALID.message);
         }
         try {
             return teacherRepository.save(teacher);
         } catch (DataIntegrityViolationException e) {
-            SQLException ex = (SQLException) e.getRootCause();
-            String message = ServiceUtils.messageFormat(ex.getMessage());
-            throw new ResourceConflictException(message);
+            if (e.getRootCause() instanceof SQLException) {
+                SQLException ex = (SQLException) e.getRootCause();
+                String message = ServiceUtils.sqlExceptionMessageFormat(ex.getMessage());
+                throw new ResourceConflictException(message);
+            } else {
+                throw new DataInvalidException(e.getMessage());
+            }
+
         }
     }
 

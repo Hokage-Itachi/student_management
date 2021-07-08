@@ -16,6 +16,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception e){
+        String error = "Internal Server Error";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadRequestException(BadCredentialsException e, WebRequest request) {
         String error = "Username or password invalid";
@@ -76,5 +82,7 @@ public class ApiExceptionHandler {
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
+
+
 
 }

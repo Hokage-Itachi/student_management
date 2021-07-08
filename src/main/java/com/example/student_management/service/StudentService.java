@@ -57,7 +57,7 @@ public class StudentService {
 
         } catch (DataIntegrityViolationException e) {
             SQLException ex = (SQLException) e.getRootCause();
-            String message = ServiceUtils.messageFormat(ex.getMessage());
+            String message = ServiceUtils.sqlExceptionMessageFormat(ex.getMessage());
             throw new ResourceConflictException(message);
         }
     }

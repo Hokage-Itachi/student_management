@@ -1,12 +1,14 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
+import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.UserRepository;
 import com.example.student_management.security.authentication.CustomUserDetails;
 import com.example.student_management.utils.ServiceUtils;
+import org.hibernate.PropertyValueException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,9 +52,16 @@ public class UserService implements UserDetailsService {
         try {
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            SQLException ex = (SQLException) e.getRootCause();
-            String message = ServiceUtils.messageFormat(ex.getMessage());
-            throw new ResourceConflictException(message);
+            if (e.getRootCause() instanceof SQLException){
+                SQLException ex = (SQLException) e.getRootCause();
+                String message = ServiceUtils.sqlExceptionMessageFormat(ex.getMessage());
+                throw new ResourceConflictException(message);
+            } else if (e.getRootCause() instanceof PropertyValueException){
+                PropertyValueException ex = (PropertyValueException) e.getRootCause();
+                throw new DataInvalidException(ServiceUtils.propertyValueExceptionMessageFormat(ex.getMessage()));
+            } else {
+                throw new DataInvalidException(e.getMessage());
+            }
         }
     }
 
