@@ -55,6 +55,7 @@ public class RoleController {
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
+        // TODO: handle role name not found
         roleService.findByRoleName(roleName);
         Role role = roleConverter.toEntity(roleDto);
         Role updatedRole = roleService.update(role);
@@ -68,19 +69,5 @@ public class RoleController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @PostMapping("/{roleName}/permission")
-    @PreAuthorize("hasAnyAuthority('can_authorize_role')")
-    public ResponseEntity<Object> addRolePermission(@PathVariable("roleName") String roleName, @RequestBody PermissionRequest request) {
-        Role role = roleService.findByRoleName(roleName);
-        Permission permission = permissionService.findById(request.getPermissionId());
-
-        role.getPermissions().add(permission);
-        Role updatedRole = roleService.update(role);
-
-        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
-    }
-
-    // TODO: add delete role permission api
 
 }

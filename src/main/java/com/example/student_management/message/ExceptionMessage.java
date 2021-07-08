@@ -18,6 +18,7 @@ public enum ExceptionMessage {
     USER_NOT_FOUND_BY_EMAIL("User with email '%s' not found"),
     USER_NOT_FOUND_BY_USERNAME("User with username '%s' not found"),
     USER_PERMISSION_NOT_FOUND("User %d does not have permission %d"),
+    ROLE_PERMISSION_NOT_FOUND("Role '%s' does not have permission %d"),
 
     // Invalid expression message
     STUDENT_NAME_INVALID("Student name invalid"),
@@ -42,6 +43,7 @@ public enum ExceptionMessage {
     ROLE_NAME_CONFLICT("Role '%s' already exists"),
     REGISTRATION_CONFLICT("Registration of student %d for class %d already exists"),
     USER_AUTHORIZATION_CONFLICT("User %d already has permission %d"),
+    ROLE_AUTHORIZATION_CONFLICT("Role '%s' already has permission %d"),
 
 
     // Foreign key exception message
