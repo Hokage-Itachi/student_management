@@ -2,6 +2,7 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.ExamResult;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.ExamResultRepository;
@@ -24,7 +25,7 @@ public class ExamResultService {
     }
 
     public ExamResult findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Exam result"));
         }
         Optional<ExamResult> examResultOptional = examResultRepository.findById(id);
@@ -34,12 +35,23 @@ public class ExamResultService {
         return examResultOptional.get();
     }
 
-    public ExamResult save(ExamResult examResult) {
+    public ExamResult update(ExamResult examResult) {
         if (examResult.getScore() == null) {
             throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_SCORE_INVALID.message);
         }
         if (examResult.getResultDate() == null) {
             throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_DATE_INVALID.message);
+        }
+        return examResultRepository.save(examResult);
+    }
+
+    public ExamResult add(ExamResult examResult) {
+        if (examResult.getScore() == null) {
+            throw new DataInvalidException(ExceptionMessage.EXAM_RESULT_SCORE_INVALID.message);
+        }
+        Optional<ExamResult> examResultOptional = examResultRepository.findByStudentIdAndExamIdAndClazzId(examResult.getStudent().getId(), examResult.getExam().getId(), examResult.getClazz().getId());
+        if (examResultOptional.isPresent()) {
+            throw new ResourceConflictException(ExceptionMessage.EXAM_RESULT_CONFLICT.message);
         }
         return examResultRepository.save(examResult);
     }

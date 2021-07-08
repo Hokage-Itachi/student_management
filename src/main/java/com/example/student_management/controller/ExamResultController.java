@@ -65,7 +65,7 @@ public class ExamResultController {
         examResult.setClazz(clazz);
         examResult.setStudent(student);
 
-        ExamResult insertedExamResult = examResultService.save(examResult);
+        ExamResult insertedExamResult = examResultService.add(examResult);
         return new ResponseEntity<>(examResultConverter.toDto(insertedExamResult), HttpStatus.CREATED);
     }
 
@@ -83,7 +83,7 @@ public class ExamResultController {
         examResult.setClazz(clazz);
         examResult.setStudent(student);
 
-        ExamResult updatedExamResult = examResultService.save(examResult);
+        ExamResult updatedExamResult = examResultService.update(examResult);
         return new ResponseEntity<>(examResultConverter.toDto(updatedExamResult), HttpStatus.OK);
     }
 

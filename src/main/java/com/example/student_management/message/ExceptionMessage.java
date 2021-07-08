@@ -45,6 +45,7 @@ public enum ExceptionMessage {
     REGISTRATION_CONFLICT("Registration of student %d for class %d already exists"),
     USER_AUTHORIZATION_CONFLICT("User %d already has permission %d"),
     ROLE_AUTHORIZATION_CONFLICT("Role '%s' already has permission %d"),
+    EXAM_RESULT_CONFLICT("Exam result already exists"),
 
 
     // Foreign key exception message
