@@ -25,8 +25,8 @@ public class ApiExceptionHandler {
 //    }
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadRequestException(BadCredentialsException e, WebRequest request) {
-        String error = "Username or password invalid";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+        String message = "Username or password invalid";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(e.getMessage(), message);
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
