@@ -2,10 +2,12 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Role;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RoleRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class RoleService {
     }
 
     public Role findByRoleName(String roleName) {
-        if (roleName == null){
+        if (roleName == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Role"));
         }
         Optional<Role> roleOptional = roleRepository.findByRoleName(roleName);
@@ -60,6 +62,8 @@ public class RoleService {
             roleRepository.deleteById(roleName);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.ROLE_NOT_FOUND.toString(), roleName));
+        } catch (DataIntegrityViolationException e) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.ROLE_FOREIGN_KEY.message, roleName));
         }
     }
 }

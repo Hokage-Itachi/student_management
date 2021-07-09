@@ -54,7 +54,8 @@ public enum ExceptionMessage {
     PERMISSION_FOREIGN_KEY("Permission '%d' still has foreign key reference"),
     EXAM_FOREIGN_KEY("Exam '%d' still has foreign key reference"),
     COURSE_FOREIGN_KEY("Course %d still has foreign key reference"),
-    CLASS_FOREIGN_KEY("Class %d still has foreign key reference")
+    CLASS_FOREIGN_KEY("Class %d still has foreign key reference"),
+    ROLE_FOREIGN_KEY("Role '%s' still has foreign key reference")
     ;
     public final String message;
 
