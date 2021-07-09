@@ -13,6 +13,7 @@ import com.example.student_management.security.jwt.JwtProvider;
 import com.example.student_management.service.MailService;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
     private final UserService userService;
     private final RoleService roleService;
@@ -82,6 +84,7 @@ public class AuthController {
         User user = userService.findByEmail(request.getEmail());
         // TODO: add expiration into token
         String token = RandomString.make(100);
+        log.info("Forgot password token: {}", token);
         user.setForgotPasswordToken(token);
         userService.save(user);
         String requestURL = httpServletRequest.getRequestURL().toString();
@@ -101,7 +104,7 @@ public class AuthController {
         } else {
             throw new DataInvalidException(ExceptionMessage.TOKEN_INVALID.message);
         }
-
+        userService.save(user);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
