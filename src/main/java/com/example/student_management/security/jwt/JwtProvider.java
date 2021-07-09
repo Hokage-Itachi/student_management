@@ -2,6 +2,7 @@ package com.example.student_management.security.jwt;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +11,10 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtProvider {
-    private final String JWT_SECRET = "itachi";
-
-    private final Long JWT_EXPIRATION = 604800000L;
+    @Value("${student_management.auth.jwt.JWT_SECRET}")
+    private String JWT_SECRET;
+    @Value("${student_management.auth.jwt.JWT_EXPIRATION}")
+    private Long JWT_EXPIRATION;
 
     public String generateToken(UserDetails userDetails) {
         Date now = new Date();

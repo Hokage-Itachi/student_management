@@ -1,4 +1,4 @@
-package com.example.student_management.dto;
+package com.example.student_management.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClassId {
-    private Long classId;
+public class ForgotPasswordRequest {
+    private String email;
 }

@@ -1,6 +1,5 @@
 package com.example.student_management.converter;
 
-import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Course;
 import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.CourseDto;

@@ -22,7 +22,7 @@ public class StudentConverter {
         List<Registration> registrations = entity.getRegistrations();
         List<String> classes = new ArrayList<>();
         if (registrations != null) {
-            classes = registrations.stream().map(registrationId -> classService.findById(registrationId.getId().getClassId()).get().getName()).collect(Collectors.toList());
+            classes = registrations.stream().map(registrationId -> classService.findById(registrationId.getId().getClassId()).getName()).collect(Collectors.toList());
         }
         return StudentDto.builder()
                 .id(entity.getId())

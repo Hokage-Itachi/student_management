@@ -1,5 +1,8 @@
 package com.example.student_management.security;
 
+import com.example.student_management.domain.User;
+import com.example.student_management.security.authentication.CustomUserDetails;
+import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -50,14 +53,23 @@ public class CustomSecurityExpressionRoot implements MethodSecurityExpressionOpe
 
     @Override
     public final boolean hasAnyRole(String... roles) {
-        return hasAnyAuthorityName(roles);
+        String userRole = getAuthenticationRole();
+        for (String role : roles) {
+            if (role.equals(userRole)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasAnyAuthorityName(String... roles) {
+        String userRole = getAuthenticationRole();
+        if (userRole.equals("super admin")) {
+            return true;
+        }
         List<String> authorities = Arrays.asList(roles);
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
             String authority = grantedAuthority.getAuthority();
-//            System.out.println(authority);
             if (authorities.contains(authority)) {
                 return true;
             }
@@ -106,6 +118,12 @@ public class CustomSecurityExpressionRoot implements MethodSecurityExpressionOpe
 
     public void setRoleHierarchy(RoleHierarchy roleHierarchy) {
         this.roleHierarchy = roleHierarchy;
+    }
+
+    public String getAuthenticationRole() {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        return user.getRole().getRoleName();
     }
 
     @Override

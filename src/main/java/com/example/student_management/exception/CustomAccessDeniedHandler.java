@@ -15,7 +15,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
         httpServletResponse.setStatus(403);
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData("Forbidden", 403, e.getMessage());
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData("Forbidden", e.getMessage());
         httpServletResponse.getOutputStream().println(new JSONObject(data).toString());
     }
 }

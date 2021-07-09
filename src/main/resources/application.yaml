@@ -7,6 +7,13 @@ spring:
     username: postgres
     password: 123456
     url: jdbc:postgresql://localhost:5432/student_management
+# mail config
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: annguyenvan.2k@gmail.com
+    password: 2564640211
+# config logging
 logging:
   file:
     name: logs/applications.log
@@ -23,3 +30,10 @@ logging:
     com:
       example:
         student_management: TRACE
+# set static variable value
+student_management:
+  auth:
+    jwt:
+      JWT_SECRET: itachi
+      # expire in one day (unit: ms)
+      JWT_EXPIRATION: 86400000

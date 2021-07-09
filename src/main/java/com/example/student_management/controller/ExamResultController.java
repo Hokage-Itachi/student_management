@@ -11,14 +11,12 @@ import com.example.student_management.service.ClassService;
 import com.example.student_management.service.ExamResultService;
 import com.example.student_management.service.ExamService;
 import com.example.student_management.service.StudentService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,84 +45,53 @@ public class ExamResultController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id', 'can_view_all_exam_results')")
     public ResponseEntity<Object> getExamResultById(@PathVariable("id") Long id) {
-        Optional<ExamResult> examResultOptional = examResultService.findById(id);
-        if (examResultOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        ExamResult examResult = examResultService.findById(id);
 
-        return new ResponseEntity<>(examResultConverter.toDto(examResultOptional.get()), HttpStatus.OK);
+        return new ResponseEntity<>(examResultConverter.toDto(examResult), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam_result')")
     public ResponseEntity<Object> addExamResult(@RequestBody ExamResultRequest request) {
-        Optional<Student> studentOptional = studentService.findById(request.getStudentId());
-        if (studentOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Optional<Class> classOptional = classService.findById(request.getClassId());
-        if (classOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Optional<Exam> examOptional = examService.findById(request.getExamId());
-        if (examOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Student student = studentService.findById(request.getStudentId());
+        Class clazz = classService.findById(request.getClassId());
+        Exam exam = examService.findById(request.getExamId());
 
         ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
-        examResult.setExam(examOptional.get());
-        examResult.setClazz(classOptional.get());
-        examResult.setStudent(studentOptional.get());
+        examResult.setId(null);
+        examResult.setExam(exam);
+        examResult.setClazz(clazz);
+        examResult.setStudent(student);
 
-        ExamResult insertedExamResult = examResultService.save(examResult);
+        ExamResult insertedExamResult = examResultService.add(examResult);
         return new ResponseEntity<>(examResultConverter.toDto(insertedExamResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
     public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultRequest request) {
-        Optional<ExamResult> examResultOptional = examResultService.findById(id);
-        if (examResultOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Optional<Student> studentOptional = studentService.findById(request.getStudentId());
-        if (studentOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Optional<Class> classOptional = classService.findById(request.getClassId());
-        if (classOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Optional<Exam> examOptional = examService.findById(request.getExamId());
-        if (examOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        examResultService.findById(id);
+        Student student = studentService.findById(request.getStudentId());
+        Class clazz = classService.findById(request.getClassId());
+        Exam exam = examService.findById(request.getExamId());
 
         ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
         examResult.setId(id);
-        examResult.setExam(examOptional.get());
-        examResult.setClazz(classOptional.get());
-        examResult.setStudent(studentOptional.get());
+        examResult.setExam(exam);
+        examResult.setClazz(clazz);
+        examResult.setStudent(student);
 
-        ExamResult updatedExamResult = examResultService.save(examResult);
+        ExamResult updatedExamResult = examResultService.update(examResult);
         return new ResponseEntity<>(examResultConverter.toDto(updatedExamResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_exam_result_by_id')")
     public ResponseEntity<Object> deleteExamResult(@PathVariable("id") Long id) {
-        try {
-            examResultService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        examResultService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

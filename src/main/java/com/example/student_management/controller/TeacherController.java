@@ -4,14 +4,12 @@ import com.example.student_management.converter.TeacherConverter;
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.TeacherDto;
 import com.example.student_management.service.TeacherService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,25 +33,18 @@ public class TeacherController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id','can_view_all_teachers')")
     public ResponseEntity<Object> getTeacherById(@PathVariable("id") Long id) {
-        Optional<Teacher> teacherOptional = teacherService.findById(id);
-        if (teacherOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Teacher teacher = teacherService.findById(id);
 
-        TeacherDto teacher = teacherConverter.toDto(teacherOptional.get());
-        return new ResponseEntity<>(teacher, HttpStatus.OK);
+        return new ResponseEntity<>(teacherConverter.toDto(teacher), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_teacher')")
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
-        Optional<Teacher> teacherOptional = teacherService.findByEmail(teacherDto.getEmail());
-        if (teacherOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
         Teacher teacher = teacherConverter.toEntity(teacherDto);
+        teacher.setId(null);
         Teacher insertedTeacher = teacherService.save(teacher);
         return new ResponseEntity<>(teacherConverter.toDto(insertedTeacher), HttpStatus.CREATED);
     }
@@ -61,16 +52,9 @@ public class TeacherController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_teacher')")
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
-        Optional<Teacher> teacherOptional = teacherService.findById(id);
-        if (teacherOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        teacherService.findById(id);
 
         Teacher teacherUpdateInfo = teacherConverter.toEntity(teacherDto);
-        if (!teacherOptional.get().getEmail().equals(teacherUpdateInfo.getEmail()) && teacherService.findByEmail(teacherDto.getEmail()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
         teacherUpdateInfo.setId(id);
 
         Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
@@ -80,11 +64,8 @@ public class TeacherController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_teacher_by_id')")
     public ResponseEntity<Object> deleteTeacher(@PathVariable("id") Long id) {
-        try {
-            teacherService.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        teacherService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

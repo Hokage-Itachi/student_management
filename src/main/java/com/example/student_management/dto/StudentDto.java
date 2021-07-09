@@ -20,6 +20,5 @@ public class StudentDto {
     private String note;
     private String facebook;
     private Date createDate;
-    private List<String> examResults;
     private List<String> classes;
 }

@@ -1,17 +1,18 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.RoleConverter;
+import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.Role;
 import com.example.student_management.dto.RoleDto;
+import com.example.student_management.request.PermissionRequest;
+import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class RoleController {
     private final RoleService roleService;
     private final RoleConverter roleConverter;
+    private final PermissionService permissionService;
 
-    public RoleController(RoleService roleService, RoleConverter roleConverter) {
+    public RoleController(RoleService roleService, RoleConverter roleConverter, PermissionService permissionService) {
         this.roleService = roleService;
         this.roleConverter = roleConverter;
+        this.permissionService = permissionService;
     }
 
     @GetMapping
@@ -34,57 +37,36 @@ public class RoleController {
     }
 
     @GetMapping("/{roleName}")
-    @PreAuthorize("hasAnyAuthority('can_view_role_by_id')")
+    @PreAuthorize("hasAnyAuthority('can_view_role_by_id', 'can_view_all_roles')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName) {
-        Optional<Role> roleOptional = roleService.findByRoleName(roleName);
-        if (roleOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Role role = roleService.findByRoleName(roleName);
 
-        return new ResponseEntity<>(roleConverter.toDto(roleOptional.get()), HttpStatus.OK);
+        return new ResponseEntity<>(roleConverter.toDto(role), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_role')")
     public ResponseEntity<Object> addRole(@RequestBody RoleDto roleDto) {
-        if (roleService.findByRoleName(roleDto.getRoleName()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
         Role role = roleConverter.toEntity(roleDto);
-        Role insertedRole = roleService.save(role);
+        Role insertedRole = roleService.add(role);
         return new ResponseEntity<>(roleConverter.toDto(insertedRole), HttpStatus.CREATED);
     }
 
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
-        Optional<Role> roleOptional = roleService.findByRoleName(roleName);
-        if (roleOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        if (roleService.findByRoleName(roleDto.getRoleName()).isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
         Role role = roleConverter.toEntity(roleDto);
-        Role updatedRole = roleService.save(role);
-        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.CREATED);
+        role.setRoleName(roleName);
+        Role updatedRole = roleService.update(role);
+        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
     }
 
-    @DeleteMapping("{roleName}")
+    @DeleteMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_delet_role_by_id')")
     public ResponseEntity<Object> deleteRole(@PathVariable("roleName") String roleName) {
-        try {
-            roleService.deleteByRoleName(roleName);
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        roleService.deleteByRoleName(roleName);
 
         return new ResponseEntity<>(HttpStatus.OK);
-
-
     }
 
 }

@@ -1,13 +1,22 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
+import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ResourceConflictException;
+import com.example.student_management.exception.ResourceNotFoundException;
+import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.UserRepository;
 import com.example.student_management.security.authentication.CustomUserDetails;
+import com.example.student_management.utils.ServiceUtils;
+import org.hibernate.PropertyValueException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,34 +32,67 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        if (id == null){
+            throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "User"));
+        }
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_ID.toString(), id));
+        }
+        return userOptional.get();
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_EMAIL.toString(), email));
+        }
+        return userOptional.get();
     }
 
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getRootCause() instanceof SQLException){
+                SQLException ex = (SQLException) e.getRootCause();
+                String message = ServiceUtils.sqlExceptionMessageFormat(ex.getMessage());
+                throw new ResourceConflictException(message);
+            } else if (e.getRootCause() instanceof PropertyValueException){
+                PropertyValueException ex = (PropertyValueException) e.getRootCause();
+                throw new DataInvalidException(ServiceUtils.propertyValueExceptionMessageFormat(ex.getMessage()));
+            } else {
+                throw new DataInvalidException(e.getMessage());
+            }
+        }
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_USERNAME.toString(), username));
+        }
+        return userOptional.get();
     }
 
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+
+        try {
+            userRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(String.format(ExceptionMessage.USER_NOT_FOUND_BY_ID.toString(), id));
+        }
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = this.findByUsername(username);
-        if (userOptional.isEmpty()) {
+        try {
+            User user = this.findByUsername(username);
+            return new CustomUserDetails(user);
+        } catch (ResourceNotFoundException e) {
             throw new UsernameNotFoundException(username);
         }
-
-        return new CustomUserDetails(userOptional.get());
     }
 }

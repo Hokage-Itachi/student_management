@@ -1,11 +1,8 @@
 package com.example.student_management.converter;
 
 import com.example.student_management.domain.Exam;
-import com.example.student_management.domain.ExamResult;
 import com.example.student_management.dto.ExamDto;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class ExamConverter {

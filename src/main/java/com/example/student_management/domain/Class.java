@@ -3,7 +3,6 @@ package com.example.student_management.domain;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +44,6 @@ public class Class {
     @OneToMany(mappedBy = "clazz")
     private List<Event> events;
 
-    @OneToMany(mappedBy = "clazz", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clazz")
     private List<Registration> registrations;
 }

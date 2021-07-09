@@ -1,7 +1,6 @@
 package com.example.student_management.dto;
 
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
