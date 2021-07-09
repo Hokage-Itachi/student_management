@@ -10,6 +10,7 @@ import java.util.List;
 @Table(name = "classes")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

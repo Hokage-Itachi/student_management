@@ -9,6 +9,7 @@ import com.example.student_management.request.ClassRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.CourseService;
 import com.example.student_management.service.TeacherService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/classes")
+@Slf4j
 public class ClassController {
     private final ClassService classService;
     private final CourseService courseService;
@@ -58,6 +60,7 @@ public class ClassController {
         clazz.setTeacher(teacher);
         clazz.setCourse(course);
         Class insertedClass = classService.save(clazz);
+        log.info("{} inserted", clazz);
         return new ResponseEntity<>(classConverter.toDto(insertedClass), HttpStatus.CREATED);
     }
 
@@ -74,6 +77,7 @@ public class ClassController {
         clazz.setCourse(course);
 
         Class updatedClass = classService.save(clazz);
+        log.info("{} updated", updatedClass);
         return new ResponseEntity<>(classConverter.toDto(updatedClass), HttpStatus.OK);
     }
 
@@ -81,6 +85,7 @@ public class ClassController {
     @PreAuthorize("hasAnyAuthority('can_delete_class_by_id')")
     public ResponseEntity<Object> deleteClass(@PathVariable("id") Long id) {
         classService.deleteById(id);
+        log.info("Class {} deleted", id);
         return new ResponseEntity<>(HttpStatus.OK);
 
 
