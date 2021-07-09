@@ -58,7 +58,7 @@ public class RoleController {
         Role role = roleConverter.toEntity(roleDto);
         role.setRoleName(roleName);
         Role updatedRole = roleService.update(role);
-        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.CREATED);
+        return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
     }
 
     @DeleteMapping("/{roleName}")
