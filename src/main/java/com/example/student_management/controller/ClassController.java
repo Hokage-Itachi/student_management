@@ -2,13 +2,8 @@ package com.example.student_management.controller;
 
 import com.example.student_management.converter.ClassConverter;
 import com.example.student_management.domain.Class;
-import com.example.student_management.domain.Course;
-import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.request.ClassRequest;
 import com.example.student_management.service.ClassService;
-import com.example.student_management.service.CourseService;
-import com.example.student_management.service.TeacherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +18,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ClassController {
     private final ClassService classService;
-    private final CourseService courseService;
     private final ClassConverter classConverter;
-    private final TeacherService teacherService;
 
-    public ClassController(ClassService classService, CourseService courseService, ClassConverter classConverter, TeacherService teacherService) {
+    public ClassController(ClassService classService, ClassConverter classConverter) {
         this.classService = classService;
-        this.courseService = courseService;
         this.classConverter = classConverter;
-        this.teacherService = teacherService;
     }
 
     @GetMapping
@@ -52,13 +43,10 @@ public class ClassController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_class')")
-    public ResponseEntity<Object> addClass(@RequestBody ClassRequest request) {
-        Class clazz = classConverter.toEntity(request.getClazz());
-        Teacher teacher = teacherService.findById(request.getTeacherId());
-        Course course = courseService.findById(request.getCourseId());
+    public ResponseEntity<Object> addClass(@RequestBody ClassDto classDto) {
+
+        Class clazz = classConverter.toEntity(classDto);
         clazz.setId(null);
-        clazz.setTeacher(teacher);
-        clazz.setCourse(course);
         Class insertedClass = classService.save(clazz);
         log.info("{} inserted", clazz);
         return new ResponseEntity<>(classConverter.toDto(insertedClass), HttpStatus.CREATED);
@@ -66,16 +54,9 @@ public class ClassController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_class')")
-    public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassRequest request) {
-        classService.findById(id);
-        Teacher teacher = teacherService.findById(request.getTeacherId());
-        Course course = courseService.findById(request.getCourseId());
-        Class clazz = classConverter.toEntity(request.getClazz());
-
+    public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassDto classDto) {
+        Class clazz = classConverter.toEntity(classDto);
         clazz.setId(id);
-        clazz.setTeacher(teacher);
-        clazz.setCourse(course);
-
         Class updatedClass = classService.save(clazz);
         log.info("{} updated", updatedClass);
         return new ResponseEntity<>(classConverter.toDto(updatedClass), HttpStatus.OK);

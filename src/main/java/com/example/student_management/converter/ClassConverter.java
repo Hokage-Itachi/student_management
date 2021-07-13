@@ -1,59 +1,53 @@
 package com.example.student_management.converter;
 
 import com.example.student_management.domain.Class;
-import com.example.student_management.domain.Registration;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.dto.EventDto;
-import com.example.student_management.service.StudentService;
+import com.example.student_management.exception.ForeignKeyException;
+import com.example.student_management.message.ExceptionMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
+@Slf4j
 public class ClassConverter {
 
-    private final StudentService studentService;
-    private final EventConverter eventConverter;
+    private final CourseConverter courseConverter;
+    private final TeacherConverter teacherConverter;
 
-    public ClassConverter(StudentService studentService, EventConverter eventConverter) {
-        this.studentService = studentService;
-        this.eventConverter = eventConverter;
+    public ClassConverter(CourseConverter courseConverter, TeacherConverter teacherConverter) {
+        this.courseConverter = courseConverter;
+        this.teacherConverter = teacherConverter;
     }
 
     public ClassDto toDto(Class entity) {
-        List<EventDto> events = new ArrayList<>();
-        if (entity.getEvents() != null) {
-            events = entity.getEvents().stream().map(eventConverter::toDto).collect(Collectors.toList());
-        }
-        List<Registration> registrations = entity.getRegistrations();
-        List<String> students = new ArrayList<>();
-        if (registrations != null) {
-            students = registrations.stream().map(registrationId -> studentService.findById(registrationId.getId().getStudentId()).getFullName()).collect(Collectors.toList());
-
-        }
         return ClassDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .startDate(entity.getStartDate())
                 .endDate(entity.getEndDate())
                 .status(entity.getStatus())
-                .course(entity.getCourse().getName())
-                .teacher(entity.getTeacher().getFullName())
-                .events(events)
-                .students(students)
+                .course(courseConverter.toDto(entity.getCourse()))
+                .teacher(teacherConverter.toDto(entity.getTeacher()))
                 .build();
     }
 
     public Class toEntity(ClassDto classDto) {
-
+        if (classDto.getTeacher() == null || classDto.getTeacher().getId() == null){
+            log.error("Teacher reference null");
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Teacher"));
+        }
+        if(classDto.getCourse() == null || classDto.getCourse().getId() == null){
+            log.error("Course reference null");
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Course"));
+        }
         return Class.builder()
                 .id(classDto.getId())
                 .name(classDto.getName())
                 .startDate(classDto.getStartDate())
                 .endDate(classDto.getEndDate())
                 .status(classDto.getStatus())
+                .course(courseConverter.toEntity(classDto.getCourse()))
+                .teacher(teacherConverter.toEntity(classDto.getTeacher()))
                 .build();
     }
 }

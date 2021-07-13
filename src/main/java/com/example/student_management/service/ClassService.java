@@ -6,11 +6,13 @@ import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.ClassRepository;
+import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +51,12 @@ public class ClassService {
             log.error("Class start date null");
             throw new DataInvalidException(ExceptionMessage.CLASS_START_DATE_INVALID.message);
         }
-        return classRepository.save(clazz);
+        try {
+            return classRepository.save(clazz);
+        } catch (DataIntegrityViolationException e) {
+            SQLException ex = (SQLException) e.getRootCause();
+            throw new ResourceNotFoundException(ServiceUtils.sqlExceptionMessageFormat(ex.getMessage()));
+        }
     }
 
     public void deleteById(Long id) {
