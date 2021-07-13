@@ -20,6 +20,9 @@ public class ClassConverter {
     }
 
     public ClassDto toDto(Class entity) {
+        if(entity == null){
+            return null;
+        }
         return ClassDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -32,13 +35,8 @@ public class ClassConverter {
     }
 
     public Class toEntity(ClassDto classDto) {
-        if (classDto.getTeacher() == null || classDto.getTeacher().getId() == null){
-            log.error("Teacher reference null");
-            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Teacher"));
-        }
-        if(classDto.getCourse() == null || classDto.getCourse().getId() == null){
-            log.error("Course reference null");
-            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Course"));
+        if (classDto == null) {
+            return null;
         }
         return Class.builder()
                 .id(classDto.getId())

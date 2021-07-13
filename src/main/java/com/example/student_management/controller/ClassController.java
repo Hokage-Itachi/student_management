@@ -55,6 +55,7 @@ public class ClassController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_class')")
     public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassDto classDto) {
+        classService.findById(id);
         Class clazz = classConverter.toEntity(classDto);
         clazz.setId(id);
         Class updatedClass = classService.save(clazz);

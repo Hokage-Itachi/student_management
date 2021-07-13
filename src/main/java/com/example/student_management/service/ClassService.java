@@ -51,6 +51,14 @@ public class ClassService {
             log.error("Class start date null");
             throw new DataInvalidException(ExceptionMessage.CLASS_START_DATE_INVALID.message);
         }
+        if (clazz.getTeacher() == null || clazz.getTeacher().getId() == null){
+            log.error("Teacher reference null");
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Teacher"));
+        }
+        if(clazz.getCourse() == null || clazz.getCourse().getId() == null){
+            log.error("Course reference null");
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Course"));
+        }
         try {
             return classRepository.save(clazz);
         } catch (DataIntegrityViolationException e) {
