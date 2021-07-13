@@ -18,5 +18,4 @@ public class TeacherDto {
     private String phone;
     private String address;
     private String grade;
-    private List<String> classes;
 }
