@@ -1,10 +1,8 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.EventConverter;
-import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Event;
 import com.example.student_management.dto.EventDto;
-import com.example.student_management.request.EventRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -48,12 +46,10 @@ public class EventController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_event')")
-    public ResponseEntity<Object> addEvent(@RequestBody EventRequest request) {
-        Class clazz = classService.findById(request.getClassId());
+    public ResponseEntity<Object> addEvent(@RequestBody EventDto eventDto) {
 
-        Event event = eventConverter.toEntity(request.getEvent());
+        Event event = eventConverter.toEntity(eventDto);
         event.setId(null);
-        event.setClazz(clazz);
         Event insertedEvent = eventService.save(event);
         return new ResponseEntity<>(eventConverter.toDto(insertedEvent), HttpStatus.CREATED);
 
@@ -62,14 +58,10 @@ public class EventController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_event')")
-    public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventRequest request) {
-        Class clazz = classService.findById(request.getClassId());
-
+    public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventDto eventDto) {
         eventService.findById(id);
-
-        Event eventUpdateInfo = eventConverter.toEntity(request.getEvent());
+        Event eventUpdateInfo = eventConverter.toEntity(eventDto);
         eventUpdateInfo.setId(id);
-        eventUpdateInfo.setClazz(clazz);
         Event updatedEvent = eventService.save(eventUpdateInfo);
         return new ResponseEntity<>(eventConverter.toDto(updatedEvent), HttpStatus.OK);
     }

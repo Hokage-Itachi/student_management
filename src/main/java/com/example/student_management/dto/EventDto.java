@@ -19,6 +19,6 @@ public class EventDto {
     private String status;
     private Date happenDate;
     @JsonProperty("class")
-    private String clazz;
+    private ClassDto clazz;
 
 }

@@ -5,9 +5,12 @@ import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.EventRepository;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +27,7 @@ public class EventService {
     }
 
     public Event findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Event"));
         }
         Optional<Event> eventOptional = eventRepository.findById(id);
@@ -44,7 +47,12 @@ public class EventService {
         if (event.getStatus() == null || event.getStatus().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.EVENT_STATUS_INVALID.message);
         }
-        return eventRepository.save(event);
+        try {
+            return eventRepository.save(event);
+        } catch (DataIntegrityViolationException e) {
+            SQLException ex = (SQLException) e.getRootCause();
+            throw new ResourceNotFoundException(ServiceUtils.sqlExceptionMessageFormat(ex.getMessage()));
+        }
     }
 
     public void deleteById(Long id) {
