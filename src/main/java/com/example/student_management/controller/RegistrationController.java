@@ -52,12 +52,7 @@ public class RegistrationController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_registration')")
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
-        Student student = studentService.findById(registrationDto.getId().getStudentId());
-        Class clazz = classService.findById(registrationDto.getId().getClassId());
-
         Registration registration = registrationConverter.toEntity(registrationDto);
-        registration.setClazz(clazz);
-        registration.setStudent(student);
         Registration insertedRegistration = registrationService.add(registration);
         return new ResponseEntity<>(registrationConverter.toDto(insertedRegistration), HttpStatus.CREATED);
     }
@@ -65,13 +60,9 @@ public class RegistrationController {
     @PutMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")
     public ResponseEntity<Object> updateRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId, @RequestBody RegistrationDto registrationDto) {
-        Student student = studentService.findById(studentId);
-        Class clazz = classService.findById(classId);
 
         Registration registration = registrationConverter.toEntity(registrationDto);
         registration.setId(new RegistrationId(studentId, classId));
-        registration.setClazz(clazz);
-        registration.setStudent(student);
 
         Registration updatedRegistration = registrationService.update(registration);
         return new ResponseEntity<>(registrationConverter.toDto(updatedRegistration), HttpStatus.OK);

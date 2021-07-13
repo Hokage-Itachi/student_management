@@ -17,6 +17,6 @@ public class RegistrationDto {
     private Date registerDay;
     private String status;
     private Date createdDate;
-    private String clazz;
-    private String student;
+    private ClassDto clazz;
+    private StudentDto student;
 }
