@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
-    //    @ExceptionHandler(Exception.class)
+//        @ExceptionHandler(Exception.class)
 //    public ResponseEntity<Object> handleException(Exception e){
 //        String error = "Internal Server Error";
 //        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
@@ -89,7 +89,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         String error = "Json error";
-        String message = "Error while parsing Json";
+        String message = e.getMessage().split(";")[0];
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }

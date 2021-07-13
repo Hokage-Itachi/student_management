@@ -55,8 +55,8 @@ public enum ExceptionMessage {
     EXAM_FOREIGN_KEY("Exam '%d' still has foreign key reference"),
     COURSE_FOREIGN_KEY("Course %d still has foreign key reference"),
     CLASS_FOREIGN_KEY("Class %d still has foreign key reference"),
-    ROLE_FOREIGN_KEY("Role '%s' still has foreign key reference")
-    ;
+    ROLE_FOREIGN_KEY("Role '%s' still has foreign key reference"),
+    NULL_FOREIGN_KEY_REFERENCE("'%s' reference must not be null");
     public final String message;
 
     ExceptionMessage(String message) {
