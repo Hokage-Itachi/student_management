@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PermissionConverter {
     public PermissionDto toDto(Permission entity) {
+        if(entity == null){
+            return null;
+        }
         return PermissionDto.builder()
                 .id(entity.getId())
                 .description(entity.getDescription())
@@ -15,6 +18,9 @@ public class PermissionConverter {
     }
 
     public Permission toEntity(PermissionDto permissionDto) {
+        if(permissionDto == null){
+            return null;
+        }
         return Permission.builder()
                 .id(permissionDto.getId())
                 .description(permissionDto.getDescription())

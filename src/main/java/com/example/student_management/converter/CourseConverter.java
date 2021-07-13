@@ -14,42 +14,24 @@ import java.util.stream.Collectors;
 @Component
 public class CourseConverter {
 
-    private final ClassConverter classConverter;
-    private final ExamConverter examConverter;
-    private final PlanConverter planConverter;
-
-    public CourseConverter(ClassConverter classConverter, ExamConverter examConverter, PlanConverter planConverter) {
-        this.classConverter = classConverter;
-        this.examConverter = examConverter;
-        this.planConverter = planConverter;
-    }
 
     public CourseDto toDto(Course entity) {
-        List<ClassDto> classes = new ArrayList<>();
-        List<ExamDto> exams = new ArrayList<>();
-        List<PlanDto> plans = new ArrayList<>();
-        if (entity.getClasses() != null) {
-            classes = entity.getClasses().stream().map(classConverter::toDto).collect(Collectors.toList());
-        }
-        if (entity.getExams() != null) {
-            exams = entity.getExams().stream().map(examConverter::toDto).collect(Collectors.toList());
-        }
-        if (entity.getPlans() != null) {
-            plans = entity.getPlans().stream().map(planConverter::toDto).collect(Collectors.toList());
+        if(entity == null){
+            return null;
         }
         return CourseDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .type(entity.getType())
                 .createdDate(entity.getCreateDate())
-                .classes(classes)
-                .exams(exams)
-                .plans(plans)
                 .build();
 
     }
 
     public Course toEntity(CourseDto courseDto) {
+        if (courseDto == null) {
+            return null;
+        }
         return Course.builder()
                 .id(courseDto.getId())
                 .name(courseDto.getName())
