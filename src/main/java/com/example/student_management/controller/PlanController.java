@@ -46,12 +46,9 @@ public class PlanController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_plan')")
-    public ResponseEntity<Object> addPlan(@RequestBody PlanRequest request) {
-        Course course = courseService.findById(request.getCourseId());
-
-        Plan plan = planConverter.toEntity(request.getPlan());
+    public ResponseEntity<Object> addPlan(@RequestBody PlanDto planDto) {
+        Plan plan = planConverter.toEntity(planDto);
         plan.setId(null);
-        plan.setCourse(course);
         Plan insertedPlan = planService.save(plan);
         return new ResponseEntity<>(planConverter.toDto(insertedPlan), HttpStatus.OK);
     }
