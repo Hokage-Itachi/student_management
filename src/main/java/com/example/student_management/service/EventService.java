@@ -2,6 +2,7 @@ package com.example.student_management.service;
 
 import com.example.student_management.domain.Event;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.EventRepository;
@@ -46,6 +47,9 @@ public class EventService {
         }
         if (event.getStatus() == null || event.getStatus().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.EVENT_STATUS_INVALID.message);
+        }
+        if (event.getClazz() == null || event.getClazz().getId() == null) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Class"));
         }
         try {
             return eventRepository.save(event);

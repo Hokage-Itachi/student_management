@@ -15,6 +15,9 @@ public class EventConverter {
     }
 
     public EventDto toDto(Event entity) {
+        if(entity == null){
+            return null;
+        }
         return EventDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -27,8 +30,8 @@ public class EventConverter {
 
 
     public Event toEntity(EventDto eventDto) {
-        if (eventDto.getClazz() == null || eventDto.getClazz().getId() == null) {
-            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Class"));
+        if (eventDto == null) {
+            return null;
         }
         return Event.builder()
                 .id(eventDto.getId())
