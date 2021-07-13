@@ -17,9 +17,9 @@ public class ExamResultDto {
     private Integer score;
     private Date resultDate;
     private String note;
-    private String student;
-    private String exam;
+    private StudentDto student;
+    private ExamDto exam;
     @JsonProperty("class")
-    private String clazz;
+    private ClassDto clazz;
 
 }

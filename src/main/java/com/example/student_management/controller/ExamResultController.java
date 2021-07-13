@@ -11,6 +11,7 @@ import com.example.student_management.service.ClassService;
 import com.example.student_management.service.ExamResultService;
 import com.example.student_management.service.ExamService;
 import com.example.student_management.service.StudentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/examResults")
+@Slf4j
 public class ExamResultController {
     private final ExamResultConverter examResultConverter;
     private final ExamResultService examResultService;
@@ -54,36 +56,22 @@ public class ExamResultController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam_result')")
-    public ResponseEntity<Object> addExamResult(@RequestBody ExamResultRequest request) {
-        Student student = studentService.findById(request.getStudentId());
-        Class clazz = classService.findById(request.getClassId());
-        Exam exam = examService.findById(request.getExamId());
-
-        ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
+    public ResponseEntity<Object> addExamResult(@RequestBody ExamResultDto examResultDto) {
+        ExamResult examResult = examResultConverter.toEntity(examResultDto);
         examResult.setId(null);
-        examResult.setExam(exam);
-        examResult.setClazz(clazz);
-        examResult.setStudent(student);
-
-        ExamResult insertedExamResult = examResultService.add(examResult);
+        ExamResult insertedExamResult = examResultService.save(examResult);
+        log.info("Exam result {} inserted", insertedExamResult);
         return new ResponseEntity<>(examResultConverter.toDto(insertedExamResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
-    public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultRequest request) {
+    public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultDto examResultDto) {
         examResultService.findById(id);
-        Student student = studentService.findById(request.getStudentId());
-        Class clazz = classService.findById(request.getClassId());
-        Exam exam = examService.findById(request.getExamId());
-
-        ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
+        ExamResult examResult = examResultConverter.toEntity(examResultDto);
         examResult.setId(id);
-        examResult.setExam(exam);
-        examResult.setClazz(clazz);
-        examResult.setStudent(student);
-
-        ExamResult updatedExamResult = examResultService.update(examResult);
+        ExamResult updatedExamResult = examResultService.save(examResult);
+        log.info("Exam result {} updated", examResult.getId());
         return new ResponseEntity<>(examResultConverter.toDto(updatedExamResult), HttpStatus.OK);
     }
 
@@ -91,7 +79,7 @@ public class ExamResultController {
     @PreAuthorize("hasAnyAuthority('can_delete_exam_result_by_id')")
     public ResponseEntity<Object> deleteExamResult(@PathVariable("id") Long id) {
         examResultService.deleteById(id);
-
+        log.info("Exam result {} deleted", id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
