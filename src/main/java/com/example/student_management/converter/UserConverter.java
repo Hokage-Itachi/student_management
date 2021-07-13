@@ -1,26 +1,24 @@
 package com.example.student_management.converter;
 
-import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.User;
 import com.example.student_management.dto.UserDto;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Component
 public class UserConverter {
+    private final RoleConverter roleConverter;
+
+    public UserConverter(RoleConverter roleConverter) {
+        this.roleConverter = roleConverter;
+    }
+
     public UserDto toDto(User entity) {
-        Set<Permission> permissions = entity.getRole().getPermissions();
-        if (entity.getPermissions() != null) {
-            permissions.addAll(entity.getPermissions());
+        if (entity == null) {
+            return null;
         }
-        List<String> permissionDtoList = permissions.stream().map(Permission::getPerName).collect(Collectors.toList());
         return UserDto.builder()
                 .id(entity.getId())
                 .username(entity.getUsername())
-                .password("")
                 .email(entity.getEmail())
                 .birthday(entity.getBirthday())
                 .fullName(entity.getFullName())
@@ -29,12 +27,14 @@ public class UserConverter {
                 .loginFailedCount(entity.getLoginFailedCount())
                 .registerDate(entity.getRegisterDate())
                 .forgotPasswordToken(entity.getForgotPasswordToken())
-                .role(entity.getRole().getRoleName())
-                .permissions(permissionDtoList)
+                .role(roleConverter.toDto(entity.getRole()))
                 .build();
     }
 
     public User toEntity(UserDto userDto) {
+        if (userDto == null) {
+            return null;
+        }
         return User.builder()
                 .id(userDto.getId())
                 .username(userDto.getUsername())
@@ -46,6 +46,7 @@ public class UserConverter {
                 .loginFailedCount(userDto.getLoginFailedCount())
                 .registerDate(userDto.getRegisterDate())
                 .forgotPasswordToken(userDto.getForgotPasswordToken())
+                .role(roleConverter.toEntity(userDto.getRole()))
                 .build();
     }
 }

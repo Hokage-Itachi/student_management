@@ -1,5 +1,6 @@
 package com.example.student_management.controller;
 
+import com.example.student_management.converter.RoleConverter;
 import com.example.student_management.converter.UserConverter;
 import com.example.student_management.domain.Role;
 import com.example.student_management.domain.User;
@@ -20,13 +21,15 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final UserConverter userConverter;
+    private final RoleConverter roleConverter;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserController(UserService userService, UserConverter userConverter, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, UserConverter userConverter, RoleConverter roleConverter, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userConverter = userConverter;
+        this.roleConverter = roleConverter;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -50,12 +53,10 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_user')")
     public ResponseEntity<Object> addUser(@RequestBody UserDto userDto) {
-        Role role = roleService.findByRoleName(userDto.getRole());
 
         User user = userConverter.toEntity(userDto);
         user.setId(null);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(role);
         User insertedUser = userService.save(user);
         return new ResponseEntity<>(userConverter.toDto(insertedUser), HttpStatus.CREATED);
 
@@ -66,11 +67,8 @@ public class UserController {
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
         userService.findById(id);
 
-        Role role = roleService.findByRoleName(userDto.getRole());
-
         User user = userConverter.toEntity(userDto);
         user.setId(id);
-        user.setRole(role);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User updatedUser = userService.save(user);
         return new ResponseEntity<>(userConverter.toDto(updatedUser), HttpStatus.OK);

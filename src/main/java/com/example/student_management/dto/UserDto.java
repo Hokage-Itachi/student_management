@@ -24,6 +24,5 @@ public class UserDto {
     private Integer loginFailedCount;
     private Date registerDate;
     private String forgotPasswordToken;
-    private String role;
-    private List<String> permissions;
+    private RoleDto role;
 }
