@@ -55,14 +55,12 @@ public class PlanController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_plan')")
-    public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanRequest request) {
+    public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanDto planDto) {
         planService.findById(id);
-        Course course = courseService.findById(request.getCourseId());
 
-        Plan planUpdateInfo = planConverter.toEntity(request.getPlan());
+        Plan planUpdateInfo = planConverter.toEntity(planDto);
         planUpdateInfo.setId(id);
-        planUpdateInfo.setCourse(course);
-
+        // TODO: partial update
         Plan updatedPlan = planService.save(planUpdateInfo);
         return new ResponseEntity<>(planConverter.toDto(updatedPlan), HttpStatus.OK);
     }
