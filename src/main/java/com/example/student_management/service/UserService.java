@@ -11,6 +11,9 @@ import com.example.student_management.security.authentication.CustomUserDetails;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +38,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    @Cacheable("user")
     public User findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "User"));
@@ -46,6 +50,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @Cacheable("user")
     public User findByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
@@ -54,6 +59,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @CachePut(value = "user")
     public User save(User user) {
         if (user.getRole() == null || user.getRole().getRoleName() == null) {
             throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Role"));
@@ -74,6 +80,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Cacheable("user")
     public User findByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
@@ -82,6 +89,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @CacheEvict(value = "user")
     public void deleteById(Long id) {
 
         try {
@@ -93,6 +101,7 @@ public class UserService implements UserDetailsService {
 
 
     @Override
+    @Cacheable("user")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             User user = this.findByUsername(username);

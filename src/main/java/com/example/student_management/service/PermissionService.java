@@ -6,6 +6,10 @@ import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.PermissionRepository;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -20,11 +24,10 @@ public class PermissionService {
     public PermissionService(PermissionRepository permissionRepository) {
         this.permissionRepository = permissionRepository;
     }
-
     public List<Permission> findAll() {
         return permissionRepository.findAll();
     }
-
+    @Cacheable("permission")
     public Permission findById(Long id) {
         if (id == null){
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Permission"));
@@ -35,14 +38,14 @@ public class PermissionService {
         }
         return permissionOptional.get();
     }
-
+    @CachePut(value = "permission")
     public Permission save(Permission permission) {
         if (permission.getPerName() == null || permission.getPerName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.PERMISSION_NAME_INVALID.message);
         }
         return permissionRepository.save(permission);
     }
-
+    @CacheEvict(value = "permission")
     public void deleteById(Long id) {
 
         try {
