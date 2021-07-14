@@ -7,6 +7,8 @@ import com.example.student_management.domain.User;
 import com.example.student_management.dto.UserDto;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,7 +55,6 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_user')")
     public ResponseEntity<Object> addUser(@RequestBody UserDto userDto) {
-
         User user = userConverter.toEntity(userDto);
         user.setId(null);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -65,12 +66,15 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_user')")
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
-        userService.findById(id);
-
-        User user = userConverter.toEntity(userDto);
-        user.setId(id);
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User updatedUser = userService.save(user);
+        User updatedTarget = userService.findById(id);
+        User updatedSource = userConverter.toEntity(userDto);
+        updatedSource.setId(id);
+        if (userDto.getPassword() != null) {
+            updatedSource.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        User updatedUser = userService.save(updatedTarget);
         return new ResponseEntity<>(userConverter.toDto(updatedUser), HttpStatus.OK);
     }
 

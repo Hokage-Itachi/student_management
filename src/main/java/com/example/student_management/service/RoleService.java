@@ -51,9 +51,6 @@ public class RoleService {
         if (role.getRoleName() == null || role.getRoleName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
         }
-        if (roleRepository.findByRoleName(role.getRoleName()).isEmpty()) {
-            throw new ResourceNotFoundException(String.format(ExceptionMessage.ROLE_NOT_FOUND.message, role.getRoleName()));
-        }
         return roleRepository.save(role);
     }
 

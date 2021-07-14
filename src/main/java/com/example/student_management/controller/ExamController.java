@@ -1,12 +1,12 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.ExamConverter;
-import com.example.student_management.domain.Course;
 import com.example.student_management.domain.Exam;
 import com.example.student_management.dto.ExamDto;
-import com.example.student_management.request.ExamRequest;
-import com.example.student_management.service.CourseService;
 import com.example.student_management.service.ExamService;
+import com.example.student_management.utils.ServiceUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,15 +17,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/exams")
+@Slf4j
 public class ExamController {
     private final ExamService examService;
     private final ExamConverter examConverter;
-    private final CourseService courseService;
 
-    public ExamController(ExamService examService, ExamConverter examConverter, CourseService courseService) {
+    public ExamController(ExamService examService, ExamConverter examConverter) {
         this.examService = examService;
         this.examConverter = examConverter;
-        this.courseService = courseService;
     }
 
     @GetMapping
@@ -41,33 +40,27 @@ public class ExamController {
     public ResponseEntity<Object> getExamById(@PathVariable("id") Long id) {
         Exam exam = examService.findById(id);
         ExamDto examDto = examConverter.toDto(exam);
-
         return new ResponseEntity<>(examDto, HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam')")
-    public ResponseEntity<Object> addExam(@RequestBody ExamRequest request) {
-        Course course = courseService.findById(request.getCourseId());
-
-        Exam exam = examConverter.toEntity(request.getExam());
+    public ResponseEntity<Object> addExam(@RequestBody ExamDto examDto) {
+        Exam exam = examConverter.toEntity(examDto);
         exam.setId(null);
-        exam.setCourse(course);
         Exam insertedExam = examService.save(exam);
-
         return new ResponseEntity<>(examConverter.toDto(insertedExam), HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam')")
-    public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamRequest request) {
-        examService.findById(id);
-        Course course = courseService.findById(request.getCourseId());
-        Exam examUpdateInfo = examConverter.toEntity(request.getExam());
-        examUpdateInfo.setId(id);
-        examUpdateInfo.setCourse(course);
-
-        Exam updatedExam = examService.save(examUpdateInfo);
+    public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamDto examDto) {
+        Exam updatedTarget = examService.findById(id);
+        Exam updatedSource = examConverter.toEntity(examDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Exam updatedExam = examService.save(updatedTarget);
         return new ResponseEntity<>(examConverter.toDto(updatedExam), HttpStatus.OK);
     }
 
@@ -75,7 +68,6 @@ public class ExamController {
     @PreAuthorize("hasAnyAuthority('can_delete_exam_by_id')")
     public ResponseEntity<Object> deleteExam(@PathVariable("id") Long id) {
         examService.deleteById(id);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

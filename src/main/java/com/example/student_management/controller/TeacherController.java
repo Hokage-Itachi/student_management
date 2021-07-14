@@ -4,6 +4,8 @@ import com.example.student_management.converter.TeacherConverter;
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.TeacherDto;
 import com.example.student_management.service.TeacherService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,12 +54,12 @@ public class TeacherController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_teacher')")
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
-        teacherService.findById(id);
-
-        Teacher teacherUpdateInfo = teacherConverter.toEntity(teacherDto);
-        teacherUpdateInfo.setId(id);
-
-        Teacher updatedTeacher = teacherService.save(teacherUpdateInfo);
+        Teacher updatedTarget = teacherService.findById(id);
+        Teacher updatedSource = teacherConverter.toEntity(teacherDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Teacher updatedTeacher = teacherService.save(updatedTarget);
         return new ResponseEntity<>(teacherConverter.toDto(updatedTeacher), HttpStatus.OK);
     }
 

@@ -4,6 +4,8 @@ import com.example.student_management.converter.PermissionConverter;
 import com.example.student_management.domain.Permission;
 import com.example.student_management.dto.PermissionDto;
 import com.example.student_management.service.PermissionService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -50,11 +52,12 @@ public class PermissionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_permission')")
     public ResponseEntity<Object> updatePermission(@PathVariable("id") Long id, @RequestBody PermissionDto permissionDto) {
-        permissionService.findById(id);
-
-        Permission permission = permissionConverter.toEntity(permissionDto);
-        permission.setId(id);
-        Permission updatedPermission = permissionService.save(permission);
+        Permission updatedTarget = permissionService.findById(id);
+        Permission updatedSource = permissionConverter.toEntity(permissionDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Permission updatedPermission = permissionService.save(updatedTarget);
         return new ResponseEntity<>(permissionConverter.toDto(updatedPermission), HttpStatus.OK);
     }
 

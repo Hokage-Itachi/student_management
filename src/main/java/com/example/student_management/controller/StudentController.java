@@ -4,6 +4,8 @@ import com.example.student_management.converter.StudentConverter;
 import com.example.student_management.domain.Student;
 import com.example.student_management.dto.StudentDto;
 import com.example.student_management.service.StudentService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +37,6 @@ public class StudentController {
     @PreAuthorize("hasAnyAuthority('can_view_student_by_id','can_view_all_students')")
     public ResponseEntity<Object> getStudentById(@PathVariable("id") Long id) {
         Student student = studentService.findById(id);
-
         return new ResponseEntity<>(studentConverter.toDto(student), HttpStatus.OK);
     }
 
@@ -51,11 +52,12 @@ public class StudentController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_student')")
     public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
-        studentService.findById(id);
-
-        Student studentUpdateInfo = studentConverter.toEntity(studentDto);
-        studentUpdateInfo.setId(id);
-        Student updatedStudent = studentService.save(studentUpdateInfo);
+        Student updatedTarget = studentService.findById(id);
+        Student updatedSource = studentConverter.toEntity(studentDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Student updatedStudent = studentService.save(updatedTarget);
         return new ResponseEntity<>(studentConverter.toDto(updatedStudent), HttpStatus.OK);
     }
 

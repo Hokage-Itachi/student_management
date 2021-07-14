@@ -1,12 +1,11 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.RoleConverter;
-import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.Role;
 import com.example.student_management.dto.RoleDto;
-import com.example.student_management.request.PermissionRequest;
-import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +19,10 @@ import java.util.stream.Collectors;
 public class RoleController {
     private final RoleService roleService;
     private final RoleConverter roleConverter;
-    private final PermissionService permissionService;
 
-    public RoleController(RoleService roleService, RoleConverter roleConverter, PermissionService permissionService) {
+    public RoleController(RoleService roleService, RoleConverter roleConverter) {
         this.roleService = roleService;
         this.roleConverter = roleConverter;
-        this.permissionService = permissionService;
     }
 
     @GetMapping
@@ -55,9 +52,12 @@ public class RoleController {
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
-        Role role = roleConverter.toEntity(roleDto);
-        role.setRoleName(roleName);
-        Role updatedRole = roleService.update(role);
+        Role updatedTarget = roleService.findByRoleName(roleName);
+        Role updatedSource = roleConverter.toEntity(roleDto);
+        updatedSource.setRoleName(roleName);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Role updatedRole = roleService.update(updatedTarget);
         return new ResponseEntity<>(roleConverter.toDto(updatedRole), HttpStatus.OK);
     }
 

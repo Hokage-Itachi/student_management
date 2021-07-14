@@ -7,6 +7,8 @@ import com.example.student_management.dto.PlanDto;
 import com.example.student_management.request.PlanRequest;
 import com.example.student_management.service.CourseService;
 import com.example.student_management.service.PlanService;
+import com.example.student_management.utils.ServiceUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +22,10 @@ import java.util.stream.Collectors;
 public class PlanController {
     private final PlanService planService;
     private final PlanConverter planConverter;
-    private final CourseService courseService;
 
-    public PlanController(PlanService planService, PlanConverter planConverter, CourseService courseService) {
+    public PlanController(PlanService planService, PlanConverter planConverter) {
         this.planService = planService;
         this.planConverter = planConverter;
-        this.courseService = courseService;
     }
 
     @GetMapping
@@ -40,7 +40,6 @@ public class PlanController {
     @PreAuthorize("hasAnyAuthority('can_view_plan_by_id', 'can_view_all_plans')")
     public ResponseEntity<Object> getPlanById(@PathVariable("id") Long id) {
         Plan plan = planService.findById(id);
-
         return new ResponseEntity<>(planConverter.toDto(plan), HttpStatus.OK);
     }
 
@@ -56,12 +55,12 @@ public class PlanController {
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_plan')")
     public ResponseEntity<Object> updatePlan(@PathVariable("id") Long id, @RequestBody PlanDto planDto) {
-        planService.findById(id);
-
-        Plan planUpdateInfo = planConverter.toEntity(planDto);
-        planUpdateInfo.setId(id);
-        // TODO: partial update
-        Plan updatedPlan = planService.save(planUpdateInfo);
+        Plan updatedTarget = planService.findById(id);
+        Plan updatedSource = planConverter.toEntity(planDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        Plan updatedPlan = planService.save(updatedTarget);
         return new ResponseEntity<>(planConverter.toDto(updatedPlan), HttpStatus.OK);
     }
 

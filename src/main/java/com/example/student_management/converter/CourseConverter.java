@@ -23,7 +23,7 @@ public class CourseConverter {
                 .id(entity.getId())
                 .name(entity.getName())
                 .type(entity.getType())
-                .createdDate(entity.getCreateDate())
+                .createDate(entity.getCreateDate())
                 .build();
 
     }
@@ -36,7 +36,7 @@ public class CourseConverter {
                 .id(courseDto.getId())
                 .name(courseDto.getName())
                 .type(courseDto.getType())
-                .createDate(courseDto.getCreatedDate())
+                .createDate(courseDto.getCreateDate())
                 .build();
     }
 }
