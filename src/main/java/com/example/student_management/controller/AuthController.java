@@ -3,7 +3,7 @@ package com.example.student_management.controller;
 import com.example.student_management.domain.Role;
 import com.example.student_management.domain.User;
 import com.example.student_management.exception.DataInvalidException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.request.ForgotPasswordRequest;
 import com.example.student_management.request.LoginRequest;
 import com.example.student_management.request.ResetPasswordRequest;
@@ -13,16 +13,10 @@ import com.example.student_management.security.jwt.JwtProvider;
 import com.example.student_management.service.MailService;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -95,7 +88,8 @@ public class AuthController {
         String requestURL = httpServletRequest.getRequestURL().toString();
         String siteURL = requestURL.replace(httpServletRequest.getServletPath(), "");
         String link = siteURL + "/reset-password?token=" + token;
-        mailService.sendMail(user.getEmail(), link);
+        String template = "forgot-password-mail";
+        mailService.sendMail(user.getEmail(), link, template);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
