@@ -1,12 +1,17 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.EventConverter;
+import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Event;
 import com.example.student_management.dto.EventDto;
 import com.example.student_management.service.EventService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,8 +34,15 @@ public class EventController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_events')")
-    public ResponseEntity<Object> getAllEvents() {
-        List<Event> events = eventService.findAll();
+    public ResponseEntity<Object> getAllEvents(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Event> specification = new CustomSpecificationBuilder<Event>(ServiceUtils.getFilterParam(filter, Event.class)).build();
+        List<Event> events = eventService.findAll(specification, pageable);
         List<EventDto> eventDtoList = events.stream().map(eventConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(eventDtoList, HttpStatus.OK);
     }

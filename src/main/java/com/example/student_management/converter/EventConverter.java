@@ -2,8 +2,6 @@ package com.example.student_management.converter;
 
 import com.example.student_management.domain.Event;
 import com.example.student_management.dto.EventDto;
-import com.example.student_management.exception.ForeignKeyException;
-import com.example.student_management.message.ExceptionMessage;
 import org.springframework.stereotype.Component;
 
 @Component
