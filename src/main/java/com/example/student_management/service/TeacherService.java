@@ -5,11 +5,13 @@ import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.TeacherRepository;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -24,12 +26,15 @@ public class TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public List<Teacher> findAll() {
-        return teacherRepository.findAll();
+    public List<Teacher> findAll(Specification<Teacher> specification, Pageable pageable) {
+        if (specification == null) {
+            return teacherRepository.findAll(pageable).getContent();
+        }
+        return teacherRepository.findAll(specification, pageable).getContent();
     }
 
     public Teacher findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Teacher"));
         }
         Optional<Teacher> teacherOptional = teacherRepository.findById(id);

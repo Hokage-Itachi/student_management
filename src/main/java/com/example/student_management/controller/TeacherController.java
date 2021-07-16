@@ -4,8 +4,12 @@ import com.example.student_management.converter.TeacherConverter;
 import com.example.student_management.domain.Teacher;
 import com.example.student_management.dto.TeacherDto;
 import com.example.student_management.service.TeacherService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,8 +32,15 @@ public class TeacherController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_teachers')")
-    public ResponseEntity<Object> getAllTeacher() {
-        List<Teacher> teachers = teacherService.findAll();
+    public ResponseEntity<Object> getAllTeacher(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Teacher> specification = new CustomSpecificationBuilder<Teacher>(ServiceUtils.getFilterParam(filter, Teacher.class)).build();
+        List<Teacher> teachers = teacherService.findAll(specification, pageable);
         List<TeacherDto> teacherDtoList = teachers.stream().map(teacherConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(teacherDtoList, HttpStatus.OK);
     }
