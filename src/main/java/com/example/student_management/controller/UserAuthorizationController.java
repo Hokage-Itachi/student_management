@@ -4,7 +4,7 @@ import com.example.student_management.domain.Permission;
 import com.example.student_management.domain.User;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.UserService;
 import org.springframework.http.HttpStatus;

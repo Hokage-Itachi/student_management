@@ -1,11 +1,11 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.UserRepository;
 import com.example.student_management.security.authentication.CustomUserDetails;
 import com.example.student_management.utils.ServiceUtils;
@@ -16,6 +16,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,8 +36,11 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll(Specification<User> specification, Pageable pageable) {
+        if (specification == null) {
+            return userRepository.findAll(pageable).getContent();
+        }
+        return userRepository.findAll(specification, pageable).getContent();
     }
 
     @Cacheable("user")
