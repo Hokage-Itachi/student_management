@@ -1,14 +1,15 @@
 package com.example.student_management.controller;
 
-import com.example.student_management.converter.RoleConverter;
 import com.example.student_management.converter.UserConverter;
-import com.example.student_management.domain.Role;
 import com.example.student_management.domain.User;
 import com.example.student_management.dto.UserDto;
-import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,23 +24,26 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
     private final UserConverter userConverter;
-    private final RoleConverter roleConverter;
-    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
 
-    public UserController(UserService userService, UserConverter userConverter, RoleConverter roleConverter, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, UserConverter userConverter, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userConverter = userConverter;
-        this.roleConverter = roleConverter;
-        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_users')")
-    public ResponseEntity<Object> getAllUsers() {
-        List<User> users = userService.findAll();
+    public ResponseEntity<Object> getAllUsers(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<User> specification = new CustomSpecificationBuilder<User>(ServiceUtils.getFilterParam(filter, User.class)).build();
+        List<User> users = userService.findAll(specification, pageable);
         List<UserDto> userDtoList = users.stream().map(userConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(userDtoList, HttpStatus.OK);
     }
