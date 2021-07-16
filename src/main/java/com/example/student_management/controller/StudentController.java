@@ -4,8 +4,12 @@ import com.example.student_management.converter.StudentConverter;
 import com.example.student_management.domain.Student;
 import com.example.student_management.dto.StudentDto;
 import com.example.student_management.service.StudentService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +31,15 @@ public class StudentController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_students')")
-    public ResponseEntity<Object> getAllStudent() {
-        List<Student> students = studentService.findAll();
+    public ResponseEntity<Object> getAllStudent(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Student> specification = new CustomSpecificationBuilder<Student>(ServiceUtils.getFilterParam(filter, Student.class)).build();
+        List<Student> students = studentService.findAll(specification, pageable);
         List<StudentDto> studentDtoList = students.stream().map(studentConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(studentDtoList, HttpStatus.OK);
     }
