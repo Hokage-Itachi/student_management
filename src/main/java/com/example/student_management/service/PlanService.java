@@ -4,11 +4,13 @@ import com.example.student_management.domain.Plan;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.PlanRepository;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -23,8 +25,11 @@ public class PlanService {
         this.planRepository = planRepository;
     }
 
-    public List<Plan> findAll() {
-        return planRepository.findAll();
+    public List<Plan> findAll(Specification<Plan> specification, Pageable pageable) {
+        if (specification == null) {
+            return planRepository.findAll(pageable).getContent();
+        }
+        return planRepository.findAll(specification, pageable).getContent();
     }
 
     public Plan findById(Long id) {
