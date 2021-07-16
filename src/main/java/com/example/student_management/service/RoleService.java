@@ -1,14 +1,16 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Role;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.RoleRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +24,11 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    public List<Role> findAll(Specification<Role> specification, Pageable pageable) {
+        if (specification == null) {
+            return roleRepository.findAll(pageable).getContent();
+        }
+        return roleRepository.findAll(specification, pageable).getContent();
     }
 
     public Role findByRoleName(String roleName) {
