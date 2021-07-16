@@ -4,13 +4,16 @@ import com.example.student_management.converter.ExamResultConverter;
 import com.example.student_management.domain.ExamResult;
 import com.example.student_management.dto.ExamResultDto;
 import com.example.student_management.service.ExamResultService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.BeanIds;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +33,15 @@ public class ExamResultController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_exam_results')")
-    public ResponseEntity<Object> getAllExamResults() {
-        List<ExamResult> examResults = examResultService.findAll();
+    public ResponseEntity<Object> getAllExamResults(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<ExamResult> specification = new CustomSpecificationBuilder<ExamResult>(ServiceUtils.getFilterParam(filter, ExamResult.class)).build();
+        List<ExamResult> examResults = examResultService.findAll(specification, pageable);
         List<ExamResultDto> examResultDtoList = examResults.stream().map(examResultConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(examResultDtoList, HttpStatus.OK);
     }

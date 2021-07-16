@@ -5,12 +5,14 @@ import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.ExamResultRepository;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -26,8 +28,11 @@ public class ExamResultService {
         this.examResultRepository = examResultRepository;
     }
 
-    public List<ExamResult> findAll() {
-        return examResultRepository.findAll();
+    public List<ExamResult> findAll(Specification<ExamResult> specification, Pageable pageable) {
+        if (specification == null) {
+            return examResultRepository.findAll(pageable).getContent();
+        }
+        return examResultRepository.findAll(specification, pageable).getContent();
     }
 
     public ExamResult findById(Long id) {
