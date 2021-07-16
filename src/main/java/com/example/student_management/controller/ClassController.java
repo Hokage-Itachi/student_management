@@ -40,8 +40,8 @@ public class ClassController {
             @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
     ) {
         Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
-        Specification<Class> spec = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
-        List<Class> classes = classService.findAll(pageable, spec);
+        Specification<Class> specification = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
+        List<Class> classes = classService.findAll(pageable, specification);
         List<ClassDto> classDtoList = classes.stream().map(classConverter::toDto).collect(Collectors.toList());
         log.info("Get {} classes successfully", classDtoList.size());
         return new ResponseEntity<>(classDtoList, HttpStatus.OK);

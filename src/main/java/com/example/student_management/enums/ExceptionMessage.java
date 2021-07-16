@@ -1,4 +1,4 @@
-package com.example.student_management.message;
+package com.example.student_management.enums;
 
 public enum ExceptionMessage {
     // Not found exception message

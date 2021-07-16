@@ -111,7 +111,7 @@ public class ServiceUtils {
             throw new IllegalArgumentException(String.format("Sort option '%s' malformed '%s'", sort, sortFormat));
         }
         List<String> fields = Arrays.stream(targetClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());
-        if(!fields.contains(arr[0])){
+        if (!fields.contains(arr[0])) {
             throw new IllegalArgumentException(String.format("%s have no attribute '%s'", targetClass.getSimpleName(), arr[0]));
         }
         return arr;
