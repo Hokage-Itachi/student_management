@@ -4,8 +4,12 @@ import com.example.student_management.converter.RoleConverter;
 import com.example.student_management.domain.Role;
 import com.example.student_management.dto.RoleDto;
 import com.example.student_management.service.RoleService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +31,15 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_roles')")
-    public ResponseEntity<Object> getAllRole() {
-        List<Role> roles = roleService.findAll();
+    public ResponseEntity<Object> getAllRole(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Role> specification = new CustomSpecificationBuilder<Role>(ServiceUtils.getFilterParam(filter, Role.class)).build();
+        List<Role> roles = roleService.findAll(specification, pageable);
         List<RoleDto> roleDtoList = roles.stream().map(roleConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(roleDtoList, HttpStatus.OK);
     }
