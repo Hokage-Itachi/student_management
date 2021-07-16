@@ -10,8 +10,12 @@ import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.service.RegistrationService;
 import com.example.student_management.service.StudentService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,8 +41,15 @@ public class RegistrationController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_registrations')")
-    public ResponseEntity<Object> getAllRegistration() {
-        List<Registration> registrations = registrationService.findAll();
+    public ResponseEntity<Object> getAllRegistration(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Registration> specification = new CustomSpecificationBuilder<Registration>(ServiceUtils.getFilterParam(filter, Registration.class)).build();
+        List<Registration> registrations = registrationService.findAll(specification, pageable);
         List<RegistrationDto> registrationDtoList = registrations.stream().map(registrationConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(registrationDtoList, HttpStatus.OK);
     }
@@ -55,7 +66,7 @@ public class RegistrationController {
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_registration')")
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
-        if(registrationDto.getId() == null){
+        if (registrationDto.getId() == null) {
             throw new DataInvalidException("Registration id must not be null");
         }
         Registration registration = registrationConverter.toEntity(registrationDto);

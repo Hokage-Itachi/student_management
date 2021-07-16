@@ -4,9 +4,11 @@ import com.example.student_management.domain.Registration;
 import com.example.student_management.domain.RegistrationId;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.RegistrationRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,11 @@ public class RegistrationService {
         this.registrationRepository = registrationRepository;
     }
 
-    public List<Registration> findAll() {
-        return registrationRepository.findAll();
+    public List<Registration> findAll(Specification<Registration> specification, Pageable pageable) {
+        if (specification == null) {
+            return registrationRepository.findAll(pageable).getContent();
+        }
+        return registrationRepository.findAll(specification, pageable).getContent();
     }
 
     public Registration findById(RegistrationId id) {
