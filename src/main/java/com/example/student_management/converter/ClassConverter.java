@@ -2,8 +2,6 @@ package com.example.student_management.converter;
 
 import com.example.student_management.domain.Class;
 import com.example.student_management.dto.ClassDto;
-import com.example.student_management.exception.ForeignKeyException;
-import com.example.student_management.message.ExceptionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

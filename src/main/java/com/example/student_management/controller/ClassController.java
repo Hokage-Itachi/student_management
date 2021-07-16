@@ -4,9 +4,13 @@ import com.example.student_management.converter.ClassConverter;
 import com.example.student_management.domain.Class;
 import com.example.student_management.dto.ClassDto;
 import com.example.student_management.service.ClassService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +33,15 @@ public class ClassController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_classes')")
-    public ResponseEntity<Object> getAllClasses() {
-
-        List<Class> classes = classService.findAll();
+    public ResponseEntity<Object> getAllClasses(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<Class> spec = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
+        List<Class> classes = classService.findAll(pageable, spec);
         List<ClassDto> classDtoList = classes.stream().map(classConverter::toDto).collect(Collectors.toList());
         log.info("Get {} classes successfully", classDtoList.size());
         return new ResponseEntity<>(classDtoList, HttpStatus.OK);
