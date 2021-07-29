@@ -7,12 +7,18 @@ spring:
     username: postgres
     password: 123456
     url: jdbc:postgresql://localhost:5432/student_management
-# mail config
+  # mail config
   mail:
     host: smtp.gmail.com
     port: 587
     username: annguyenvan.2k@gmail.com
     password: 2564640211
+  #jackson config
+  jackson:
+    default-property-inclusion: non_null
+  # cache config
+  cache:
+    type: hazelcast
 # config logging
 logging:
   pattern:
