@@ -13,6 +13,8 @@ import com.example.student_management.security.jwt.JwtProvider;
 import com.example.student_management.service.MailService;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 @RestController
 @RequestMapping("/api/auth")
 @Slf4j
+@SecurityRequirements
 public class AuthController {
     private final UserService userService;
     private final RoleService roleService;

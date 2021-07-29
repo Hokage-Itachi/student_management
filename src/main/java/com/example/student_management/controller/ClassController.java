@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/classes")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class ClassController {
     private final ClassService classService;
     private final ClassConverter classConverter;
