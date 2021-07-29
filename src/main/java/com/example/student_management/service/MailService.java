@@ -19,12 +19,10 @@ public class MailService {
     private String hostEmail;
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine springTemplateEngine;
-    private final TemplateEngine templateEngine;
 
-    public MailService(JavaMailSender mailSender, SpringTemplateEngine springTemplateEngine, TemplateEngine templateEngine) {
+    public MailService(JavaMailSender mailSender, SpringTemplateEngine springTemplateEngine) {
         this.mailSender = mailSender;
         this.springTemplateEngine = springTemplateEngine;
-        this.templateEngine = templateEngine;
     }
 
     @Async

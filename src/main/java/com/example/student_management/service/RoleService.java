@@ -7,6 +7,9 @@ import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.repository.RoleRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,7 @@ public class RoleService {
         return roleRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "role")
     public Role findByRoleName(String roleName) {
         if (roleName == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Role"));
@@ -42,6 +46,7 @@ public class RoleService {
         return roleOptional.get();
     }
 
+    @CachePut(value = "role")
     public Role add(Role role) {
         if (role.getRoleName() == null || role.getRoleName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
@@ -52,6 +57,7 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+    @CachePut(value = "role")
     public Role update(Role role) {
         if (role.getRoleName() == null || role.getRoleName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.ROLE_NAME_INVALID.message);
@@ -59,6 +65,7 @@ public class RoleService {
         return roleRepository.save(role);
     }
 
+    @CacheEvict(value = "role")
     public void deleteByRoleName(String roleName) {
         try {
             roleRepository.deleteById(roleName);

@@ -7,6 +7,9 @@ import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.EventRepository;
 import com.example.student_management.utils.ServiceUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +34,7 @@ public class EventService {
         }
         return eventRepository.findAll(specification, pageable).getContent();
     }
-
+    @Cacheable(value = "event")
     public Event findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Event"));
@@ -43,6 +46,7 @@ public class EventService {
         return eventOptional.get();
     }
 
+    @CachePut(value = "event")
     public Event save(Event event) {
         if (event.getName() == null || event.getName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.EVENT_NAME_INVALID.message);
@@ -64,6 +68,7 @@ public class EventService {
         }
     }
 
+    @CacheEvict(value = "event")
     public void deleteById(Long id) {
         try {
             eventRepository.deleteById(id);

@@ -9,6 +9,9 @@ import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.ExamResultRepository;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,7 @@ public class ExamResultService {
         return examResultRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "examResult")
     public ExamResult findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Exam result"));
@@ -46,6 +50,7 @@ public class ExamResultService {
         return examResultOptional.get();
     }
 
+    @CachePut(value = "examResult")
     public ExamResult save(ExamResult examResult) {
         if (examResult.getScore() == null) {
             log.error("Exam result score null");
@@ -81,6 +86,7 @@ public class ExamResultService {
         }
     }
 
+    @CacheEvict(value = "examResult")
     public void deleteById(Long id) {
         try {
             examResultRepository.deleteById(id);

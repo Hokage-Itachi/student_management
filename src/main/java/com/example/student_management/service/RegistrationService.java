@@ -6,6 +6,9 @@ import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.RegistrationRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +32,7 @@ public class RegistrationService {
         return registrationRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "registration")
     public Registration findById(RegistrationId id) {
         Optional<Registration> registrationOptional = registrationRepository.findById(id);
         if (registrationOptional.isEmpty()) {
@@ -37,6 +41,7 @@ public class RegistrationService {
         return registrationOptional.get();
     }
 
+    @CachePut(value = "registration")
     public Registration update(Registration registration) {
         if (registrationRepository.findById(registration.getId()).isEmpty()) {
             throw new ResourceNotFoundException(String.format(ExceptionMessage.REGISTRATION_NOT_FOUND.toString(), registration.getId().getStudentId(), registration.getId().getClassId()));
@@ -44,6 +49,7 @@ public class RegistrationService {
         return registrationRepository.save(registration);
     }
 
+    @CachePut(value = "registration")
     public Registration add(Registration registration) {
         if (registrationRepository.findById(registration.getId()).isPresent()) {
             throw new ResourceConflictException(String.format(ExceptionMessage.REGISTRATION_CONFLICT.toString(), registration.getId().getStudentId(), registration.getId().getClassId()));
@@ -51,6 +57,7 @@ public class RegistrationService {
         return registrationRepository.save(registration);
     }
 
+    @CacheEvict(value = "registration")
     public void deleteById(RegistrationId id) {
         try {
             registrationRepository.deleteById(id);

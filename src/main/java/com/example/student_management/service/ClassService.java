@@ -38,7 +38,8 @@ public class ClassService {
         }
         return classRepository.findAll(pageable).getContent();
     }
-    @Cacheable("class")
+
+    @Cacheable(value = "class")
     public Class findById(Long id) {
         if (id == null) {
             String message = String.format(ExceptionMessage.ID_INVALID.message, "Class");
@@ -56,7 +57,7 @@ public class ClassService {
 
     }
 
-    @CachePut("class")
+    @CachePut(value = "class")
     public Class save(Class clazz) {
         if (clazz.getStartDate() == null) {
             log.error("Class start date null");
@@ -78,7 +79,7 @@ public class ClassService {
         }
     }
 
-    @CacheEvict("class")
+    @CacheEvict(value = "class")
     public void deleteById(Long id) {
         try {
             classRepository.deleteById(id);
@@ -88,10 +89,5 @@ public class ClassService {
         } catch (DataIntegrityViolationException e) {
             throw new ForeignKeyException(String.format(ExceptionMessage.CLASS_FOREIGN_KEY.message, id));
         }
-    }
-
-    public Page<Class> test(Specification<Class> specification, Pageable pageable) {
-
-        return classRepository.findAll(specification, pageable);
     }
 }

@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll(specification, pageable).getContent();
     }
 
-    @Cacheable("user")
+    @Cacheable(value = "user")
     public User findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "User"));
@@ -55,7 +55,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
-    @Cacheable("user")
+    @Cacheable(value =  "user")
     public User findByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
@@ -85,7 +85,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Cacheable("user")
+    @Cacheable(value = "user")
     public User findByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService {
 
 
     @Override
-    @Cacheable("user")
+    @Cacheable(value = "user")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             User user = this.findByUsername(username);

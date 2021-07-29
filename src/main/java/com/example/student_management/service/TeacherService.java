@@ -1,13 +1,16 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.Teacher;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.TeacherRepository;
 import com.example.student_management.utils.ServiceUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +36,7 @@ public class TeacherService {
         return teacherRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "teacher")
     public Teacher findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Teacher"));
@@ -44,6 +48,7 @@ public class TeacherService {
         return teacherOptional.get();
     }
 
+    @CachePut(value = "teacher")
     public Teacher save(Teacher teacher) {
         if (!ServiceUtils.isStringValid(teacher.getFullName(), "[^0-9]+")) {
             throw new DataInvalidException(ExceptionMessage.TEACHER_NAME_INVALID.message);
@@ -65,6 +70,7 @@ public class TeacherService {
         }
     }
 
+    @CacheEvict(value = "teacher")
     public void deleteById(Long id) {
 
         try {
@@ -74,13 +80,5 @@ public class TeacherService {
         } catch (DataIntegrityViolationException e) {
             throw new ForeignKeyException(String.format(ExceptionMessage.TEACHER_FOREIGN_KEY.toString(), id));
         }
-    }
-
-    public Teacher findByEmail(String email) {
-        Optional<Teacher> teacherOptional = teacherRepository.findByEmail(email);
-        if (teacherOptional.isEmpty()) {
-            throw new ResourceNotFoundException(String.format(ExceptionMessage.TEACHER_NOT_FOUND_BY_EMAIL.toString(), email));
-        }
-        return teacherOptional.get();
     }
 }

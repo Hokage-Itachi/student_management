@@ -6,6 +6,9 @@ import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.CourseRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +33,7 @@ public class CourseService {
         return courseRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "course")
     public Course findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Course"));
@@ -41,7 +45,7 @@ public class CourseService {
         return courseOptional.get();
     }
 
-
+    @CachePut(value = "course")
     public Course save(Course course) {
         if (course.getName() == null || course.getName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.COURSE_NAME_INVALID.message);
@@ -52,6 +56,7 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    @CacheEvict(value = "course")
     public void deleteById(Long id) {
         try {
             courseRepository.deleteById(id);

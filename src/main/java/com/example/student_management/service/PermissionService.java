@@ -33,7 +33,7 @@ public class PermissionService {
         return permissionRepository.findAll(specification, pageable).getContent();
     }
 
-    @Cacheable("permission")
+    @Cacheable(value = "permission")
     public Permission findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Permission"));

@@ -9,6 +9,9 @@ import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.repository.StudentRepository;
 import com.example.student_management.utils.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,7 @@ public class StudentService {
         return studentRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "student")
     public Student findById(Long id) {
         if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Student"));
@@ -46,10 +50,7 @@ public class StudentService {
         return studentOptional.get();
     }
 
-    public Optional<Student> findByEmail(String email) {
-        return studentRepository.findByEmail(email);
-    }
-
+    @CachePut(value = "student")
     public Student save(Student student) {
         if (!ServiceUtils.isStringValid(student.getFullName(), "[^0-9]+")) {
             throw new DataInvalidException(ExceptionMessage.STUDENT_NAME_INVALID.message);
@@ -74,6 +75,7 @@ public class StudentService {
         }
     }
 
+    @CacheEvict(value = "student")
     public void deleteById(Long id) {
         try {
             studentRepository.deleteById(id);
