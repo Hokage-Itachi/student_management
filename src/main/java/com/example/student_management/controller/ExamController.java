@@ -6,6 +6,7 @@ import com.example.student_management.dto.ExamDto;
 import com.example.student_management.service.ExamService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/exams")
 @Slf4j
+@SecurityRequirement(name = "JWT authentication")
 public class ExamController {
     private final ExamService examService;
     private final ExamConverter examConverter;

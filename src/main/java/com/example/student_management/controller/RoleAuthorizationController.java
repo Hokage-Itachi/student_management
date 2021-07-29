@@ -7,6 +7,8 @@ import com.example.student_management.exception.ResourceNotFoundException;
 import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.service.PermissionService;
 import com.example.student_management.service.RoleService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/role-authorization")
+@Slf4j
+@SecurityRequirement(name = "JWT authentication")
 public class RoleAuthorizationController {
     private final RoleService roleService;
     private final PermissionService permissionService;

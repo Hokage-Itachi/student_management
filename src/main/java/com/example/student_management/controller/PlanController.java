@@ -6,6 +6,8 @@ import com.example.student_management.dto.PlanDto;
 import com.example.student_management.service.PlanService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/plans")
+@SecurityRequirement(name = "JWT authentication")
+@Slf4j
 public class PlanController {
     private final PlanService planService;
     private final PlanConverter planConverter;

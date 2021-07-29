@@ -3,9 +3,11 @@ package com.example.student_management.controller;
 import com.example.student_management.converter.ClassConverter;
 import com.example.student_management.domain.Class;
 import com.example.student_management.dto.ClassDto;
+import com.example.student_management.request.ClassFilterRequest;
 import com.example.student_management.service.ClassService;
-import com.example.student_management.specification.CustomSpecificationBuilder;
+import com.example.student_management.specification.ClassSpecification;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/classes")
 @Slf4j
+@SecurityRequirement(name = "JWT authentication")
 public class ClassController {
     private final ClassService classService;
     private final ClassConverter classConverter;
@@ -34,15 +37,21 @@ public class ClassController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_classes')")
     public ResponseEntity<Object> getAllClasses(
-            @RequestParam(name = "filter", required = false) String[] filter,
-            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
-            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
-            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+//            ClassFilterRequest filterRequest,
+            Pageable pageable,
+            @RequestParam(value = "parameters", required = false) List<List<String>> parameters
     ) {
-        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
-        Specification<Class> specification = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
+        // TODO: add sort validation
+//        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+//        ClassFilterRequest filterRequest = new ClassFilterRequest(names, startDateFrom, startDateTo, endDateFrom, endDateTo, status, courseId, teacherId);
+//        Specification<Class> specification = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
+        Specification<Class> specification = null;// ClassSpecification.buildSpecification(filterRequest);
         List<Class> classes = classService.findAll(pageable, specification);
         List<ClassDto> classDtoList = classes.stream().map(classConverter::toDto).collect(Collectors.toList());
+        classDtoList = classDtoList.stream().peek((classDto -> {
+            classDto.setCourse(null);
+            classDto.setTeacher(null);
+        })).collect(Collectors.toList());
         log.info("Get {} classes successfully", classDtoList.size());
         return new ResponseEntity<>(classDtoList, HttpStatus.OK);
     }
@@ -51,7 +60,7 @@ public class ClassController {
     @PreAuthorize("hasAnyAuthority('can_view_all_classes', 'can_view_class_by_id')")
     public ResponseEntity<Object> getById(@PathVariable(value = "id") Long id) {
         ClassDto classDto = classConverter.toDto(classService.findById(id));
-        log.info("Get {} class successfully", id);
+        log.info("Get class {} successfully", id);
         return new ResponseEntity<>(classDto, HttpStatus.OK);
     }
 
@@ -85,6 +94,7 @@ public class ClassController {
         log.info("Deleted class {}", id);
         return new ResponseEntity<>(HttpStatus.OK);
 
-
     }
+
+
 }

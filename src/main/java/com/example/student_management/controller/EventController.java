@@ -7,6 +7,7 @@ import com.example.student_management.dto.EventDto;
 import com.example.student_management.service.EventService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/events")
 @Slf4j
+@SecurityRequirement(name = "JWT authentication")
 public class EventController {
     private final EventService eventService;
     private final EventConverter eventConverter;
