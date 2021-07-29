@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, Serializable {
 
     private User user;
 
@@ -31,7 +32,7 @@ public class CustomUserDetails implements UserDetails {
         if (user_permissions != null || !user_permissions.isEmpty()) {
             permissions = user_permissions.stream().map(Permission::getPerName).collect(Collectors.toSet());
         }
-        if(role_permissions != null || !role_permissions.isEmpty()){
+        if (role_permissions != null || !role_permissions.isEmpty()) {
             permissions.addAll(role_permissions.stream().map(Permission::getPerName).collect(Collectors.toSet()));
         }
         return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
