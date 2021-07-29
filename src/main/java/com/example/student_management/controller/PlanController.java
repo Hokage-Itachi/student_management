@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/plans")
-@SecurityRequirement(name = "JWT authentication")
 @Slf4j
 public class PlanController {
     private final PlanService planService;

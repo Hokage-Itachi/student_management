@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/registrations")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class RegistrationController {
     private final RegistrationService registrationService;
     private final RegistrationConverter registrationConverter;

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/exams")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class ExamController {
     private final ExamService examService;
     private final ExamConverter examConverter;

@@ -10,9 +10,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Configuration
 public class OpenAPIConfig {
@@ -22,42 +20,45 @@ public class OpenAPIConfig {
     private static final String CONTACT_EMAIL = "annguyenvan.2k@gmail.com";
     private static final String CONTACT_NAME = "An Nguyễn";
     private static final String VERSION = "1.0.0";
-    private static final String SCHEME_NAME = "JWT authentication";
+    private static final String SCHEME_NAME = "Authorization";
+    private static final String BEARER_FORMAT = "JWT";
     private static final String SCHEME_TYPE = "bearer";
+    private static final String SECURITY_REQUIREMENT_NAME = "JWT authentication";
 
     @Bean
-    public OpenAPI OpenAPIConfig() {
-        OpenAPI openAPI = new OpenAPI();
-        // define server
-        Server server = new Server();
-        server.setUrl(SERVER_URL);
-        // define info
-        Info info = new Info();
-        info.setTitle(TITLE);
-        info.setDescription(DESCRIPTION);
-        info.setVersion(VERSION);
+    public OpenAPI OpenAPIConfiguration() {
 
-        Contact contact = new Contact();
-        contact.setEmail(CONTACT_EMAIL);
-        contact.setName(CONTACT_NAME);
+        return new OpenAPI()
+                .servers(List.of(new Server().url(SERVER_URL)))
+                .info(infoConfiguration())
+                .components(componentsConfiguration())
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_REQUIREMENT_NAME, List.of("read", "write")));
+    }
 
-        info.setContact(contact);
-        info.setVersion(VERSION);
-        // define security scheme
-        SecurityScheme securityScheme = new SecurityScheme();
-        securityScheme.setType(SecurityScheme.Type.HTTP);
-        securityScheme.setIn(SecurityScheme.In.HEADER);
-        securityScheme.setScheme(SCHEME_TYPE);
-        securityScheme.setBearerFormat("JWT");
-        securityScheme.setName("Authorization");
-        Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
-        securitySchemeMap.put(SCHEME_NAME, securityScheme);
+    @Bean
+    public Info infoConfiguration() {
+        return new Info()
+                .title(TITLE)
+                .description(DESCRIPTION)
+                .version(VERSION)
+                .contact(new Contact()
+                        .name(CONTACT_NAME)
+                        .email(CONTACT_EMAIL));
+    }
 
+    @Bean
+    public SecurityScheme securitySchemeConfigurationSecurityScheme() {
+        return new SecurityScheme()
+                .scheme(SCHEME_TYPE)
+                .name(SCHEME_NAME)
+                .type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER)
+                .bearerFormat(BEARER_FORMAT);
+    }
 
-        openAPI.setInfo(info);
-        openAPI.setServers(List.of(server));
-        openAPI.setComponents(new Components().securitySchemes(securitySchemeMap));
-        return openAPI;
-
+    @Bean
+    public Components componentsConfiguration() {
+        return new Components()
+                .addSecuritySchemes(SECURITY_REQUIREMENT_NAME, securitySchemeConfigurationSecurityScheme());
     }
 }

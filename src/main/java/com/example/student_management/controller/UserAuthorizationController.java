@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user-authorization")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class UserAuthorizationController {
     private final UserService userService;
     private final PermissionService permissionService;

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/courses")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class CourseController {
     private final CourseService courseService;
     private final CourseConverter courseConverter;

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/roles")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class RoleController {
     private final RoleService roleService;
     private final RoleConverter roleConverter;

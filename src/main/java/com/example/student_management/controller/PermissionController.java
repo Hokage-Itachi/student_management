@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/permissions")
-@SecurityRequirement(name = "JWT authentication")
 @Slf4j
 public class PermissionController {
     private final PermissionService permissionService;

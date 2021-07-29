@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/events")
 @Slf4j
-@SecurityRequirement(name = "JWT authentication")
 public class EventController {
     private final EventService eventService;
     private final EventConverter eventConverter;
