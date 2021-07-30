@@ -19,6 +19,9 @@ spring:
   # cache config
   cache:
     type: hazelcast
+  mvc:
+    format:
+      date: iso
 # config logging
 logging:
   pattern:
