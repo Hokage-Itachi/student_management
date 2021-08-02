@@ -4,13 +4,19 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class OpenAPIConfig {
@@ -59,6 +65,20 @@ public class OpenAPIConfig {
     @Bean
     public Components componentsConfiguration() {
         return new Components()
-                .addSecuritySchemes(SECURITY_REQUIREMENT_NAME, securitySchemeConfigurationSecurityScheme());
+                .addSecuritySchemes(SECURITY_REQUIREMENT_NAME, securitySchemeConfigurationSecurityScheme())
+                .responses(globalResponses());
+    }
+
+    @Bean
+    public Map<String, ApiResponse> globalResponses() {
+        ApiResponse unauthorized = new ApiResponse().description("Unauthorized").content(new Content());
+        ApiResponse methodNotAllowed = new ApiResponse().description("Method not allowed").content(new Content());
+        ApiResponse resourceNotFound = new ApiResponse().description("Resource not found").content(new Content());
+        Map<String, ApiResponse> apiResponseMap = new HashMap<>();
+        apiResponseMap.put("unauthorized", unauthorized);
+        apiResponseMap.put("methodNotAllowed", methodNotAllowed);
+        apiResponseMap.put("resourceNotFound", resourceNotFound);
+        return apiResponseMap;
     }
 }
+
