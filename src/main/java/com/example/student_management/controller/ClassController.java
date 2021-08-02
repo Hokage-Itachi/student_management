@@ -7,10 +7,13 @@ import com.example.student_management.request.ClassFilterRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.specification.ClassSpecification;
 import com.example.student_management.utils.ServiceUtils;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/classes")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound")
+})
 public class ClassController {
     private final ClassService classService;
     private final ClassConverter classConverter;
@@ -35,16 +43,12 @@ public class ClassController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_classes')")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllClasses(
-//            ClassFilterRequest filterRequest,
-            Pageable pageable,
-            @RequestParam(value = "parameters", required = false) List<List<String>> parameters
+            @ParameterObject ClassFilterRequest filterRequest,
+            @ParameterObject Pageable pageable
     ) {
-        // TODO: add sort validation
-//        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
-//        ClassFilterRequest filterRequest = new ClassFilterRequest(names, startDateFrom, startDateTo, endDateFrom, endDateTo, status, courseId, teacherId);
-//        Specification<Class> specification = new CustomSpecificationBuilder<Class>(ServiceUtils.getFilterParam(filter, Class.class)).build();
-        Specification<Class> specification = null;// ClassSpecification.buildSpecification(filterRequest);
+        Specification<Class> specification = ClassSpecification.buildSpecification(filterRequest);
         List<Class> classes = classService.findAll(pageable, specification);
         List<ClassDto> classDtoList = classes.stream().map(classConverter::toDto).collect(Collectors.toList());
         classDtoList = classDtoList.stream().peek((classDto -> {
@@ -57,6 +61,7 @@ public class ClassController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_all_classes', 'can_view_class_by_id')")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
     public ResponseEntity<Object> getById(@PathVariable(value = "id") Long id) {
         ClassDto classDto = classConverter.toDto(classService.findById(id));
         log.info("Get class {} successfully", id);
@@ -65,6 +70,8 @@ public class ClassController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_class')")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> addClass(@RequestBody ClassDto classDto) {
         Class clazz = classConverter.toEntity(classDto);
         clazz.setId(null);
@@ -75,6 +82,8 @@ public class ClassController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_class')")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassDto classDto) {
         Class updatedTarget = classService.findById(id);
         Class updatedSource = classConverter.toEntity(classDto);
@@ -88,11 +97,11 @@ public class ClassController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_class_by_id')")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteClass(@PathVariable("id") Long id) {
         classService.deleteById(id);
         log.info("Deleted class {}", id);
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
 
