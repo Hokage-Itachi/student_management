@@ -13,6 +13,10 @@ import com.example.student_management.security.jwt.JwtProvider;
 import com.example.student_management.service.MailService;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.service.UserService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +42,9 @@ import java.io.UnsupportedEncodingException;
 @RequestMapping("/api/auth")
 @Slf4j
 @SecurityRequirements
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed")
+})
 public class AuthController {
     private final UserService userService;
     private final RoleService roleService;
@@ -56,6 +63,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @ApiResponse(responseCode = "200", description = "Login success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginRespone.class)))
+    @ApiResponse(responseCode = "400", description = "Bad credentials", content = @Content)
     public ResponseEntity<Object> authenticateLogin(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -64,8 +73,10 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @ApiResponse(responseCode = "201", description = "User created", content = @Content)
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> signup(@RequestBody SignUpRequest request) {
-
         Role role = roleService.findByRoleName("user");
         User user = User.builder()
                 .username(request.getUsername())
@@ -81,6 +92,8 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
+    @ApiResponse(responseCode = "200", description = "Sent mail success", content = @Content)
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> forgotPassword(@RequestBody ForgotPasswordRequest request, HttpServletRequest httpServletRequest) throws MessagingException, UnsupportedEncodingException {
         User user = userService.findByEmail(request.getEmail());
         // TODO: add expiration into token
@@ -98,6 +111,8 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
+    @ApiResponse(responseCode = "200", description = "Reset password success", content = @Content)
+    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> resetPassword(@RequestBody ResetPasswordRequest request) {
         User user = userService.findByEmail(request.getEmail());
         String userToken = user.getForgotPasswordToken();
