@@ -1,11 +1,9 @@
 package com.example.student_management.specification;
 
+import com.sun.xml.bind.v2.TODO;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 public class CustomSpecification<Object> implements Specification<Object> {
     private final SearchCriteria criteria;
@@ -17,25 +15,31 @@ public class CustomSpecification<Object> implements Specification<Object> {
 
     @Override
     public Predicate toPredicate(Root<Object> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        // TODO: 7/22/2021 separate specification
+       Expression expression = root.get(criteria.getKey()).as(criteria.getValue().getClass());
+        if (criteria.getJoinColumn() != null && !criteria.getJoinColumn().isBlank()) {
+            Join<Object, Object> joinParent = root.join(criteria.getJoinColumn());
+            expression = joinParent.get(criteria.getKey()).as(criteria.getValue().getClass());
+        }
         switch (criteria.getOption()) {
             case EQUALITY:
-                return builder.equal(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase());
+                return builder.equal(builder.lower(expression), criteria.getValue());
             case NEGATION:
-                return builder.notEqual(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase());
+                return builder.notEqual(builder.lower(expression), criteria.getValue());
             case GREATER_THAN:
-                return builder.greaterThan(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase());
+                return builder.greaterThan(builder.lower(expression), criteria.getValue().toString());
             case LESS_THAN:
-                return builder.lessThan(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase());
+                return builder.lessThan(builder.lower(expression), criteria.getValue().toString().toLowerCase());
             case LIKE:
-                return builder.like(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase());
+                return builder.like(builder.lower(expression), criteria.getValue().toString().toLowerCase());
             case STARTS_WITH:
-                return builder.like(builder.lower(root.get(criteria.getKey())), criteria.getValue().toLowerCase() + "%");
+                return builder.like(builder.lower(expression), criteria.getValue().toString().toLowerCase() + "%");
             case ENDS_WITH:
-                return builder.like(builder.lower(root.get(criteria.getKey())), "%" + criteria.getValue().toLowerCase());
+                return builder.like(builder.lower(expression), "%" + criteria.getValue().toString().toLowerCase());
             case CONTAINS:
-                return builder.like(builder.lower(root.get(criteria.getKey())), "%" + criteria.getValue().toLowerCase() + "%");
+                return builder.like(builder.lower(expression), "%" + criteria.getValue().toString().toLowerCase() + "%");
             case NOT_CONTAINS:
-                return builder.notLike(builder.lower(root.get(criteria.getKey())), "%" + criteria.getValue().toLowerCase() + "%");
+                return builder.notLike(builder.lower(expression), "%" + criteria.getValue().toString().toLowerCase() + "%");
             default:
                 return null;
         }

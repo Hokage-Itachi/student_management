@@ -7,6 +7,7 @@ import com.example.student_management.request.ClassFilterRequest;
 import com.example.student_management.service.ClassService;
 import com.example.student_management.specification.ClassSpecification;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +31,8 @@ import java.util.stream.Collectors;
 @ApiResponses(value = {
         @ApiResponse(responseCode = "401", ref = "unauthorized"),
         @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
-        @ApiResponse(responseCode = "404", ref = "resourceNotFound")
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
 })
 public class ClassController {
     private final ClassService classService;
@@ -43,6 +45,7 @@ public class ClassController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_classes')")
+    @Operation(summary = "Get list class")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllClasses(
             @ParameterObject ClassFilterRequest filterRequest,
@@ -61,6 +64,7 @@ public class ClassController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_all_classes', 'can_view_class_by_id')")
+    @Operation(summary = "Get class by id")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
     public ResponseEntity<Object> getById(@PathVariable(value = "id") Long id) {
         ClassDto classDto = classConverter.toDto(classService.findById(id));
@@ -70,8 +74,8 @@ public class ClassController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_class')")
+    @Operation(summary = "Create class")
     @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
-    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> addClass(@RequestBody ClassDto classDto) {
         Class clazz = classConverter.toEntity(classDto);
         clazz.setId(null);
@@ -82,8 +86,8 @@ public class ClassController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_class')")
+    @Operation(summary = "Update class")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClassDto.class)))
-    @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
     public ResponseEntity<Object> updateClass(@PathVariable(value = "id") Long id, @RequestBody ClassDto classDto) {
         Class updatedTarget = classService.findById(id);
         Class updatedSource = classConverter.toEntity(classDto);
@@ -97,6 +101,7 @@ public class ClassController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_class_by_id')")
+    @Operation(summary = "Delete class")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteClass(@PathVariable("id") Long id) {
         classService.deleteById(id);

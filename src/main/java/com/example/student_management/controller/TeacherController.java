@@ -2,10 +2,16 @@ package com.example.student_management.controller;
 
 import com.example.student_management.converter.TeacherConverter;
 import com.example.student_management.domain.Teacher;
+import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.TeacherDto;
 import com.example.student_management.service.TeacherService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +29,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/teachers")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class TeacherController {
     private final TeacherService teacherService;
     private final TeacherConverter teacherConverter;
@@ -35,6 +47,8 @@ public class TeacherController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_teachers')")
+    @Operation(summary = "Get list teacher")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllTeacher(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -50,6 +64,8 @@ public class TeacherController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_teacher_by_id','can_view_all_teachers')")
+    @Operation(summary = "Get teacher by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeacherDto.class)))
     public ResponseEntity<Object> getTeacherById(@PathVariable("id") Long id) {
         Teacher teacher = teacherService.findById(id);
 
@@ -58,6 +74,9 @@ public class TeacherController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_teacher')")
+    @Operation(summary = "Create teacher")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeacherDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> addTeacher(@RequestBody TeacherDto teacherDto) {
         Teacher teacher = teacherConverter.toEntity(teacherDto);
         teacher.setId(null);
@@ -67,6 +86,9 @@ public class TeacherController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_teacher')")
+    @Operation(summary = "Update teacher")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TeacherDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> updateTeacher(@PathVariable("id") Long id, @RequestBody TeacherDto teacherDto) {
         Teacher updatedTarget = teacherService.findById(id);
         Teacher updatedSource = teacherConverter.toEntity(teacherDto);
@@ -79,6 +101,8 @@ public class TeacherController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_teacher_by_id')")
+    @Operation(summary = "Delete teacher")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteTeacher(@PathVariable("id") Long id) {
         teacherService.deleteById(id);
 

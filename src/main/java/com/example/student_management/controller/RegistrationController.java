@@ -12,7 +12,11 @@ import com.example.student_management.service.RegistrationService;
 import com.example.student_management.service.StudentService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +33,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/registrations")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class RegistrationController {
     private final RegistrationService registrationService;
     private final RegistrationConverter registrationConverter;
@@ -44,6 +54,8 @@ public class RegistrationController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_registrations')")
+    @Operation(summary = "Get list registration")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllRegistration(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -59,6 +71,8 @@ public class RegistrationController {
 
     @GetMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_view_registration_by_id', 'can_view_all_registrations')")
+    @Operation(summary = "Get registration by class id and student id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationDto.class)))
     public ResponseEntity<Object> getRegistrationById(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
         Registration registration = registrationService.findById(id);
@@ -68,6 +82,9 @@ public class RegistrationController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_registration')")
+    @Operation(summary = "Create registration")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> addRegistration(@RequestBody RegistrationDto registrationDto) {
         if (registrationDto.getId() == null) {
             throw new DataInvalidException("Registration id must not be null");
@@ -83,6 +100,9 @@ public class RegistrationController {
 
     @PutMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")
+    @Operation(summary = "Update registration")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> updateRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId, @RequestBody RegistrationDto registrationDto) {
         RegistrationId id = new RegistrationId(studentId, classId);
         Registration updatedTarget = registrationService.findById(id);
@@ -100,6 +120,8 @@ public class RegistrationController {
 
     @DeleteMapping("/{classId}/{studentId}")
     @PreAuthorize("hasAnyAuthority('can_update_registration')")
+    @Operation(summary = "Delete registration")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteRegistration(@PathVariable("classId") Long classId, @PathVariable("studentId") Long studentId) {
         RegistrationId id = new RegistrationId(studentId, classId);
         registrationService.deleteById(id);

@@ -11,12 +11,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchCriteria {
+    private String joinColumn;
     private String key;
     private SearchOperation option;
-    private String value;
+    private Object value;
     private boolean orPredicate;
 
-    public SearchCriteria(String key, String operation, String value){
+    public SearchCriteria(String key, String operation, Object value) {
         this.key = key;
         this.option = SearchOperation.getSearchOperation(operation);
         this.value = value;

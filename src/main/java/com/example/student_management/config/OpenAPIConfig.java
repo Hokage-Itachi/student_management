@@ -71,9 +71,9 @@ public class OpenAPIConfig {
 
     @Bean
     public Map<String, ApiResponse> globalResponses() {
-        ApiResponse unauthorized = new ApiResponse().description("Unauthorized").content(new Content());
-        ApiResponse methodNotAllowed = new ApiResponse().description("Method not allowed").content(new Content());
-        ApiResponse resourceNotFound = new ApiResponse().description("Resource not found").content(new Content());
+        ApiResponse unauthorized = new ApiResponse().description("Unauthorized");
+        ApiResponse methodNotAllowed = new ApiResponse().description("Method not allowed");
+        ApiResponse resourceNotFound = new ApiResponse().description("Resource not found");
         Map<String, ApiResponse> apiResponseMap = new HashMap<>();
         apiResponseMap.put("unauthorized", unauthorized);
         apiResponseMap.put("methodNotAllowed", methodNotAllowed);

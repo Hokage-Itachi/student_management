@@ -6,7 +6,11 @@ import com.example.student_management.dto.RoleDto;
 import com.example.student_management.service.RoleService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +27,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/roles")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class RoleController {
     private final RoleService roleService;
     private final RoleConverter roleConverter;
@@ -34,6 +44,8 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_roles')")
+    @Operation(summary = "Get list role")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllRole(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -49,6 +61,8 @@ public class RoleController {
 
     @GetMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_view_role_by_id', 'can_view_all_roles')")
+    @Operation(summary = "Get role by role name")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto.class)))
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName) {
         Role role = roleService.findByRoleName(roleName);
 
@@ -57,6 +71,9 @@ public class RoleController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_role')")
+    @Operation(summary = "Create role")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> addRole(@RequestBody RoleDto roleDto) {
         Role role = roleConverter.toEntity(roleDto);
         Role insertedRole = roleService.add(role);
@@ -65,6 +82,9 @@ public class RoleController {
 
     @PutMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_update_role')")
+    @Operation(summary = "Update role")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> getRoleByName(@PathVariable("roleName") String roleName, @RequestBody RoleDto roleDto) {
         Role updatedTarget = roleService.findByRoleName(roleName);
         Role updatedSource = roleConverter.toEntity(roleDto);
@@ -77,6 +97,8 @@ public class RoleController {
 
     @DeleteMapping("/{roleName}")
     @PreAuthorize("hasAnyAuthority('can_delet_role_by_id')")
+    @Operation(summary = "Delete role")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteRole(@PathVariable("roleName") String roleName) {
         roleService.deleteByRoleName(roleName);
 

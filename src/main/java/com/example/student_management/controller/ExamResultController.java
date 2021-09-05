@@ -2,10 +2,16 @@ package com.example.student_management.controller;
 
 import com.example.student_management.converter.ExamResultConverter;
 import com.example.student_management.domain.ExamResult;
+import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.ExamResultDto;
 import com.example.student_management.service.ExamResultService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +29,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/examResults")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class ExamResultController {
     private final ExamResultConverter examResultConverter;
     private final ExamResultService examResultService;
@@ -34,6 +46,8 @@ public class ExamResultController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_exam_results')")
+    @Operation(summary = "Get list exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllExamResults(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -49,6 +63,8 @@ public class ExamResultController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id', 'can_view_all_exam_results')")
+    @Operation(summary = "Get exam result by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
     public ResponseEntity<Object> getExamResultById(@PathVariable("id") Long id) {
         ExamResult examResult = examResultService.findById(id);
 
@@ -57,6 +73,8 @@ public class ExamResultController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam_result')")
+    @Operation(summary = "Create exam result")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
     public ResponseEntity<Object> addExamResult(@RequestBody ExamResultDto examResultDto) {
         ExamResult examResult = examResultConverter.toEntity(examResultDto);
         examResult.setId(null);
@@ -67,6 +85,8 @@ public class ExamResultController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
+    @Operation(summary = "Update exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
     public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultDto examResultDto) {
         ExamResult updatedTarget = examResultService.findById(id);
         ExamResult updatedSource = examResultConverter.toEntity(examResultDto);
@@ -80,6 +100,8 @@ public class ExamResultController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_exam_result_by_id')")
+    @Operation(summary = "Delete exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteExamResult(@PathVariable("id") Long id) {
         examResultService.deleteById(id);
         log.info("Exam result {} deleted", id);

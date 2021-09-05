@@ -2,10 +2,16 @@ package com.example.student_management.controller;
 
 import com.example.student_management.converter.ExamConverter;
 import com.example.student_management.domain.Exam;
+import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.ExamDto;
 import com.example.student_management.service.ExamService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +29,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/exams")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class ExamController {
     private final ExamService examService;
     private final ExamConverter examConverter;
@@ -34,6 +46,8 @@ public class ExamController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_exams')")
+    @Operation(summary = "Get list exam")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllExam(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -49,6 +63,8 @@ public class ExamController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_exam_by_id', 'can_view_all_exams')")
+    @Operation(summary = "Get exam by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamDto.class)))
     public ResponseEntity<Object> getExamById(@PathVariable("id") Long id) {
         Exam exam = examService.findById(id);
         ExamDto examDto = examConverter.toDto(exam);
@@ -57,6 +73,8 @@ public class ExamController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam')")
+    @Operation(summary = "Create exam")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamDto.class)))
     public ResponseEntity<Object> addExam(@RequestBody ExamDto examDto) {
         Exam exam = examConverter.toEntity(examDto);
         exam.setId(null);
@@ -66,6 +84,8 @@ public class ExamController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam')")
+    @Operation(summary = "Update exam")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamDto.class)))
     public ResponseEntity<Object> updateExam(@PathVariable("id") Long id, @RequestBody ExamDto examDto) {
         Exam updatedTarget = examService.findById(id);
         Exam updatedSource = examConverter.toEntity(examDto);
@@ -78,6 +98,8 @@ public class ExamController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_exam_by_id')")
+    @Operation(summary = "Delete exam")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteExam(@PathVariable("id") Long id) {
         examService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);

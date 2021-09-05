@@ -91,7 +91,7 @@ public class ServiceUtils {
     private static String[] validateFilter(String filter, Class targetClass) {
         String format = "key:operation:value";
         String[] arr = filter.split(":");
-        if (arr.length != 3) {
+        if (arr.length < 3) {
             throw new IllegalArgumentException(String.format("Filter option '%s' malformed '%s'", filter, format));
         }
         List<String> fields = Arrays.stream(targetClass.getDeclaredFields()).map(Field::getName).collect(Collectors.toList());

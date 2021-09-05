@@ -30,7 +30,6 @@ public class CustomSpecificationBuilder<Object> {
         List<Specification<Object>> specs = parameters.stream().map(CustomSpecification<Object>::new).collect(Collectors.toList());
         Specification<Object> specification = specs.get(0);
         for (int i = 1; i < parameters.size(); i++) {
-            // TODO: learn why
             specification = parameters.get(i).isOrPredicate() ? Specification.where(specification).or(specs.get(i)) : Specification.where(specification).and(specs.get(i));
         }
         return specification;

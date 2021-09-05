@@ -1,13 +1,17 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.EventConverter;
-import com.example.student_management.domain.Class;
 import com.example.student_management.domain.Event;
+import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.EventDto;
 import com.example.student_management.service.EventService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +28,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/events")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class EventController {
     private final EventService eventService;
     private final EventConverter eventConverter;
@@ -35,6 +45,8 @@ public class EventController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_events')")
+    @Operation(summary = "Get list event")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllEvents(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -50,6 +62,8 @@ public class EventController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_view_event_by_id', 'can_view_all_events')")
+    @Operation(summary = "Get event by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EventDto.class)))
     public ResponseEntity<Object> getEventById(@PathVariable("id") Long id) {
         Event event = eventService.findById(id);
         EventDto eventDto = eventConverter.toDto(event);
@@ -59,6 +73,8 @@ public class EventController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_event')")
+    @Operation(summary = "Create event")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EventDto.class)))
     public ResponseEntity<Object> addEvent(@RequestBody EventDto eventDto) {
         Event event = eventConverter.toEntity(eventDto);
         event.setId(null);
@@ -71,6 +87,8 @@ public class EventController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_update_event')")
+    @Operation(summary = "Update event")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EventDto.class)))
     public ResponseEntity<Object> updateEvent(@PathVariable("id") Long id, @RequestBody EventDto eventDto) {
         Event updatedTarget = eventService.findById(id);
         Event updatedSource = eventConverter.toEntity(eventDto);
@@ -84,6 +102,8 @@ public class EventController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_event_by_id')")
+    @Operation(summary = "Delete event")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteEvent(@PathVariable("id") Long id) {
         eventService.deleteById(id);
         log.info("Deleted event {}", id);

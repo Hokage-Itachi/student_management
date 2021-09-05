@@ -6,7 +6,11 @@ import com.example.student_management.dto.StudentDto;
 import com.example.student_management.service.StudentService;
 import com.example.student_management.specification.CustomSpecificationBuilder;
 import com.example.student_management.utils.ServiceUtils;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +27,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/students")
 @Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class StudentController {
     private final StudentConverter studentConverter;
     private final StudentService studentService;
@@ -34,6 +44,8 @@ public class StudentController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_students')")
+    @Operation(summary = "Get list student")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> getAllStudent(
             @RequestParam(name = "filter", required = false) String[] filter,
             @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
@@ -49,6 +61,8 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_student_by_id','can_view_all_students')")
+    @Operation(summary = "Get student by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDto.class)))
     public ResponseEntity<Object> getStudentById(@PathVariable("id") Long id) {
         Student student = studentService.findById(id);
         return new ResponseEntity<>(studentConverter.toDto(student), HttpStatus.OK);
@@ -56,6 +70,9 @@ public class StudentController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_student')")
+    @Operation(summary = "Create student")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> addStudent(@RequestBody StudentDto studentDto) {
         Student student = studentConverter.toEntity(studentDto);
         student.setId(null);
@@ -65,6 +82,9 @@ public class StudentController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_student')")
+    @Operation(summary = "Update student")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudentDto.class)))
+    @ApiResponse(responseCode = "409", description = "Resource conflict", content = @Content)
     public ResponseEntity<Object> updateStudent(@PathVariable("id") Long id, @RequestBody StudentDto studentDto) {
         Student updatedTarget = studentService.findById(id);
         Student updatedSource = studentConverter.toEntity(studentDto);
@@ -77,9 +97,10 @@ public class StudentController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_student_by_id')")
+    @Operation(summary = "Delete student")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteStudent(@PathVariable("id") Long id) {
         studentService.deleteById(id);
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
