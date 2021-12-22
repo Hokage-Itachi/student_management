@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -15,9 +16,9 @@ public class ExamResultDto {
     private Integer score;
     private Date resultDate;
     private String note;
-    private String student;
-    private String exam;
+    private StudentDto student;
+    private ExamDto exam;
     @JsonProperty("class")
-    private String clazz;
+    private ClassDto clazz;
 
 }

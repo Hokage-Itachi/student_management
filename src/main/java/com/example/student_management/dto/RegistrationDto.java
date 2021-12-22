@@ -1,6 +1,7 @@
 package com.example.student_management.dto;
 
 import com.example.student_management.domain.RegistrationId;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Date;
@@ -15,6 +16,6 @@ public class RegistrationDto {
     private Date registerDay;
     private String status;
     private Date createdDate;
-    private String clazz;
-    private String student;
+    private ClassDto clazz;
+    private StudentDto student;
 }

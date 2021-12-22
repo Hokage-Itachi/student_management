@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
@@ -12,5 +13,5 @@ import java.util.List;
 public class ExamDto {
     private Long id;
     private String name;
-    private String course;
+    private CourseDto course;
 }

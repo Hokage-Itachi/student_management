@@ -1,5 +1,6 @@
 package com.example.student_management.security.jwt;
 
+import com.example.student_management.exception.DataInvalidException;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,12 +14,14 @@ import java.util.Date;
 public class JwtProvider {
     @Value("${student_management.auth.jwt.JWT_SECRET}")
     private String JWT_SECRET;
-    @Value("${student_management.auth.jwt.JWT_EXPIRATION}")
-    private Long JWT_EXPIRATION;
+    @Value("${student_management.auth.jwt.JWT_LOGIN_EXPIRATION}")
+    private Long JWT_LOGIN_EXPIRATION;
+    @Value("${student_management.auth.jwt.JWT_REFRESH_EXPIRATION}")
+    private Long JWT_REFRESH_EXPIRATION;
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateLoginToken(UserDetails userDetails) {
         Date now = new Date();
-        Date expireDate = new Date(now.getTime() + JWT_EXPIRATION);
+        Date expireDate = new Date(now.getTime() + JWT_LOGIN_EXPIRATION);
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(now)
@@ -27,9 +30,25 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getUserNameFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
-        return claims.getSubject();
+    public String generateRefreshToken(String accessToken) {
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + JWT_REFRESH_EXPIRATION);
+        return Jwts.builder()
+                .setSubject(accessToken)
+                .setIssuedAt(now)
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                .compact();
+    }
+
+    public String getSubjectFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(token).getBody();
+            return claims.getSubject();
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token:  {}", e.getMessage());
+            throw new DataInvalidException("Invalid JWT token");
+        }
     }
 
     public boolean validateToken(String token) {

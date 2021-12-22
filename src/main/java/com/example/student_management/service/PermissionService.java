@@ -4,10 +4,15 @@ import com.example.student_management.domain.Permission;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.PermissionRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +26,16 @@ public class PermissionService {
         this.permissionRepository = permissionRepository;
     }
 
-    public List<Permission> findAll() {
-        return permissionRepository.findAll();
+    public List<Permission> findAll(Specification<Permission> specification, Pageable pageable) {
+        if (specification == null) {
+            return permissionRepository.findAll(pageable).getContent();
+        }
+        return permissionRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "permission")
     public Permission findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Permission"));
         }
         Optional<Permission> permissionOptional = permissionRepository.findById(id);
@@ -36,6 +45,7 @@ public class PermissionService {
         return permissionOptional.get();
     }
 
+    @CachePut(value = "permission")
     public Permission save(Permission permission) {
         if (permission.getPerName() == null || permission.getPerName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.PERMISSION_NAME_INVALID.message);
@@ -43,6 +53,7 @@ public class PermissionService {
         return permissionRepository.save(permission);
     }
 
+    @CacheEvict(value = "permission")
     public void deleteById(Long id) {
 
         try {

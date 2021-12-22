@@ -7,24 +7,35 @@ spring:
     username: postgres
     password: 123456
     url: jdbc:postgresql://localhost:5432/student_management
-# mail config
+  # mail config
   mail:
     host: smtp.gmail.com
     port: 587
     username: annguyenvan.2k@gmail.com
     password: 2564640211
+  #jackson config
+  jackson:
+    default-property-inclusion: non_null
+  # cache config
+  cache:
+    type: hazelcast
+  mvc:
+    format:
+      date: iso
 # config logging
 logging:
+  pattern:
+    console: "%blue(%d{yyyy-MM-dd HH:mm:ss.SSS}) %clr(%5p) %magenta(${PID:- }) [%thread] %cyan(%logger{15}:) %msg%n"
   file:
     name: logs/applications.log
   level:
     org:
       hibernate:
-        SQL: INFO
+        SQL: DEBUG
         type:
           descriptor:
             sql:
-              BasicBinder: INFO
+              BasicBinder: TRACE
       springframework:
         web: DEBUG
     com:
@@ -36,4 +47,5 @@ student_management:
     jwt:
       JWT_SECRET: itachi
       # expire in one day (unit: ms)
-      JWT_EXPIRATION: 86400000
+      JWT_LOGIN_EXPIRATION: 86400000
+      JWT_REFRESH_EXPIRATION: 86400000

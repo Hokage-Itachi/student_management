@@ -4,10 +4,15 @@ import com.example.student_management.domain.Course;
 import com.example.student_management.exception.DataInvalidException;
 import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.repository.CourseRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +26,16 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public List<Course> findAll() {
-        return courseRepository.findAll();
+    public List<Course> findAll(Pageable pageable, Specification<Course> specification) {
+        if (specification == null) {
+            return courseRepository.findAll(pageable).getContent();
+        }
+        return courseRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "course")
     public Course findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "Course"));
         }
         Optional<Course> courseOptional = courseRepository.findById(id);
@@ -36,7 +45,7 @@ public class CourseService {
         return courseOptional.get();
     }
 
-
+    @CachePut(value = "course")
     public Course save(Course course) {
         if (course.getName() == null || course.getName().isBlank()) {
             throw new DataInvalidException(ExceptionMessage.COURSE_NAME_INVALID.message);
@@ -47,6 +56,7 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    @CacheEvict(value = "course")
     public void deleteById(Long id) {
         try {
             courseRepository.deleteById(id);

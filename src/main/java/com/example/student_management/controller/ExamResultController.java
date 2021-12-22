@@ -1,16 +1,23 @@
 package com.example.student_management.controller;
 
 import com.example.student_management.converter.ExamResultConverter;
-import com.example.student_management.domain.Class;
-import com.example.student_management.domain.Exam;
 import com.example.student_management.domain.ExamResult;
-import com.example.student_management.domain.Student;
+import com.example.student_management.dto.ClassDto;
 import com.example.student_management.dto.ExamResultDto;
-import com.example.student_management.request.ExamResultRequest;
-import com.example.student_management.service.ClassService;
 import com.example.student_management.service.ExamResultService;
-import com.example.student_management.service.ExamService;
-import com.example.student_management.service.StudentService;
+import com.example.student_management.specification.CustomSpecificationBuilder;
+import com.example.student_management.utils.ServiceUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,31 +28,43 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/examResults")
+@Slf4j
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", ref = "unauthorized"),
+        @ApiResponse(responseCode = "405", ref = "methodNotAllowed"),
+        @ApiResponse(responseCode = "404", ref = "resourceNotFound"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content)
+})
 public class ExamResultController {
     private final ExamResultConverter examResultConverter;
     private final ExamResultService examResultService;
-    private final StudentService studentService;
-    private final ExamService examService;
-    private final ClassService classService;
 
-    public ExamResultController(ExamResultConverter examResultConverter, ExamResultService examResultService, StudentService studentService, ExamService examService, ClassService classService) {
+    public ExamResultController(ExamResultConverter examResultConverter, ExamResultService examResultService) {
         this.examResultConverter = examResultConverter;
         this.examResultService = examResultService;
-        this.studentService = studentService;
-        this.examService = examService;
-        this.classService = classService;
     }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('can_view_all_exam_results')")
-    public ResponseEntity<Object> getAllExamResults() {
-        List<ExamResult> examResults = examResultService.findAll();
+    @Operation(summary = "Get list exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
+    public ResponseEntity<Object> getAllExamResults(
+            @RequestParam(name = "filter", required = false) String[] filter,
+            @RequestParam(name = "sort", required = false, defaultValue = "id:asc") String[] sort,
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "5") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, ServiceUtils.getSortParam(sort));
+        Specification<ExamResult> specification = new CustomSpecificationBuilder<ExamResult>(ServiceUtils.getFilterParam(filter, ExamResult.class)).build();
+        List<ExamResult> examResults = examResultService.findAll(specification, pageable);
         List<ExamResultDto> examResultDtoList = examResults.stream().map(examResultConverter::toDto).collect(Collectors.toList());
         return new ResponseEntity<>(examResultDtoList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_view_exam_result_by_id', 'can_view_all_exam_results')")
+    @Operation(summary = "Get exam result by id")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
     public ResponseEntity<Object> getExamResultById(@PathVariable("id") Long id) {
         ExamResult examResult = examResultService.findById(id);
 
@@ -54,44 +73,38 @@ public class ExamResultController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('can_add_exam_result')")
-    public ResponseEntity<Object> addExamResult(@RequestBody ExamResultRequest request) {
-        Student student = studentService.findById(request.getStudentId());
-        Class clazz = classService.findById(request.getClassId());
-        Exam exam = examService.findById(request.getExamId());
-
-        ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
+    @Operation(summary = "Create exam result")
+    @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
+    public ResponseEntity<Object> addExamResult(@RequestBody ExamResultDto examResultDto) {
+        ExamResult examResult = examResultConverter.toEntity(examResultDto);
         examResult.setId(null);
-        examResult.setExam(exam);
-        examResult.setClazz(clazz);
-        examResult.setStudent(student);
-
-        ExamResult insertedExamResult = examResultService.add(examResult);
+        ExamResult insertedExamResult = examResultService.save(examResult);
+        log.info("Exam result {} inserted", insertedExamResult);
         return new ResponseEntity<>(examResultConverter.toDto(insertedExamResult), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_update_exam_result')")
-    public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultRequest request) {
-        examResultService.findById(id);
-        Student student = studentService.findById(request.getStudentId());
-        Class clazz = classService.findById(request.getClassId());
-        Exam exam = examService.findById(request.getExamId());
-
-        ExamResult examResult = examResultConverter.toEntity(request.getExamResult());
-        examResult.setId(id);
-        examResult.setExam(exam);
-        examResult.setClazz(clazz);
-        examResult.setStudent(student);
-
-        ExamResult updatedExamResult = examResultService.update(examResult);
+    @Operation(summary = "Update exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExamResultDto.class)))
+    public ResponseEntity<Object> updateExamResult(@PathVariable("id") Long id, @RequestBody ExamResultDto examResultDto) {
+        ExamResult updatedTarget = examResultService.findById(id);
+        ExamResult updatedSource = examResultConverter.toEntity(examResultDto);
+        updatedSource.setId(id);
+        // Copy non-null properties from source to target
+        BeanUtils.copyProperties(updatedSource, updatedTarget, ServiceUtils.getNullPropertyNames(updatedSource));
+        ExamResult updatedExamResult = examResultService.save(updatedTarget);
+        log.info("Exam result {} updated", id);
         return new ResponseEntity<>(examResultConverter.toDto(updatedExamResult), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('can_delete_exam_result_by_id')")
+    @Operation(summary = "Delete exam result")
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content)
     public ResponseEntity<Object> deleteExamResult(@PathVariable("id") Long id) {
         examResultService.deleteById(id);
-
+        log.info("Exam result {} deleted", id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

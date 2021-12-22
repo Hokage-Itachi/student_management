@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Date;
@@ -22,6 +23,5 @@ public class UserDto {
     private Integer loginFailedCount;
     private Date registerDate;
     private String forgotPasswordToken;
-    private String role;
-    private List<String> permissions;
+    private RoleDto role;
 }

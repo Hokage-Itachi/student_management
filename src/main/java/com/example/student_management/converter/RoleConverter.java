@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoleConverter {
     public RoleDto toDto(Role entity) {
+        if(entity == null){
+            return null;
+        }
         return RoleDto.builder()
                 .roleName(entity.getRoleName())
                 .description(entity.getDescriptions())
@@ -14,6 +17,9 @@ public class RoleConverter {
     }
 
     public Role toEntity(RoleDto roleDto) {
+        if(roleDto == null){
+            return null;
+        }
         return Role.builder()
                 .roleName(roleDto.getRoleName())
                 .descriptions(roleDto.getDescription())

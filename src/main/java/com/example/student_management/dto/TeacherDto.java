@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
@@ -16,5 +17,4 @@ public class TeacherDto {
     private String phone;
     private String address;
     private String grade;
-    private List<String> classes;
 }

@@ -1,12 +1,16 @@
 package com.example.student_management.exception;
 
 import com.example.student_management.utils.ExceptionHandlerUtils;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -17,16 +21,17 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
-    //    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<Object> handleException(Exception e){
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleException(Exception e) {
 //        String error = "Internal Server Error";
 //        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
 //        return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadRequestException(BadCredentialsException e, WebRequest request) {
-        String error = "Username or password invalid";
-        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, e.getMessage());
+        String message = "Username or password invalid";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(e.getMessage(), message);
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 
@@ -89,7 +94,39 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         String error = "Json error";
-        String message = "Error while parsing Json";
+        String message = e.getMessage().split(";")[0];
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
+        String error = "Illegal argument";
+        String message = e.getMessage();
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<Object> handleBindException(BindException e) {
+        String error = "Illegal argument";
+        String message = "Data of field '" + e.getBindingResult().getFieldError().getField() + "' mismatch";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<Object> handlePropertyReferenceException(PropertyReferenceException e) {
+        String error = "Illegal argument";
+        String message = "Property '" + e.getPropertyName() + "' not found";
+        Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
+        return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        String error = "Missing require parameter";
+        String message = "Missing required parameter '" + e.getParameterName() + "' ";
         Map<String, Object> data = ExceptionHandlerUtils.createResponseData(error, message);
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }

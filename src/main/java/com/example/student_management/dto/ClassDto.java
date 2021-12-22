@@ -1,5 +1,6 @@
 package com.example.student_management.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.Date;
@@ -16,8 +17,6 @@ public class ClassDto {
     private Date startDate;
     private Date endDate;
     private String status;
-    private String course;
-    private String teacher;
-    private List<EventDto> events;
-    private List<String> students;
+    private CourseDto course;
+    private TeacherDto teacher;
 }

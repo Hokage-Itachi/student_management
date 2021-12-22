@@ -1,16 +1,23 @@
 package com.example.student_management.service;
 
 import com.example.student_management.domain.User;
+import com.example.student_management.enums.ExceptionMessage;
 import com.example.student_management.exception.DataInvalidException;
+import com.example.student_management.exception.ForeignKeyException;
 import com.example.student_management.exception.ResourceConflictException;
 import com.example.student_management.exception.ResourceNotFoundException;
-import com.example.student_management.message.ExceptionMessage;
 import com.example.student_management.repository.UserRepository;
 import com.example.student_management.security.authentication.CustomUserDetails;
 import com.example.student_management.utils.ServiceUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
@@ -28,12 +36,16 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> findAll(Specification<User> specification, Pageable pageable) {
+        if (specification == null) {
+            return userRepository.findAll(pageable).getContent();
+        }
+        return userRepository.findAll(specification, pageable).getContent();
     }
 
+    @Cacheable(value = "user")
     public User findById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new DataInvalidException(String.format(ExceptionMessage.ID_INVALID.message, "User"));
         }
         Optional<User> userOptional = userRepository.findById(id);
@@ -43,6 +55,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @Cacheable(value =  "user")
     public User findByEmail(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
@@ -51,15 +64,19 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @CachePut(value = "user")
     public User save(User user) {
+        if (user.getRole() == null || user.getRole().getRoleName() == null) {
+            throw new ForeignKeyException(String.format(ExceptionMessage.NULL_FOREIGN_KEY_REFERENCE.message, "Role"));
+        }
         try {
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            if (e.getRootCause() instanceof SQLException){
+            if (e.getRootCause() instanceof SQLException) {
                 SQLException ex = (SQLException) e.getRootCause();
                 String message = ServiceUtils.sqlExceptionMessageFormat(ex.getMessage());
                 throw new ResourceConflictException(message);
-            } else if (e.getRootCause() instanceof PropertyValueException){
+            } else if (e.getRootCause() instanceof PropertyValueException) {
                 PropertyValueException ex = (PropertyValueException) e.getRootCause();
                 throw new DataInvalidException(ServiceUtils.propertyValueExceptionMessageFormat(ex.getMessage()));
             } else {
@@ -68,6 +85,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Cacheable(value = "user")
     public User findByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
@@ -76,6 +94,7 @@ public class UserService implements UserDetailsService {
         return userOptional.get();
     }
 
+    @CacheEvict(value = "user")
     public void deleteById(Long id) {
 
         try {
@@ -87,6 +106,7 @@ public class UserService implements UserDetailsService {
 
 
     @Override
+    @Cacheable(value = "user")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             User user = this.findByUsername(username);

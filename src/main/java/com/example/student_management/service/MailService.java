@@ -3,7 +3,11 @@ package com.example.student_management.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -14,12 +18,15 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String hostEmail;
     private final JavaMailSender mailSender;
+    private final SpringTemplateEngine springTemplateEngine;
 
-    public MailService(JavaMailSender mailSender) {
+    public MailService(JavaMailSender mailSender, SpringTemplateEngine springTemplateEngine) {
         this.mailSender = mailSender;
+        this.springTemplateEngine = springTemplateEngine;
     }
 
-    public void sendMail(String recipientEmail, String link) throws MessagingException, UnsupportedEncodingException {
+    @Async
+    public void sendMail(String recipientEmail, String link, String template) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
@@ -27,14 +34,9 @@ public class MailService {
         helper.setTo(recipientEmail);
 
         String subject = "Here's the link to reset your password";
-
-        String content = "<p>Hello,</p>"
-                + "<p>You have requested to reset your password.</p>"
-                + "<p>Click the link below to change your password:</p>"
-                + "<p><a href=\"" + link + "\">Change my password</a></p>"
-                + "<br>"
-                + "<p>Ignore this email if you do remember your password, "
-                + "or you have not made the request.</p>";
+        Context context = new Context();
+        context.setVariable("returnUrl", link);
+        String content = springTemplateEngine.process(template, context);
 
         helper.setSubject(subject);
 
